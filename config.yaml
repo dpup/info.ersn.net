@@ -9,7 +9,7 @@ routes:
     api_key: "${GOOGLE_ROUTES_API_KEY}"
   caltrans_feeds:
     chain_controls:
-      refresh_interval: "15m"  # Less frequent, changes slowly
+      refresh_interval: "30m"  # Less frequent, changes slowly
       url: "https://quickmap.dot.ca.gov/data/cc.kml"
     lane_closures:
       refresh_interval: "10m"
@@ -18,33 +18,49 @@ routes:
       refresh_interval: "5m"   # More frequent, incidents change quickly
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
   monitored_routes:
-    - name: "I-5 Seattle to Portland"
-      id: "i5-sea-pdx"
+    - name: "Hwy 4 - Angels Camp to Murphys"
+      id: "hwy4-angels-murphys"
       origin:
-        latitude: 47.6062
-        longitude: -122.3321
+        latitude: 38.067400
+        longitude: -120.540200
       destination:
-        latitude: 45.5152
-        longitude: -122.6784
-    - name: "US-101 Coastal Route"  
-      id: "us101-coastal"
+        latitude: 38.139117
+        longitude: -120.456111
+    - name: "Hwy 4 - Murphys to Arnold"  
+      id: "hwy4-murphys-arnold"
       origin:
-        latitude: 46.9741
-        longitude: -124.1060  
+        latitude: 38.139117
+        longitude: -120.456111
       destination:
-        latitude: 43.7749
-        longitude: -124.5087
+        latitude: 38.265006
+        longitude: -120.333654
+    - name: "Hwy 4 - Arnold to Bear Valley"
+      id: "hwy4-arnold-bearvalley"
+      origin:
+        latitude: 38.265006
+        longitude: -120.333654
+      destination:
+        latitude: 38.461045
+        longitude: -120.042368
 
 weather:
   refresh_interval: "5m"
   stale_threshold: "10m"
   openweather_api_key: "${OPENWEATHER_API_KEY}"
   locations:
-    - id: "seattle"
-      name: "Seattle, WA"
-      lat: 47.6062
-      lon: -122.3321
-    - id: "portland"  
-      name: "Portland, OR"
-      lat: 45.5152
-      lon: -122.6784
+    - id: "murphys"
+      name: "Murphys, CA"
+      lat: 38.139117
+      lon: -120.456111
+    - id: "arnold"  
+      name: "Arnold, CA"
+      lat: 38.265006
+      lon: -120.333654
+    - id: "dorrington"
+      name: "Dorrington, CA"
+      lat: 38.301275
+      lon: -120.276705
+    - id: "bearvalley"
+      name: "Bear Valley, CA"
+      lat: 38.461045
+      lon: -120.042368

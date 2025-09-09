@@ -121,15 +121,39 @@ func DefaultConfig() *Config {
 			},
 			MonitoredRoutes: []MonitoredRoute{
 				{
-					Name: "I-5 Seattle to Portland",
-					ID:   "i5-sea-pdx",
+					Name: "Hwy 4 - Angels Camp to Murphys",
+					ID:   "hwy4-angels-murphys",
 					Origin: CoordinatesYAML{
-						Latitude:  47.6062,
-						Longitude: -122.3321,
+						Latitude:  38.0674,
+						Longitude: -120.5402,
 					},
 					Destination: CoordinatesYAML{
-						Latitude:  45.5152,
-						Longitude: -122.6784,
+						Latitude:  38.1327,
+						Longitude: -120.4606,
+					},
+				},
+				{
+					Name: "Hwy 4 - Murphys to Arnold",
+					ID:   "hwy4-murphys-arnold",
+					Origin: CoordinatesYAML{
+						Latitude:  38.1327,
+						Longitude: -120.4606,
+					},
+					Destination: CoordinatesYAML{
+						Latitude:  38.2458,
+						Longitude: -120.3486,
+					},
+				},
+				{
+					Name: "Hwy 4 - Arnold to Ebbetts Pass",
+					ID:   "hwy4-arnold-ebbetts",
+					Origin: CoordinatesYAML{
+						Latitude:  38.2458,
+						Longitude: -120.3486,
+					},
+					Destination: CoordinatesYAML{
+						Latitude:  38.5347,
+						Longitude: -119.8075,
 					},
 				},
 			},
@@ -139,16 +163,22 @@ func DefaultConfig() *Config {
 			StaleThreshold:  10 * time.Minute,
 			Locations: []WeatherLocation{
 				{
-					ID:   "seattle",
-					Name: "Seattle, WA",
-					Lat:  47.6062,
-					Lon:  -122.3321,
+					ID:   "murphys",
+					Name: "Murphys, CA",
+					Lat:  38.1327,
+					Lon:  -120.4606,
 				},
 				{
-					ID:   "portland",
-					Name: "Portland, OR",
-					Lat:  45.5152,
-					Lon:  -122.6784,
+					ID:   "arnold",
+					Name: "Arnold, CA",
+					Lat:  38.2458,
+					Lon:  -120.3486,
+				},
+				{
+					ID:   "dorrington",
+					Name: "Dorrington, CA",
+					Lat:  38.3461,
+					Lon:  -120.2036,
 				},
 			},
 		},
