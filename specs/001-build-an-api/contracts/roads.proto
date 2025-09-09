@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/dpup/info.ersn.net/server/api;api";
+
+// RoadsService provides real-time road conditions and traffic information
+service RoadsService {
+  // ListRoutes returns current conditions for all configured routes
+  rpc ListRoutes(ListRoutesRequest) returns (ListRoutesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/routes"
+    };
+  }
+
+  // GetRoute returns current conditions for a specific route
+  rpc GetRoute(GetRouteRequest) returns (GetRouteResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/routes/{route_id}"
+    };
+  }
+}
+
+// Request messages
+message ListRoutesRequest {}
+
+message GetRouteRequest {
+  string route_id = 1;
+}
+
+// Response messages
+message ListRoutesResponse {
+  repeated Route routes = 1;
+  google.protobuf.Timestamp last_updated = 2;
+}
+
+message GetRouteResponse {
+  Route route = 1;
+  google.protobuf.Timestamp last_updated = 2;
+}
+
+// Data models
+message Route {
+  string id = 1;
+  string name = 2;
+  Coordinates origin = 3;         // Start point for Google Routes API
+  Coordinates destination = 4;    // End point for Google Routes API
+  RouteStatus status = 5;         // From Caltrans or other official sources
+  TrafficCondition traffic_condition = 6;  // From Google Routes API
+  ChainControlStatus chain_control = 7;    // From Caltrans API
+  repeated RouteAlert alerts = 8; // Combined from multiple sources
+  google.protobuf.Timestamp last_updated = 9;
+}
+
+message Coordinates {
+  double latitude = 1;
+  double longitude = 2;
+}
+
+message TrafficCondition {
+  string route_id = 1;
+  int32 duration_seconds = 2;              // Travel time in seconds
+  int32 distance_meters = 3;               // Route distance in meters
+  CongestionLevel congestion_level = 4;    // Traffic density level
+  int32 delay_seconds = 5;                 // Additional time due to traffic (0 = no delays)
+}
+
+message RouteAlert {
+  string id = 1;
+  AlertType type = 2;
+  AlertSeverity severity = 3;
+  string title = 4;
+  string description = 5;
+  google.protobuf.Timestamp start_time = 6;
+  google.protobuf.Timestamp end_time = 7;
+  repeated string affected_segments = 8;
+}
+
+message TrafficIncident {
+  string id = 1;
+  string description = 2;
+  float location_mile_marker = 3;
+  int32 estimated_delay_minutes = 4;
+}
+
+// Enumerations
+enum RouteStatus {
+  ROUTE_STATUS_UNSPECIFIED = 0;
+  ROUTE_STATUS_OPEN = 1;
+  ROUTE_STATUS_CLOSED = 2;
+  ROUTE_STATUS_RESTRICTED = 3;
+  ROUTE_STATUS_MAINTENANCE = 4;
+}
+
+enum ChainControlStatus {
+  CHAIN_CONTROL_UNSPECIFIED = 0;
+  CHAIN_CONTROL_NONE = 1;
+  CHAIN_CONTROL_ADVISED = 2;
+  CHAIN_CONTROL_REQUIRED = 3;
+  CHAIN_CONTROL_PROHIBITED = 4;
+}
+
+enum CongestionLevel {
+  CONGESTION_LEVEL_UNSPECIFIED = 0;
+  CONGESTION_LEVEL_CLEAR = 1;        // Free-flowing traffic, no delays
+  CONGESTION_LEVEL_LIGHT = 2;        // Light traffic, minimal delays  
+  CONGESTION_LEVEL_MODERATE = 3;     // Some congestion, minor delays
+  CONGESTION_LEVEL_HEAVY = 4;        // Heavy traffic, significant delays
+  CONGESTION_LEVEL_SEVERE = 5;       // Stop-and-go or stopped traffic
+}
+
+enum AlertType {
+  ALERT_TYPE_UNSPECIFIED = 0;
+  ALERT_TYPE_CLOSURE = 1;
+  ALERT_TYPE_CONSTRUCTION = 2;
+  ALERT_TYPE_INCIDENT = 3;
+  ALERT_TYPE_WEATHER = 4;
+}
+
+enum AlertSeverity {
+  ALERT_SEVERITY_UNSPECIFIED = 0;
+  ALERT_SEVERITY_INFO = 1;
+  ALERT_SEVERITY_WARNING = 2;
+  ALERT_SEVERITY_CRITICAL = 3;
+}
