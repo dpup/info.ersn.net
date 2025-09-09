@@ -1,0 +1,168 @@
+# Live Data API Server - Build, Test, and Deployment Tasks
+.PHONY: build test proto clean server tools run dev lint fmt docker deploy install help
+
+# Go parameters
+GOCMD=go
+GOBUILD=$(GOCMD) build
+GOCLEAN=$(GOCMD) clean
+GOTEST=$(GOCMD) test
+GOGET=$(GOCMD) get
+GOMOD=$(GOCMD) mod
+GOFMT=$(GOCMD) fmt
+
+# Build directories
+BUILD_DIR=bin
+PROTO_DIR=api/v1
+CMD_DIR=cmd
+
+# Binary names
+SERVER_BINARY=$(BUILD_DIR)/server
+TEST_GOOGLE_BINARY=$(BUILD_DIR)/test-google
+TEST_CALTRANS_BINARY=$(BUILD_DIR)/test-caltrans
+TEST_WEATHER_BINARY=$(BUILD_DIR)/test-weather
+
+# Default target
+all: build
+
+## Build Targets
+
+# Build everything (protobuf generation + server + CLI tools)
+build: proto server tools
+
+# Build main server only
+server: $(SERVER_BINARY)
+
+$(SERVER_BINARY): proto
+	$(GOBUILD) -o $(SERVER_BINARY) $(CMD_DIR)/server
+
+# Build CLI testing tools only
+tools: $(TEST_GOOGLE_BINARY) $(TEST_CALTRANS_BINARY) $(TEST_WEATHER_BINARY)
+
+$(TEST_GOOGLE_BINARY): proto
+	$(GOBUILD) -o $(TEST_GOOGLE_BINARY) $(CMD_DIR)/test-google
+
+$(TEST_CALTRANS_BINARY): proto
+	$(GOBUILD) -o $(TEST_CALTRANS_BINARY) $(CMD_DIR)/test-caltrans
+
+$(TEST_WEATHER_BINARY): proto
+	$(GOBUILD) -o $(TEST_WEATHER_BINARY) $(CMD_DIR)/test-weather
+
+# Generate protobuf code
+proto:
+	@echo "Generating protobuf code..."
+	@mkdir -p $(BUILD_DIR)
+	PATH="$(shell go env GOPATH)/bin:$(PATH)" protoc --proto_path=$(PROTO_DIR) \
+		--proto_path=$(shell go list -f '{{ .Dir }}' -m github.com/googleapis/googleapis) \
+		--go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=. --grpc-gateway_opt=paths=source_relative \
+		$(PROTO_DIR)/*.proto
+
+# Clean build artifacts
+clean:
+	$(GOCLEAN)
+	rm -rf $(BUILD_DIR)
+	rm -f $(PROTO_DIR)/*.pb.go
+	rm -f $(PROTO_DIR)/*_grpc.pb.go
+
+## Testing Targets
+
+# Run full test suite
+test:
+	$(GOTEST) -v ./...
+
+# Test individual API clients (optional parameters)
+test-google: $(TEST_GOOGLE_BINARY)
+	./$(TEST_GOOGLE_BINARY) --config=config.yaml $(if $(ROUTE_ID),--route-id=$(ROUTE_ID)) $(if $(VERBOSE),--verbose)
+
+test-caltrans: $(TEST_CALTRANS_BINARY)
+	./$(TEST_CALTRANS_BINARY) --config=config.yaml $(if $(VERBOSE),--verbose) $(if $(FORMAT),--format=$(FORMAT))
+
+test-weather: $(TEST_WEATHER_BINARY)
+	./$(TEST_WEATHER_BINARY) --config=config.yaml $(if $(LOCATION_ID),--location-id=$(LOCATION_ID)) $(if $(VERBOSE),--verbose)
+
+# Validate configuration without API calls
+test-config:
+	@echo "Configuration validation not yet implemented"
+
+## Development Targets
+
+# Run server with configuration
+run: server
+	./$(SERVER_BINARY) --config=$(or $(CONFIG),config.yaml)
+
+# Run server in development mode with auto-restart
+dev: server
+	@echo "Development mode with auto-restart not yet implemented"
+	@echo "For now, use: make run CONFIG=config.yaml"
+
+# Go code formatting
+fmt:
+	$(GOFMT) ./...
+
+# Run Go linting tools
+lint:
+	@if command -v golangci-lint >/dev/null 2>&1; then \
+		golangci-lint run; \
+	else \
+		echo "golangci-lint not found. Install with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"; \
+		$(GOCMD) vet ./...; \
+	fi
+
+## Deployment Targets
+
+# Build Docker container image
+docker:
+	@echo "Docker build not yet implemented"
+
+# Deploy to configured environment
+deploy:
+	@echo "Deployment not yet implemented"
+
+# Install CLI tools to system PATH
+install: tools
+	@echo "Installing CLI tools to system PATH..."
+	cp $(TEST_GOOGLE_BINARY) /usr/local/bin/
+	cp $(TEST_CALTRANS_BINARY) /usr/local/bin/
+	cp $(TEST_WEATHER_BINARY) /usr/local/bin/
+	@echo "CLI tools installed: test-google, test-caltrans, test-weather"
+
+## Utility Targets
+
+# Update Go dependencies
+deps:
+	$(GOMOD) tidy
+	$(GOMOD) download
+
+# Show help
+help:
+	@echo "Live Data API Server - Available targets:"
+	@echo ""
+	@echo "Build targets:"
+	@echo "  build       - Build server and all CLI tools (default)"
+	@echo "  server      - Build main server only"
+	@echo "  tools       - Build CLI testing tools only"
+	@echo "  proto       - Generate protobuf code"
+	@echo "  clean       - Clean build artifacts"
+	@echo ""
+	@echo "Testing targets:"
+	@echo "  test        - Run full test suite"
+	@echo "  test-google [ROUTE_ID=id] [VERBOSE=true]   - Test Google Routes API"
+	@echo "  test-caltrans [VERBOSE=true] [FORMAT=table] - Test Caltrans KML feeds"
+	@echo "  test-weather [LOCATION_ID=id] [VERBOSE=true] - Test OpenWeatherMap API"
+	@echo "  test-config - Validate configuration without API calls"
+	@echo ""
+	@echo "Development targets:"
+	@echo "  run [CONFIG=config.yaml] - Run server with configuration"
+	@echo "  dev         - Run server in development mode with auto-restart"
+	@echo "  lint        - Run Go linting tools"
+	@echo "  fmt         - Format Go code"
+	@echo ""
+	@echo "Deployment targets:"
+	@echo "  docker      - Build Docker container image"
+	@echo "  deploy      - Deploy to configured environment"
+	@echo "  install     - Install CLI tools to system PATH"
+	@echo ""
+	@echo "Utility targets:"
+	@echo "  deps        - Update Go dependencies"
+	@echo "  help        - Show this help message"

@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package api.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "common.proto";
+
+option go_package = "github.com/dpup/info.ersn.net/server/api/v1";
+
+// WeatherService provides current weather conditions and alerts
+service WeatherService {
+  // ListWeather returns current weather for all configured locations
+  rpc ListWeather(ListWeatherRequest) returns (ListWeatherResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/weather"
+    };
+  }
+
+  // GetLocationWeather returns weather for a specific location
+  rpc GetLocationWeather(GetLocationWeatherRequest) returns (GetLocationWeatherResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/weather/{location_id}"
+    };
+  }
+
+  // ListWeatherAlerts returns active weather alerts for all locations
+  rpc ListWeatherAlerts(ListWeatherAlertsRequest) returns (ListWeatherAlertsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/weather/alerts"
+    };
+  }
+}
+
+// Request messages
+message ListWeatherRequest {}
+
+message GetLocationWeatherRequest {
+  string location_id = 1;
+}
+
+message ListWeatherAlertsRequest {}
+
+// Response messages
+message ListWeatherResponse {
+  repeated WeatherData weather_data = 1;
+  google.protobuf.Timestamp last_updated = 2;
+}
+
+message GetLocationWeatherResponse {
+  WeatherData weather_data = 1;
+  google.protobuf.Timestamp last_updated = 2;
+}
+
+message ListWeatherAlertsResponse {
+  repeated WeatherAlert alerts = 1;
+  google.protobuf.Timestamp last_updated = 2;
+}
+
+// Data models
+message WeatherData {
+  string location_id = 1;                    
+  string location_name = 2;                  
+  Coordinates coordinates = 3;               
+  string weather_main = 4;                   // "Clear", "Rain", "Snow", etc.
+  string weather_description = 5;            // "light rain", "clear sky", etc.
+  string weather_icon = 6;                   // Icon code for display
+  float temperature_celsius = 7;             // Temperature in Celsius 
+  float feels_like_celsius = 8;              // Feels like temperature in Celsius
+  int32 humidity_percent = 9;                // Humidity percentage (0-100)
+  float wind_speed_ms = 10;                  // Wind speed in meters per second
+  int32 wind_direction_degrees = 11;         // Wind direction in degrees (0-360)
+  int32 visibility_meters = 12;              // Visibility distance in meters
+  repeated WeatherAlert alerts = 13;         // Active weather alerts
+  google.protobuf.Timestamp last_updated = 14; // When data was cached
+}
+
+
+// Removed WeatherCondition - data is now directly in WeatherData message
+
+message WeatherAlert {
+  string id = 1;                             // Generated unique identifier
+  string sender_name = 2;                    // Alert issuing organization
+  string event = 3;                          // Alert event type ("Heat Advisory", "Winter Storm Warning")
+  int64 start_timestamp = 4;                 // Unix timestamp when effective
+  int64 end_timestamp = 5;                   // Unix timestamp when expires
+  string description = 6;                    // Alert description text
+  repeated string tags = 7;                  // OpenWeatherMap alert tags
+}
+
+// Enumerations
+
+// OpenWeatherMap alert tags (14 categories) - preserved as reference
+// Actual alert classification is done via the "tags" string array field
+// which contains the original OpenWeatherMap tag values:
+// - "extreme temperature value", "fog", "high wind", "thunderstorms" 
+// - "tornado", "hurricane/typhoon", "snow", "ice", "rain"
+// - "coastal event", "volcano", "tsunami", "other"

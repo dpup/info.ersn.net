@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package api.v1;
+
+option go_package = "github.com/dpup/info.ersn.net/server/api/v1";
+
+// Geographic coordinates in WGS84 decimal degrees
+message Coordinates {
+  double latitude = 1;   // Latitude in decimal degrees (-90 to 90)
+  double longitude = 2;  // Longitude in decimal degrees (-180 to 180)
+}
