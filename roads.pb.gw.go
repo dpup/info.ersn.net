@@ -35,63 +35,63 @@ var (
 	_ = metadata.Join
 )
 
-func request_RoadsService_ListRoutes_0(ctx context.Context, marshaler runtime.Marshaler, client RoadsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RoadsService_ListRoads_0(ctx context.Context, marshaler runtime.Marshaler, client RoadsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq ListRoutesRequest
+		protoReq ListRoadsRequest
 		metadata runtime.ServerMetadata
 	)
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.ListRoutes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.ListRoads(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_RoadsService_ListRoutes_0(ctx context.Context, marshaler runtime.Marshaler, server RoadsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RoadsService_ListRoads_0(ctx context.Context, marshaler runtime.Marshaler, server RoadsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq ListRoutesRequest
+		protoReq ListRoadsRequest
 		metadata runtime.ServerMetadata
 	)
-	msg, err := server.ListRoutes(ctx, &protoReq)
+	msg, err := server.ListRoads(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-func request_RoadsService_GetRoute_0(ctx context.Context, marshaler runtime.Marshaler, client RoadsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_RoadsService_GetRoad_0(ctx context.Context, marshaler runtime.Marshaler, client RoadsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq GetRouteRequest
+		protoReq GetRoadRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	val, ok := pathParams["route_id"]
+	val, ok := pathParams["road_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "route_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "road_id")
 	}
-	protoReq.RouteId, err = runtime.String(val)
+	protoReq.RoadId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "route_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "road_id", err)
 	}
-	msg, err := client.GetRoute(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetRoad(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_RoadsService_GetRoute_0(ctx context.Context, marshaler runtime.Marshaler, server RoadsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_RoadsService_GetRoad_0(ctx context.Context, marshaler runtime.Marshaler, server RoadsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq GetRouteRequest
+		protoReq GetRoadRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	val, ok := pathParams["route_id"]
+	val, ok := pathParams["road_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "route_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "road_id")
 	}
-	protoReq.RouteId, err = runtime.String(val)
+	protoReq.RoadId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "route_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "road_id", err)
 	}
-	msg, err := server.GetRoute(ctx, &protoReq)
+	msg, err := server.GetRoad(ctx, &protoReq)
 	return msg, metadata, err
 }
 
@@ -101,45 +101,45 @@ func local_request_RoadsService_GetRoute_0(ctx context.Context, marshaler runtim
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterRoadsServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterRoadsServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server RoadsServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_RoadsService_ListRoutes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_RoadsService_ListRoads_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.v1.RoadsService/ListRoutes", runtime.WithHTTPPathPattern("/api/v1/routes"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.v1.RoadsService/ListRoads", runtime.WithHTTPPathPattern("/api/v1/roads"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_RoadsService_ListRoutes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_RoadsService_ListRoads_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RoadsService_ListRoutes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RoadsService_ListRoads_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_RoadsService_GetRoute_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_RoadsService_GetRoad_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.v1.RoadsService/GetRoute", runtime.WithHTTPPathPattern("/api/v1/routes/{route_id}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/api.v1.RoadsService/GetRoad", runtime.WithHTTPPathPattern("/api/v1/roads/{road_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_RoadsService_GetRoute_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_RoadsService_GetRoad_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RoadsService_GetRoute_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RoadsService_GetRoad_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -181,49 +181,49 @@ func RegisterRoadsServiceHandler(ctx context.Context, mux *runtime.ServeMux, con
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "RoadsServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterRoadsServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client RoadsServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_RoadsService_ListRoutes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_RoadsService_ListRoads_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/api.v1.RoadsService/ListRoutes", runtime.WithHTTPPathPattern("/api/v1/routes"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/api.v1.RoadsService/ListRoads", runtime.WithHTTPPathPattern("/api/v1/roads"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_RoadsService_ListRoutes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_RoadsService_ListRoads_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RoadsService_ListRoutes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RoadsService_ListRoads_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_RoadsService_GetRoute_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_RoadsService_GetRoad_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/api.v1.RoadsService/GetRoute", runtime.WithHTTPPathPattern("/api/v1/routes/{route_id}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/api.v1.RoadsService/GetRoad", runtime.WithHTTPPathPattern("/api/v1/roads/{road_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_RoadsService_GetRoute_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_RoadsService_GetRoad_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_RoadsService_GetRoute_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RoadsService_GetRoad_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }
 
 var (
-	pattern_RoadsService_ListRoutes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "routes"}, ""))
-	pattern_RoadsService_GetRoute_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "routes", "route_id"}, ""))
+	pattern_RoadsService_ListRoads_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "roads"}, ""))
+	pattern_RoadsService_GetRoad_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"api", "v1", "roads", "road_id"}, ""))
 )
 
 var (
-	forward_RoadsService_ListRoutes_0 = runtime.ForwardResponseMessage
-	forward_RoadsService_GetRoute_0   = runtime.ForwardResponseMessage
+	forward_RoadsService_ListRoads_0 = runtime.ForwardResponseMessage
+	forward_RoadsService_GetRoad_0   = runtime.ForwardResponseMessage
 )

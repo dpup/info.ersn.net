@@ -10,7 +10,7 @@ import (
 // Structure matches research.md YAML configuration (lines 112-146)
 type Config struct {
 	Server  ServerConfig  `yaml:"server"`
-	Routes  RoutesConfig  `yaml:"routes"`
+	Roads   RoadsConfig   `yaml:"roads"`
 	Weather WeatherConfig `yaml:"weather"`
 }
 
@@ -20,11 +20,11 @@ type ServerConfig struct {
 	CorsOrigins []string `yaml:"cors_origins"`
 }
 
-// RoutesConfig holds route monitoring configuration
-type RoutesConfig struct {
-	GoogleRoutes    GoogleConfig       `yaml:"google_routes"`
-	CaltransFeeds   CaltransConfig     `yaml:"caltrans_feeds"`
-	MonitoredRoutes []MonitoredRoute   `yaml:"monitored_routes"`
+// RoadsConfig holds road monitoring configuration
+type RoadsConfig struct {
+	GoogleRoutes   GoogleConfig      `yaml:"google_routes"`
+	CaltransFeeds  CaltransConfig    `yaml:"caltrans_feeds"`
+	MonitoredRoads []MonitoredRoad   `yaml:"monitored_roads"`
 }
 
 // GoogleConfig holds Google Routes API settings
@@ -47,8 +47,8 @@ type CaltransFeedConfig struct {
 	URL             string        `yaml:"url"`
 }
 
-// MonitoredRoute represents a route to monitor
-type MonitoredRoute struct {
+// MonitoredRoad represents a road to monitor
+type MonitoredRoad struct {
 	Name        string           `yaml:"name"`
 	ID          string           `yaml:"id"`
 	Origin      CoordinatesYAML  `yaml:"origin"`
@@ -100,7 +100,7 @@ func DefaultConfig() *Config {
 			Port:        8080,
 			CorsOrigins: []string{"*"},
 		},
-		Routes: RoutesConfig{
+		Roads: RoadsConfig{
 			GoogleRoutes: GoogleConfig{
 				RefreshInterval: 5 * time.Minute,
 				StaleThreshold:  10 * time.Minute,
@@ -119,7 +119,7 @@ func DefaultConfig() *Config {
 					URL:             "https://quickmap.dot.ca.gov/data/chp-only.kml",
 				},
 			},
-			MonitoredRoutes: []MonitoredRoute{
+			MonitoredRoads: []MonitoredRoad{
 				{
 					Name: "Hwy 4 - Angels Camp to Murphys",
 					ID:   "hwy4-angels-murphys",

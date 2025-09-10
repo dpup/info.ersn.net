@@ -37,11 +37,11 @@ func main() {
 	weatherClient := weather.NewClient(openweatherAPIKey)
 
 	// Initialize gRPC services
-	roadsService := services.NewRoadsService(googleClient, caltransClient, cache, &appConfig.Routes)
+	roadsService := services.NewRoadsService(googleClient, caltransClient, cache, &appConfig.Roads)
 	weatherService := services.NewWeatherService(weatherClient, cache, &appConfig.Weather)
 
 	log.Printf("Live Data API Server starting")
-	log.Printf("Routes monitored: %d", len(appConfig.Routes.MonitoredRoutes))
+	log.Printf("Roads monitored: %d", len(appConfig.Roads.MonitoredRoads))
 	log.Printf("Weather locations: %d", len(appConfig.Weather.Locations))
 	log.Printf("Port: %d", port)
 
@@ -87,11 +87,11 @@ func createDefaultConfig(googleAPIKey, openweatherAPIKey string) *config.Config 
 			Port:        8080,
 			CorsOrigins: []string{"*"},
 		},
-		Routes: config.RoutesConfig{
+		Roads: config.RoadsConfig{
 			GoogleRoutes: config.GoogleConfig{
 				APIKey: googleAPIKey,
 			},
-			MonitoredRoutes: []config.MonitoredRoute{
+			MonitoredRoads: []config.MonitoredRoad{
 				{
 					Name: "Hwy 4 - Angels Camp to Murphys",
 					ID:   "hwy4-angels-murphys",

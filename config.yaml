@@ -2,7 +2,7 @@ server:
   port: 8080
   cors_origins: ["*"]
 
-routes:
+roads:
   google_routes:
     refresh_interval: "5m"
     stale_threshold: "10m"
@@ -17,7 +17,7 @@ routes:
     chp_incidents:
       refresh_interval: "5m"   # More frequent, incidents change quickly
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
-  monitored_routes:
+  monitored_roads:
     - name: "Hwy 4 - Angels Camp to Murphys"
       id: "hwy4-angels-murphys"
       origin:

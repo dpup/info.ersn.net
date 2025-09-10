@@ -10,62 +10,62 @@ option go_package = "github.com/dpup/info.ersn.net/server/api/v1";
 
 // RoadsService provides real-time road conditions and traffic information
 service RoadsService {
-  // ListRoutes returns current conditions for all configured routes
-  rpc ListRoutes(ListRoutesRequest) returns (ListRoutesResponse) {
+  // ListRoads returns current conditions for all configured roads
+  rpc ListRoads(ListRoadsRequest) returns (ListRoadsResponse) {
     option (google.api.http) = {
-      get: "/api/v1/routes"
+      get: "/api/v1/roads"
     };
   }
 
-  // GetRoute returns current conditions for a specific route
-  rpc GetRoute(GetRouteRequest) returns (GetRouteResponse) {
+  // GetRoad returns current conditions for a specific road
+  rpc GetRoad(GetRoadRequest) returns (GetRoadResponse) {
     option (google.api.http) = {
-      get: "/api/v1/routes/{route_id}"
+      get: "/api/v1/roads/{road_id}"
     };
   }
 }
 
 // Request messages
-message ListRoutesRequest {}
+message ListRoadsRequest {}
 
-message GetRouteRequest {
-  string route_id = 1;
+message GetRoadRequest {
+  string road_id = 1;
 }
 
 // Response messages
-message ListRoutesResponse {
-  repeated Route routes = 1;
+message ListRoadsResponse {
+  repeated Road roads = 1;
   google.protobuf.Timestamp last_updated = 2;
 }
 
-message GetRouteResponse {
-  Route route = 1;
+message GetRoadResponse {
+  Road road = 1;
   google.protobuf.Timestamp last_updated = 2;
 }
 
 // Data models
-message Route {
+message Road {
   string id = 1;
   string name = 2;
   Coordinates origin = 3;         // Start point for Google Routes API
   Coordinates destination = 4;    // End point for Google Routes API
-  RouteStatus status = 5;         // From Caltrans or other official sources
+  RoadStatus status = 5;         // From Caltrans or other official sources
   TrafficCondition traffic_condition = 6;  // From Google Routes API
   ChainControlStatus chain_control = 7;    // From Caltrans API
-  repeated RouteAlert alerts = 8; // Combined from multiple sources
+  repeated RoadAlert alerts = 8; // Combined from multiple sources
   google.protobuf.Timestamp last_updated = 9;
 }
 
 
 message TrafficCondition {
-  string route_id = 1;
+  string road_id = 1;
   int32 duration_seconds = 2;              // Travel time in seconds
   int32 distance_meters = 3;               // Route distance in meters
   CongestionLevel congestion_level = 4;    // Traffic density level
   int32 delay_seconds = 5;                 // Additional time due to traffic (0 = no delays)
 }
 
-message RouteAlert {
+message RoadAlert {
   string id = 1;
   AlertType type = 2;
   AlertSeverity severity = 3;
@@ -84,12 +84,12 @@ message TrafficIncident {
 }
 
 // Enumerations
-enum RouteStatus {
-  ROUTE_STATUS_UNSPECIFIED = 0;
-  ROUTE_STATUS_OPEN = 1;
-  ROUTE_STATUS_CLOSED = 2;
-  ROUTE_STATUS_RESTRICTED = 3;
-  ROUTE_STATUS_MAINTENANCE = 4;
+enum RoadStatus {
+  ROAD_STATUS_UNSPECIFIED = 0;
+  ROAD_STATUS_OPEN = 1;
+  ROAD_STATUS_CLOSED = 2;
+  ROAD_STATUS_RESTRICTED = 3;
+  ROAD_STATUS_MAINTENANCE = 4;
 }
 
 enum ChainControlStatus {
