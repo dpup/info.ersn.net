@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
 )
 
@@ -74,9 +74,9 @@ func main() {
 	fmt.Printf("Condition: %s\n", current.WeatherMain)
 	fmt.Printf("Description: %s\n", current.WeatherDescription)
 	fmt.Printf("Humidity: %.0f%%\n", float64(current.HumidityPercent))
-	fmt.Printf("Wind: %.1f m/s\n", current.WindSpeedMs)
-	if current.VisibilityMeters > 0 {
-		fmt.Printf("Visibility: %.0f m\n", float64(current.VisibilityMeters))
+	fmt.Printf("Wind: %d km/h\n", current.WindSpeedKmh)
+	if current.VisibilityKm > 0 {
+		fmt.Printf("Visibility: %d km\n", current.VisibilityKm)
 	}
 	fmt.Printf("\n")
 

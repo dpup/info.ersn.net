@@ -47,23 +47,17 @@ message GetRoadResponse {
 message Road {
   string id = 1;
   string name = 2;
-  Coordinates origin = 3;         // Start point for Google Routes API
-  Coordinates destination = 4;    // End point for Google Routes API
-  RoadStatus status = 5;         // From Caltrans or other official sources
-  TrafficCondition traffic_condition = 6;  // From Google Routes API
-  ChainControlStatus chain_control = 7;    // From Caltrans API
-  repeated RoadAlert alerts = 8; // Combined from multiple sources
-  google.protobuf.Timestamp last_updated = 9;
+  RoadStatus status = 3;              // Current road status
+  int32 duration_minutes = 4;         // Current travel time in minutes
+  int32 distance_km = 5;              // Route distance in kilometers
+  CongestionLevel congestion_level = 6; // Traffic congestion level
+  int32 delay_minutes = 7;            // Additional time due to traffic (0 = no delays)
+  ChainControlStatus chain_control = 8; // Chain control requirements
+  repeated RoadAlert alerts = 9;      // Combined from multiple sources
 }
 
 
-message TrafficCondition {
-  string road_id = 1;
-  int32 duration_seconds = 2;              // Travel time in seconds
-  int32 distance_meters = 3;               // Route distance in meters
-  CongestionLevel congestion_level = 4;    // Traffic density level
-  int32 delay_seconds = 5;                 // Additional time due to traffic (0 = no delays)
-}
+// TrafficCondition merged into Road for simplicity
 
 message RoadAlert {
   string id = 1;
@@ -102,11 +96,11 @@ enum ChainControlStatus {
 
 enum CongestionLevel {
   CONGESTION_LEVEL_UNSPECIFIED = 0;
-  CONGESTION_LEVEL_CLEAR = 1;        // Free-flowing traffic, no delays
-  CONGESTION_LEVEL_LIGHT = 2;        // Light traffic, minimal delays  
-  CONGESTION_LEVEL_MODERATE = 3;     // Some congestion, minor delays
-  CONGESTION_LEVEL_HEAVY = 4;        // Heavy traffic, significant delays
-  CONGESTION_LEVEL_SEVERE = 5;       // Stop-and-go or stopped traffic
+  CONGESTION_LEVEL_CLEAR = 1;
+  CONGESTION_LEVEL_LIGHT = 2;
+  CONGESTION_LEVEL_MODERATE = 3;
+  CONGESTION_LEVEL_HEAVY = 4;
+  CONGESTION_LEVEL_SEVERE = 5;
 }
 
 enum AlertType {

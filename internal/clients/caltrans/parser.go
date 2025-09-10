@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
 // CaltransFeedType represents the type of Caltrans feed

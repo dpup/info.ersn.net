@@ -61,18 +61,16 @@ message ListWeatherAlertsResponse {
 message WeatherData {
   string location_id = 1;                    
   string location_name = 2;                  
-  Coordinates coordinates = 3;               
-  string weather_main = 4;                   // "Clear", "Rain", "Snow", etc.
-  string weather_description = 5;            // "light rain", "clear sky", etc.
-  string weather_icon = 6;                   // Icon code for display
-  float temperature_celsius = 7;             // Temperature in Celsius 
-  float feels_like_celsius = 8;              // Feels like temperature in Celsius
-  int32 humidity_percent = 9;                // Humidity percentage (0-100)
-  float wind_speed_ms = 10;                  // Wind speed in meters per second
-  int32 wind_direction_degrees = 11;         // Wind direction in degrees (0-360)
-  int32 visibility_meters = 12;              // Visibility distance in meters
-  repeated WeatherAlert alerts = 13;         // Active weather alerts
-  google.protobuf.Timestamp last_updated = 14; // When data was cached
+  string weather_main = 3;                   // "Clear", "Rain", "Snow", etc.
+  string weather_description = 4;            // "light rain", "clear sky", etc.
+  string weather_icon = 5;                   // Icon code for display
+  int32 temperature_celsius = 6;             // Temperature in Celsius (rounded)
+  int32 feels_like_celsius = 7;              // Feels like temperature in Celsius (rounded)
+  int32 humidity_percent = 8;                // Humidity percentage (0-100)
+  int32 wind_speed_kmh = 9;                  // Wind speed in km/h (more user-friendly)
+  int32 wind_direction_degrees = 10;         // Wind direction in degrees (0-360) 
+  int32 visibility_km = 11;                  // Visibility distance in kilometers
+  repeated WeatherAlert alerts = 12;         // Active weather alerts
 }
 
 

@@ -100,6 +100,7 @@ config.development.yaml
 # Generated protobuf files (can be regenerated from source)
 *.pb.go
 *_grpc.pb.go
+*.pb.gw.go
 
 # Temporary files
 *.tmp

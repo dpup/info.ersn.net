@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
 // Client provides access to Google Routes API v2

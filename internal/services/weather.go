@@ -7,7 +7,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
 	"github.com/dpup/info.ersn.net/server/internal/config"
@@ -224,7 +224,6 @@ func (s *WeatherService) processWeatherLocation(ctx context.Context, location co
 	}
 
 	weatherData.Alerts = alerts
-	weatherData.LastUpdated = timestamppb.Now()
 
 	return weatherData, nil
 }

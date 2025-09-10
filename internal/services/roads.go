@@ -8,7 +8,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
 	"github.com/dpup/info.ersn.net/server/internal/clients/google"
@@ -146,10 +146,14 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 	log.Printf("Processing road: %s", monitoredRoad.ID)
 
 	// Get traffic data from Google Routes
-	trafficCondition, err := s.getTrafficCondition(ctx, monitoredRoad)
+	durationMins, distanceKm, congestionLevel, delayMins, err := s.getTrafficData(ctx, monitoredRoad)
 	if err != nil {
 		log.Printf("Failed to get traffic data for %s: %v", monitoredRoad.ID, err)
-		// Continue without traffic data rather than failing completely
+		// Use defaults for missing traffic data
+		durationMins = 0
+		distanceKm = 0
+		congestionLevel = "unknown"
+		delayMins = 0
 	}
 
 	// Get Caltrans data for road status and chain control
@@ -157,38 +161,38 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 	if err != nil {
 		log.Printf("Failed to get Caltrans data for %s: %v", monitoredRoad.ID, err)
 		// Use defaults
-		roadStatus = api.RoadStatus_ROAD_STATUS_OPEN
-		chainControl = api.ChainControlStatus_CHAIN_CONTROL_NONE
+		roadStatus = "open"
+		chainControl = "none"
 		alerts = nil
 	}
 
-	// Build road object
+	// Build road object with enum-based structure
 	road := &api.Road{
-		Id:               monitoredRoad.ID,
-		Name:             monitoredRoad.Name,
-		Origin:           monitoredRoad.Origin.ToProto(),
-		Destination:      monitoredRoad.Destination.ToProto(),
-		Status:           roadStatus,
-		TrafficCondition: trafficCondition,
-		ChainControl:     chainControl,
-		Alerts:           alerts,
-		LastUpdated:      timestamppb.Now(),
+		Id:              monitoredRoad.ID,
+		Name:            monitoredRoad.Name,
+		Status:          s.mapRoadStatus(roadStatus),
+		DurationMinutes: durationMins,
+		DistanceKm:      distanceKm,
+		CongestionLevel: s.mapCongestionLevel(congestionLevel),
+		DelayMinutes:    delayMins,
+		ChainControl:    s.mapChainControlStatus(chainControl),
+		Alerts:          alerts,
 	}
 
 	return road, nil
 }
 
-// getTrafficCondition fetches traffic data from Google Routes API
-func (s *RoadsService) getTrafficCondition(ctx context.Context, monitoredRoad config.MonitoredRoad) (*api.TrafficCondition, error) {
+// getTrafficData fetches traffic data from Google Routes API
+func (s *RoadsService) getTrafficData(ctx context.Context, monitoredRoad config.MonitoredRoad) (int32, int32, string, int32, error) {
 	if s.config.GoogleRoutes.APIKey == "" {
-		return nil, fmt.Errorf("Google Routes API key not configured")
+		return 0, 0, "unknown", 0, fmt.Errorf("Google Routes API key not configured")
 	}
 
 	roadData, err := s.googleClient.ComputeRoutes(ctx, 
 		monitoredRoad.Origin.ToProto(),
 		monitoredRoad.Destination.ToProto())
 	if err != nil {
-		return nil, fmt.Errorf("failed to compute routes: %w", err)
+		return 0, 0, "unknown", 0, fmt.Errorf("failed to compute routes: %w", err)
 	}
 
 	// Determine congestion level based on speed readings
@@ -196,31 +200,27 @@ func (s *RoadsService) getTrafficCondition(ctx context.Context, monitoredRoad co
 
 	// Calculate delay (simplified - could be enhanced with historical data)
 	delaySeconds := int32(0)
-	if congestionLevel >= api.CongestionLevel_CONGESTION_LEVEL_MODERATE {
-		// Rough estimation: 10% delay for moderate, 25% for heavy, 50% for severe
-		delayMultiplier := map[api.CongestionLevel]float32{
-			api.CongestionLevel_CONGESTION_LEVEL_MODERATE: 0.10,
-			api.CongestionLevel_CONGESTION_LEVEL_HEAVY:    0.25,
-			api.CongestionLevel_CONGESTION_LEVEL_SEVERE:   0.50,
-		}
-		if multiplier, ok := delayMultiplier[congestionLevel]; ok {
-			delaySeconds = int32(float32(roadData.DurationSeconds) * multiplier)
-		}
+	switch congestionLevel {
+	case "moderate":
+		delaySeconds = int32(float32(roadData.DurationSeconds) * 0.10)
+	case "heavy":
+		delaySeconds = int32(float32(roadData.DurationSeconds) * 0.25)
+	case "severe":
+		delaySeconds = int32(float32(roadData.DurationSeconds) * 0.50)
 	}
 
-	return &api.TrafficCondition{
-		RoadId:          monitoredRoad.ID,
-		DurationSeconds: roadData.DurationSeconds,
-		DistanceMeters:  roadData.DistanceMeters,
-		CongestionLevel: congestionLevel,
-		DelaySeconds:    delaySeconds,
-	}, nil
+	// Convert to user-friendly units
+	durationMins := int32(roadData.DurationSeconds / 60)
+	distanceKm := int32(roadData.DistanceMeters / 1000)
+	delayMins := int32(delaySeconds / 60)
+	
+	return durationMins, distanceKm, congestionLevel, delayMins, nil
 }
 
-// analyzeCongestionLevel determines traffic congestion from speed readings
-func (s *RoadsService) analyzeCongestionLevel(speedReadings []google.SpeedReading) api.CongestionLevel {
+// analyzeCongestionLevel determines traffic congestion from speed readings and returns simple string
+func (s *RoadsService) analyzeCongestionLevel(speedReadings []google.SpeedReading) string {
 	if len(speedReadings) == 0 {
-		return api.CongestionLevel_CONGESTION_LEVEL_CLEAR
+		return "clear"
 	}
 
 	// Count different speed categories
@@ -240,20 +240,72 @@ func (s *RoadsService) analyzeCongestionLevel(speedReadings []google.SpeedReadin
 	
 	// Determine overall congestion based on proportions
 	if trafficJam*100/total > 30 { // More than 30% traffic jams
-		return api.CongestionLevel_CONGESTION_LEVEL_SEVERE
+		return "severe"
 	} else if trafficJam*100/total > 10 || slow*100/total > 50 { // 10%+ jams or 50%+ slow
-		return api.CongestionLevel_CONGESTION_LEVEL_HEAVY
+		return "heavy"
 	} else if slow*100/total > 20 { // 20%+ slow traffic
-		return api.CongestionLevel_CONGESTION_LEVEL_MODERATE
+		return "moderate"
 	} else if slow*100/total > 5 { // Some slow traffic
-		return api.CongestionLevel_CONGESTION_LEVEL_LIGHT
+		return "light"
 	}
 
-	return api.CongestionLevel_CONGESTION_LEVEL_CLEAR
+	return "clear"
 }
 
+// mapRoadStatus converts string status to RoadStatus enum
+func (s *RoadsService) mapRoadStatus(status string) api.RoadStatus {
+	switch status {
+	case "open":
+		return api.RoadStatus_ROAD_STATUS_OPEN
+	case "closed":
+		return api.RoadStatus_ROAD_STATUS_CLOSED
+	case "restricted":
+		return api.RoadStatus_ROAD_STATUS_RESTRICTED
+	case "maintenance":
+		return api.RoadStatus_ROAD_STATUS_MAINTENANCE
+	default:
+		return api.RoadStatus_ROAD_STATUS_UNSPECIFIED
+	}
+}
+
+// mapCongestionLevel converts string congestion level to CongestionLevel enum
+func (s *RoadsService) mapCongestionLevel(level string) api.CongestionLevel {
+	switch level {
+	case "clear":
+		return api.CongestionLevel_CONGESTION_LEVEL_CLEAR
+	case "light":
+		return api.CongestionLevel_CONGESTION_LEVEL_LIGHT
+	case "moderate":
+		return api.CongestionLevel_CONGESTION_LEVEL_MODERATE
+	case "heavy":
+		return api.CongestionLevel_CONGESTION_LEVEL_HEAVY
+	case "severe":
+		return api.CongestionLevel_CONGESTION_LEVEL_SEVERE
+	default:
+		return api.CongestionLevel_CONGESTION_LEVEL_UNSPECIFIED
+	}
+}
+
+// mapChainControlStatus converts string chain control to ChainControlStatus enum
+func (s *RoadsService) mapChainControlStatus(status string) api.ChainControlStatus {
+	switch status {
+	case "none":
+		return api.ChainControlStatus_CHAIN_CONTROL_NONE
+	case "advised":
+		return api.ChainControlStatus_CHAIN_CONTROL_ADVISED
+	case "required":
+		return api.ChainControlStatus_CHAIN_CONTROL_REQUIRED
+	case "prohibited":
+		return api.ChainControlStatus_CHAIN_CONTROL_PROHIBITED
+	default:
+		return api.ChainControlStatus_CHAIN_CONTROL_UNSPECIFIED
+	}
+}
+
+// Removed duplicate analyzeCongestionLevel - now combined above
+
 // getCaltransData fetches road status, chain control, and alerts from Caltrans
-func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config.MonitoredRoad) (api.RoadStatus, api.ChainControlStatus, []*api.RoadAlert, error) {
+func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, error) {
 	// Define road coordinates for geographic filtering
 	roadCoordinates := []struct{ Lat, Lon float64 }{
 		{monitoredRoad.Origin.Latitude, monitoredRoad.Origin.Longitude},
@@ -263,12 +315,12 @@ func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config
 	// Get incidents within 50km of road
 	incidents, err := s.caltransClient.ParseWithGeographicFilter(ctx, roadCoordinates, 50000)
 	if err != nil {
-		return api.RoadStatus_ROAD_STATUS_OPEN, api.ChainControlStatus_CHAIN_CONTROL_NONE, nil, err
+		return "open", "none", nil, err
 	}
 
 	// Process incidents to determine road status and chain control
-	roadStatus := api.RoadStatus_ROAD_STATUS_OPEN
-	chainControl := api.ChainControlStatus_CHAIN_CONTROL_NONE
+	roadStatus := "open"
+	chainControl := "none"
 	var alerts []*api.RoadAlert
 
 	for _, incident := range incidents {
@@ -293,7 +345,7 @@ func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config
 		// Update road status for closures
 		if incident.FeedType == caltrans.LANE_CLOSURE && 
 			 (incident.ParsedStatus == "closed" || incident.ParsedStatus == "closure") {
-			roadStatus = api.RoadStatus_ROAD_STATUS_RESTRICTED
+			roadStatus = "restricted"
 		}
 	}
 
@@ -329,20 +381,20 @@ func (s *RoadsService) mapIncidentToSeverity(incident caltrans.CaltransIncident)
 }
 
 // extractChainControlStatus determines chain control requirements from description
-func (s *RoadsService) extractChainControlStatus(description string) api.ChainControlStatus {
+func (s *RoadsService) extractChainControlStatus(description string) string {
 	lowerDesc := strings.ToLower(description)
 	
 	if strings.Contains(lowerDesc, "chain control required") || 
 	   strings.Contains(lowerDesc, "chains required") {
-		return api.ChainControlStatus_CHAIN_CONTROL_REQUIRED
+		return "required"
 	}
 	if strings.Contains(lowerDesc, "chain control advised") || 
 	   strings.Contains(lowerDesc, "chains advised") {
-		return api.ChainControlStatus_CHAIN_CONTROL_ADVISED
+		return "advised"
 	}
 	if strings.Contains(lowerDesc, "chain control in effect") {
-		return api.ChainControlStatus_CHAIN_CONTROL_REQUIRED
+		return "required"
 	}
 	
-	return api.ChainControlStatus_CHAIN_CONTROL_NONE
+	return "none"
 }

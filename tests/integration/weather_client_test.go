@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
 // T010: Integration test OpenWeatherMap client - MUST FAIL initially

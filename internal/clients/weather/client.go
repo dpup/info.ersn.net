@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
 // Client provides access to OpenWeatherMap API
@@ -130,21 +130,16 @@ func (c *Client) processCurrentWeatherResponse(response OpenWeatherCurrentRespon
 	return &api.WeatherData{
 		LocationId:            "", // Will be set by calling service
 		LocationName:          response.Name,
-		Coordinates:           &api.Coordinates{
-			Latitude:  response.Coord.Lat,
-			Longitude: response.Coord.Lon,
-		},
 		WeatherMain:           weatherMain,
 		WeatherDescription:    weatherDescription,
 		WeatherIcon:           weatherIcon,
-		TemperatureCelsius:    response.Main.Temp,
-		FeelsLikeCelsius:      response.Main.FeelsLike,
+		TemperatureCelsius:    int32(response.Main.Temp),     // Round to int
+		FeelsLikeCelsius:      int32(response.Main.FeelsLike), // Round to int
 		HumidityPercent:       response.Main.Humidity,
-		WindSpeedMs:           response.Wind.Speed,
+		WindSpeedKmh:          int32(response.Wind.Speed * 3.6), // Convert m/s to km/h
 		WindDirectionDegrees:  response.Wind.Deg,
-		VisibilityMeters:      response.Visibility,
+		VisibilityKm:          int32(response.Visibility / 1000), // Convert meters to km
 		Alerts:                nil, // Alerts fetched separately
-		LastUpdated:           nil, // Will be set by calling service
 	}, nil
 }
 

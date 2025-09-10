@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/dpup/info.ersn.net/server/internal/clients/google"
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
 // T008: Integration test Google Routes API client - MUST FAIL initially

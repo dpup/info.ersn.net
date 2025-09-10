@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	api "github.com/dpup/info.ersn.net/server"
+	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
 // Config represents the complete server configuration

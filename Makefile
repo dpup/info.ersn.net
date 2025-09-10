@@ -50,12 +50,12 @@ $(TEST_WEATHER_BINARY): proto
 # Generate protobuf code
 proto:
 	@echo "Generating protobuf code..."
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR) $(PROTO_DIR)
 	@PATH="$(shell go env GOPATH)/bin:$(PATH)" protoc --proto_path=$(PROTO_DIR) \
 		--proto_path=$(shell go list -f '{{ .Dir }}' -m github.com/googleapis/googleapis) \
-		--go_out=. --go_opt=paths=source_relative \
-		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		--grpc-gateway_out=. --grpc-gateway_opt=paths=source_relative \
+		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
+		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=$(PROTO_DIR) --grpc-gateway_opt=paths=source_relative \
 		$(PROTO_DIR)/*.proto
 	@echo "Protobuf code generation completed."
 
