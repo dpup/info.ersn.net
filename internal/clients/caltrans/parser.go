@@ -1,17 +1,16 @@
 package caltrans
 
 import (
-	"bytes"
 	"context"
+	"encoding/xml"
 	"fmt"
 	"html"
 	"io"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
-
-	"github.com/twpayne/go-kml/v2"
 
 	api "github.com/dpup/info.ersn.net/server"
 )
@@ -28,7 +27,7 @@ const (
 // FeedParser processes Caltrans KML feeds
 // Implementation per research.md lines 49-67
 type FeedParser struct {
-	httpClient *http.Client
+	HTTPClient *http.Client
 }
 
 // CaltransIncident represents parsed incident data from KML feeds
@@ -45,10 +44,42 @@ type CaltransIncident struct {
 	LastFetched     time.Time
 }
 
+// KML XML structures for parsing
+type KML struct {
+	XMLName  xml.Name `xml:"kml"`
+	Document Document `xml:"Document"`
+}
+
+type Document struct {
+	XMLName    xml.Name    `xml:"Document"`
+	Name       string      `xml:"name"`
+	Placemarks []Placemark `xml:"Placemark"`
+	Folders    []Folder    `xml:"Folder"`
+}
+
+type Folder struct {
+	XMLName    xml.Name    `xml:"Folder"`
+	Name       string      `xml:"name"`
+	Placemarks []Placemark `xml:"Placemark"`
+}
+
+type Placemark struct {
+	XMLName     xml.Name `xml:"Placemark"`
+	Name        string   `xml:"name"`
+	Description string   `xml:"description"`
+	StyleURL    string   `xml:"styleUrl"`
+	Point       Point    `xml:"Point"`
+}
+
+type Point struct {
+	XMLName     xml.Name `xml:"Point"`
+	Coordinates string   `xml:"coordinates"`
+}
+
 // NewFeedParser creates a new Caltrans KML feed parser
 func NewFeedParser() *FeedParser {
 	return &FeedParser{
-		httpClient: &http.Client{
+		HTTPClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
 	}
@@ -96,7 +127,7 @@ func (p *FeedParser) ParseWithGeographicFilter(ctx context.Context, routeCoordin
 	allIncidents = append(allIncidents, chpIncidents...)
 
 	// Filter by geographic proximity
-	var filteredIncidents []CaltransIncident
+	filteredIncidents := make([]CaltransIncident, 0)
 	for _, incident := range allIncidents {
 		for _, coord := range routeCoordinates {
 			distance := haversineDistance(
@@ -121,7 +152,13 @@ func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType Calt
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	resp, err := p.httpClient.Do(req)
+	// Default to a new HTTP client if none is set
+	httpClient := p.HTTPClient
+	if httpClient == nil {
+		httpClient = &http.Client{Timeout: 30 * time.Second}
+	}
+	
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to download KML: %w", err)
 	}
@@ -131,15 +168,14 @@ func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType Calt
 		return nil, fmt.Errorf("HTTP error %d downloading KML from %s", resp.StatusCode, url)
 	}
 
-	// Parse KML using github.com/twpayne/go-kml
+	// Parse KML using standard encoding/xml
 	kmlData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read KML response: %w", err)
 	}
 
-	// Parse KML using the correct v2 API
-	var k kml.KML
-	err = k.UnmarshalXML(bytes.NewDecoder(bytes.NewReader(kmlData)), xml.StartElement{})
+	var kml KML
+	err = xml.Unmarshal(kmlData, &kml)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse KML: %w", err)
 	}
@@ -148,27 +184,20 @@ func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType Calt
 	var incidents []CaltransIncident
 	now := time.Now()
 
-	// Extract placemarks by walking the document
-	if k.Document != nil {
-		for _, folder := range k.Document.Folders {
-			for _, placemark := range folder.Placemarks {
-				incident := p.processPlacemark(&placemark, feedType, now)
-				if incident != nil {
-					incidents = append(incidents, *incident)
-				}
-			}
-		}
-		// Also check direct placemarks in document
-		for _, placemark := range k.Document.Placemarks {
-			incident := p.processPlacemark(&placemark, feedType, now)
-			if incident != nil {
-				incidents = append(incidents, *incident)
-			}
+	// Process placemarks directly in document
+	for _, placemark := range kml.Document.Placemarks {
+		if incident := p.processPlacemark(&placemark, feedType, now); incident != nil {
+			incidents = append(incidents, *incident)
 		}
 	}
 
-	if err != nil {
-		return nil, fmt.Errorf("failed to process KML placemarks: %w", err)
+	// Process placemarks in folders
+	for _, folder := range kml.Document.Folders {
+		for _, placemark := range folder.Placemarks {
+			if incident := p.processPlacemark(&placemark, feedType, now); incident != nil {
+				incidents = append(incidents, *incident)
+			}
+		}
 	}
 
 	return incidents, nil
@@ -176,30 +205,15 @@ func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType Calt
 
 // processPlacemark converts KML Placemark to CaltransIncident
 // Structure mapping per data-model.md lines 80-90
-func (p *FeedParser) processPlacemark(placemark *kml.Placemark, feedType CaltransFeedType, fetchTime time.Time) *CaltransIncident {
+func (p *FeedParser) processPlacemark(placemark *Placemark, feedType CaltransFeedType, fetchTime time.Time) *CaltransIncident {
 	// Extract coordinates from Point geometry
-	var coordinates *api.Coordinates
-	if placemark.Point != nil && len(placemark.Point.Coordinates) > 0 {
-		// KML coordinates are in "longitude,latitude,altitude" format
-		coord := placemark.Point.Coordinates[0]
-		if len(coord) >= 2 {
-			coordinates = &api.Coordinates{
-				Latitude:  coord[1], // Second element is latitude
-				Longitude: coord[0], // First element is longitude
-			}
-		}
-	}
-
-	// Skip placemarks without valid coordinates
+	coordinates := p.parseCoordinates(placemark.Point.Coordinates)
 	if coordinates == nil {
 		return nil
 	}
 
-	// Extract description HTML from CDATA
-	descriptionHtml := ""
-	if placemark.Description != nil {
-		descriptionHtml = *placemark.Description
-	}
+	// Extract description HTML
+	descriptionHtml := placemark.Description
 
 	// Extract plain text from HTML description
 	descriptionText := extractTextFromHTML(descriptionHtml)
@@ -208,28 +222,45 @@ func (p *FeedParser) processPlacemark(placemark *kml.Placemark, feedType Caltran
 	parsedStatus := extractStatus(descriptionText)
 	parsedDates := extractDates(descriptionText)
 
-	// Extract style URL
-	styleUrl := ""
-	if placemark.StyleURL != nil {
-		styleUrl = *placemark.StyleURL
-	}
-
-	// Extract name
-	name := ""
-	if placemark.Name != nil {
-		name = *placemark.Name
-	}
-
 	return &CaltransIncident{
 		FeedType:        feedType,
-		Name:            name,
+		Name:            placemark.Name,
 		DescriptionHtml: descriptionHtml,
 		DescriptionText: descriptionText,
-		StyleUrl:        styleUrl,
+		StyleUrl:        placemark.StyleURL,
 		Coordinates:     coordinates,
 		ParsedStatus:    parsedStatus,
 		ParsedDates:     parsedDates,
 		LastFetched:     fetchTime,
+	}
+}
+
+// parseCoordinates parses KML coordinate string "longitude,latitude,altitude"
+func (p *FeedParser) parseCoordinates(coordString string) *api.Coordinates {
+	coordString = strings.TrimSpace(coordString)
+	if coordString == "" {
+		return nil
+	}
+
+	// KML coordinates format: "longitude,latitude,altitude"
+	parts := strings.Split(coordString, ",")
+	if len(parts) < 2 {
+		return nil
+	}
+
+	longitude, err := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
+	if err != nil {
+		return nil
+	}
+
+	latitude, err := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+	if err != nil {
+		return nil
+	}
+
+	return &api.Coordinates{
+		Latitude:  latitude,
+		Longitude: longitude,
 	}
 }
 

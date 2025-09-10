@@ -33,19 +33,19 @@ build: proto server tools
 server: $(SERVER_BINARY)
 
 $(SERVER_BINARY): proto
-	$(GOBUILD) -o $(SERVER_BINARY) $(CMD_DIR)/server
+	$(GOBUILD) -o $(SERVER_BINARY) ./$(CMD_DIR)/server
 
 # Build CLI testing tools only
 tools: $(TEST_GOOGLE_BINARY) $(TEST_CALTRANS_BINARY) $(TEST_WEATHER_BINARY)
 
 $(TEST_GOOGLE_BINARY): proto
-	$(GOBUILD) -o $(TEST_GOOGLE_BINARY) $(CMD_DIR)/test-google
+	$(GOBUILD) -o $(TEST_GOOGLE_BINARY) ./$(CMD_DIR)/test-google
 
 $(TEST_CALTRANS_BINARY): proto
-	$(GOBUILD) -o $(TEST_CALTRANS_BINARY) $(CMD_DIR)/test-caltrans
+	$(GOBUILD) -o $(TEST_CALTRANS_BINARY) ./$(CMD_DIR)/test-caltrans
 
 $(TEST_WEATHER_BINARY): proto
-	$(GOBUILD) -o $(TEST_WEATHER_BINARY) $(CMD_DIR)/test-weather
+	$(GOBUILD) -o $(TEST_WEATHER_BINARY) ./$(CMD_DIR)/test-weather
 
 # Generate protobuf code
 proto:
@@ -89,7 +89,30 @@ test-config:
 
 # Run server with configuration
 run: server
-	./$(SERVER_BINARY) --config=$(or $(CONFIG),config.yaml)
+	./$(SERVER_BINARY)
+
+# Run server in background for testing
+run-bg: server
+	./$(SERVER_BINARY) & echo $$! > server.pid
+	@echo "Server started in background (PID: $$(cat server.pid))"
+	@echo "Use 'make stop' to stop the server"
+
+# Stop background server
+stop:
+	@if [ -f server.pid ]; then \
+		kill $$(cat server.pid) && rm server.pid && echo "Server stopped"; \
+	else \
+		echo "No server PID file found"; \
+	fi
+
+# Test server startup (quick test that exits after a few seconds)
+test-server: server
+	@echo "Testing server startup..."
+	./$(SERVER_BINARY) & \
+	SERVER_PID=$$!; \
+	sleep 3; \
+	kill $$SERVER_PID; \
+	echo "✅ Server startup test completed successfully"
 
 # Run server in development mode with auto-restart
 dev: server
@@ -153,7 +176,10 @@ help:
 	@echo "  test-config - Validate configuration without API calls"
 	@echo ""
 	@echo "Development targets:"
-	@echo "  run [CONFIG=config.yaml] - Run server with configuration"
+	@echo "  run         - Run server (blocks until stopped with Ctrl+C)"
+	@echo "  run-bg      - Run server in background"
+	@echo "  stop        - Stop background server"
+	@echo "  test-server - Quick server startup test (3 seconds)"
 	@echo "  dev         - Run server in development mode with auto-restart"
 	@echo "  lint        - Run Go linting tools"
 	@echo "  fmt         - Format Go code"
