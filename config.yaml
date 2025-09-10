@@ -6,7 +6,7 @@ routes:
   google_routes:
     refresh_interval: "5m"
     stale_threshold: "10m"
-    api_key: "${GOOGLE_ROUTES_API_KEY}"
+    # API key loaded from GOOGLE_API_KEY environment variable
   caltrans_feeds:
     chain_controls:
       refresh_interval: "30m"  # Less frequent, changes slowly
@@ -46,7 +46,7 @@ routes:
 weather:
   refresh_interval: "5m"
   stale_threshold: "10m"
-  openweather_api_key: "${OPENWEATHER_API_KEY}"
+  # API key loaded from OPENWEATHER_API_KEY environment variable
   locations:
     - id: "murphys"
       name: "Murphys, CA"

@@ -36,10 +36,13 @@ func main() {
 	// Get API key from flag or environment
 	key := *apiKey
 	if key == "" {
-		key = os.Getenv("GOOGLE_ROUTES_API_KEY")
+		key = os.Getenv("GOOGLE_API_KEY")
+		if key == "" {
+			key = os.Getenv("GOOGLE_ROUTES_API_KEY") // fallback
+		}
 	}
 	if key == "" {
-		log.Fatal("Google Routes API key required. Use -api-key flag or GOOGLE_ROUTES_API_KEY env var")
+		log.Fatal("Google Routes API key required. Use -api-key flag or GOOGLE_API_KEY/GOOGLE_ROUTES_API_KEY env var")
 	}
 
 	// Parse coordinates

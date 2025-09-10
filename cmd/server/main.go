@@ -18,7 +18,10 @@ import (
 
 func main() {
 	// Load configuration from environment variables
-	googleAPIKey := os.Getenv("GOOGLE_ROUTES_API_KEY")
+	googleAPIKey := os.Getenv("GOOGLE_API_KEY")
+	if googleAPIKey == "" {
+		googleAPIKey = os.Getenv("GOOGLE_ROUTES_API_KEY") // fallback
+	}
 	openweatherAPIKey := os.Getenv("OPENWEATHER_API_KEY")
 	port := getEnvInt("PORT", 8080)
 

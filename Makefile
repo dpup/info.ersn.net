@@ -51,12 +51,13 @@ $(TEST_WEATHER_BINARY): proto
 proto:
 	@echo "Generating protobuf code..."
 	@mkdir -p $(BUILD_DIR)
-	PATH="$(shell go env GOPATH)/bin:$(PATH)" protoc --proto_path=$(PROTO_DIR) \
+	@PATH="$(shell go env GOPATH)/bin:$(PATH)" protoc --proto_path=$(PROTO_DIR) \
 		--proto_path=$(shell go list -f '{{ .Dir }}' -m github.com/googleapis/googleapis) \
 		--go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		--grpc-gateway_out=. --grpc-gateway_opt=paths=source_relative \
 		$(PROTO_DIR)/*.proto
+	@echo "Protobuf code generation completed."
 
 # Clean build artifacts
 clean:
@@ -93,8 +94,11 @@ run: server
 
 # Run server in background for testing
 run-bg: server
-	./$(SERVER_BINARY) & echo $$! > server.pid
+	@echo "Starting server in background..."
+	@nohup ./$(SERVER_BINARY) > server.log 2>&1 & echo $$! > server.pid
+	@sleep 2
 	@echo "Server started in background (PID: $$(cat server.pid))"
+	@echo "Server logs: tail -f server.log"
 	@echo "Use 'make stop' to stop the server"
 
 # Stop background server
