@@ -1,0 +1,103 @@
+// Enhanced Roads API Contract
+// Feature: 002-improvements-to-handling
+// Extends existing roads.proto with alert classification and enhanced descriptions
+
+syntax = "proto3";
+package roads.v1;
+
+import "google/protobuf/timestamp.proto";
+import "common.proto";
+
+// Enhanced alert with classification and AI-processed description
+message EnhancedRoadAlert {
+  string id = 1;
+  AlertType type = 2;
+  AlertSeverity severity = 3;
+  AlertClassification classification = 4;  // NEW: On route vs nearby
+  string title = 5;
+  string original_description = 6;         // Raw Caltrans description
+  string enhanced_description = 7;         // NEW: AI-processed description
+  string condensed_summary = 8;            // NEW: Short format for mobile
+  google.protobuf.Timestamp start_time = 9;
+  google.protobuf.Timestamp end_time = 10;
+  google.protobuf.Timestamp last_updated = 11;  // NEW: Enhancement timestamp
+  repeated string affected_segments = 12;
+  Coordinates location = 13;
+  map<string, string> metadata = 14;      // NEW: Dynamic key-value pairs
+}
+
+// Classification of alert relationship to route
+enum AlertClassification {
+  ALERT_CLASSIFICATION_UNSPECIFIED = 0;
+  ON_ROUTE = 1;      // Directly affects route path
+  NEARBY = 2;        // In surrounding area but not blocking route
+}
+
+// Enhanced road response with classified alerts
+message EnhancedRoad {
+  string id = 1;
+  string name = 2;
+  string section = 3;
+  RoadStatus status = 4;
+  int32 duration_minutes = 5;
+  int32 distance_km = 6;
+  CongestionLevel congestion_level = 7;
+  int32 delay_minutes = 8;
+  repeated EnhancedRoadAlert alerts = 9;  // Enhanced alerts with classification
+  RouteGeometry geometry = 10;            // NEW: Route polyline data
+}
+
+// Route geometry from Google Routes API
+message RouteGeometry {
+  string encoded_polyline = 1;             // Google polyline encoding
+  repeated Coordinates decoded_points = 2; // Decoded coordinate sequence
+  double max_distance_km = 3;              // Threshold for "nearby" classification
+}
+
+// Enhanced API responses
+message ListEnhancedRoadsResponse {
+  repeated EnhancedRoad roads = 1;
+  google.protobuf.Timestamp last_updated = 2;
+  ProcessingMetrics metrics = 3;          // NEW: Processing performance data
+}
+
+message GetEnhancedRoadResponse {
+  EnhancedRoad road = 1;
+  google.protobuf.Timestamp last_updated = 2;
+  ProcessingMetrics metrics = 3;
+}
+
+// Processing performance metrics for monitoring
+message ProcessingMetrics {
+  int32 total_raw_alerts = 1;             // Total alerts from Caltrans
+  int32 filtered_alerts = 2;              // Alerts after distance filtering
+  int32 enhanced_alerts = 3;              // Alerts successfully enhanced by AI
+  int32 enhancement_failures = 4;         // AI enhancement failures
+  double avg_processing_time_ms = 5;      // Average enhancement time
+  google.protobuf.Timestamp cache_refresh_time = 6;
+}
+
+// Enhanced Roads Service
+service EnhancedRoadsService {
+  // Get all roads with enhanced alert processing
+  rpc ListEnhancedRoads(ListRoadsRequest) returns (ListEnhancedRoadsResponse);
+  
+  // Get specific road with enhanced alerts
+  rpc GetEnhancedRoad(GetRoadRequest) returns (GetEnhancedRoadResponse);
+  
+  // Get processing metrics for monitoring
+  rpc GetProcessingMetrics(GetProcessingMetricsRequest) returns (ProcessingMetrics);
+}
+
+message GetProcessingMetricsRequest {
+  // Empty - returns current processing statistics
+}
+
+// Configuration message for alert processing
+message AlertProcessingConfig {
+  double max_distance_km = 1;             // Distance threshold for nearby alerts
+  bool enable_ai_enhancement = 2;         // Toggle AI description processing
+  string openai_model = 3;                // AI model to use (default: gpt-3.5-turbo)
+  int32 enhancement_timeout_seconds = 4;  // Max time to wait for AI processing
+  int32 cache_ttl_minutes = 5;           // Cache time-to-live for enhanced alerts
+}
