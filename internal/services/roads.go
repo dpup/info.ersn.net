@@ -256,13 +256,13 @@ func (s *RoadsService) analyzeCongestionLevel(speedReadings []google.SpeedReadin
 func (s *RoadsService) mapRoadStatus(status string) api.RoadStatus {
 	switch status {
 	case "open":
-		return api.RoadStatus_ROAD_STATUS_OPEN
+		return api.RoadStatus_OPEN
 	case "closed":
-		return api.RoadStatus_ROAD_STATUS_CLOSED
+		return api.RoadStatus_CLOSED
 	case "restricted":
-		return api.RoadStatus_ROAD_STATUS_RESTRICTED
+		return api.RoadStatus_RESTRICTED
 	case "maintenance":
-		return api.RoadStatus_ROAD_STATUS_MAINTENANCE
+		return api.RoadStatus_MAINTENANCE
 	default:
 		return api.RoadStatus_ROAD_STATUS_UNSPECIFIED
 	}
@@ -272,15 +272,15 @@ func (s *RoadsService) mapRoadStatus(status string) api.RoadStatus {
 func (s *RoadsService) mapCongestionLevel(level string) api.CongestionLevel {
 	switch level {
 	case "clear":
-		return api.CongestionLevel_CONGESTION_LEVEL_CLEAR
+		return api.CongestionLevel_CLEAR
 	case "light":
-		return api.CongestionLevel_CONGESTION_LEVEL_LIGHT
+		return api.CongestionLevel_LIGHT
 	case "moderate":
-		return api.CongestionLevel_CONGESTION_LEVEL_MODERATE
+		return api.CongestionLevel_MODERATE
 	case "heavy":
-		return api.CongestionLevel_CONGESTION_LEVEL_HEAVY
+		return api.CongestionLevel_HEAVY
 	case "severe":
-		return api.CongestionLevel_CONGESTION_LEVEL_SEVERE
+		return api.CongestionLevel_SEVERE
 	default:
 		return api.CongestionLevel_CONGESTION_LEVEL_UNSPECIFIED
 	}
@@ -290,13 +290,13 @@ func (s *RoadsService) mapCongestionLevel(level string) api.CongestionLevel {
 func (s *RoadsService) mapChainControlStatus(status string) api.ChainControlStatus {
 	switch status {
 	case "none":
-		return api.ChainControlStatus_CHAIN_CONTROL_NONE
+		return api.ChainControlStatus_NONE
 	case "advised":
-		return api.ChainControlStatus_CHAIN_CONTROL_ADVISED
+		return api.ChainControlStatus_ADVISED
 	case "required":
-		return api.ChainControlStatus_CHAIN_CONTROL_REQUIRED
+		return api.ChainControlStatus_REQUIRED
 	case "prohibited":
-		return api.ChainControlStatus_CHAIN_CONTROL_PROHIBITED
+		return api.ChainControlStatus_PROHIBITED
 	default:
 		return api.ChainControlStatus_CHAIN_CONTROL_UNSPECIFIED
 	}
@@ -356,28 +356,28 @@ func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config
 func (s *RoadsService) mapIncidentToAlertType(incident caltrans.CaltransIncident) api.AlertType {
 	switch incident.FeedType {
 	case caltrans.CHAIN_CONTROL:
-		return api.AlertType_ALERT_TYPE_WEATHER
+		return api.AlertType_WEATHER
 	case caltrans.LANE_CLOSURE:
 		if incident.ParsedStatus == "construction" {
-			return api.AlertType_ALERT_TYPE_CONSTRUCTION
+			return api.AlertType_CONSTRUCTION
 		}
-		return api.AlertType_ALERT_TYPE_CLOSURE
+		return api.AlertType_CLOSURE
 	case caltrans.CHP_INCIDENT:
-		return api.AlertType_ALERT_TYPE_INCIDENT
+		return api.AlertType_INCIDENT
 	default:
-		return api.AlertType_ALERT_TYPE_INCIDENT
+		return api.AlertType_ALERT_TYPE_UNSPECIFIED
 	}
 }
 
 // mapIncidentToSeverity determines alert severity from incident data
 func (s *RoadsService) mapIncidentToSeverity(incident caltrans.CaltransIncident) api.AlertSeverity {
 	if incident.ParsedStatus == "closed" || incident.ParsedStatus == "closure" {
-		return api.AlertSeverity_ALERT_SEVERITY_CRITICAL
+		return api.AlertSeverity_CRITICAL
 	}
 	if incident.FeedType == caltrans.CHP_INCIDENT {
-		return api.AlertSeverity_ALERT_SEVERITY_WARNING
+		return api.AlertSeverity_WARNING
 	}
-	return api.AlertSeverity_ALERT_SEVERITY_INFO
+	return api.AlertSeverity_INFO
 }
 
 // extractChainControlStatus determines chain control requirements from description
