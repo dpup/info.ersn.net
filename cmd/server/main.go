@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/dpup/prefab"
 
@@ -38,6 +40,7 @@ func main() {
 	// Server configuration (port, etc.) will be loaded from prefab.yaml/env vars
 	server := prefab.New(
 		prefab.WithGRPCReflection(),
+		prefab.WithHTTPHandlerFunc("/", homepageHandler),
 	)
 
 	// Register gRPC services using Prefab's service registrar
@@ -63,15 +66,80 @@ func main() {
 // Configuration is loaded from prefab.yaml and environment variables with PF__ prefix
 func loadConfig() *config.Config {
 	appConfig := &config.Config{}
-	
+
 	// Unmarshal specific sections from Prefab's config using exact key paths
 	if err := prefab.Config.Unmarshal("roads", &appConfig.Roads); err != nil {
 		log.Fatalf("Failed to unmarshal roads section: %v", err)
 	}
-	
+
 	if err := prefab.Config.Unmarshal("weather", &appConfig.Weather); err != nil {
 		log.Fatalf("Failed to unmarshal weather section: %v", err)
 	}
-	
+
 	return appConfig
+}
+
+// homepageHandler serves a simple HTML homepage at the server root
+func homepageHandler(w http.ResponseWriter, r *http.Request) {
+	// Only handle the root path
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	html := `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>info.ersn.net</title>
+    <style>
+        body { 
+            font-family: 'Courier New', Consolas, monospace; 
+            background: #000; 
+            color: #0f0; 
+            padding: 20px; 
+            line-height: 1.4; 
+        }
+        a { color: #0ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        pre { margin: 0; }
+        .header { color: #ff0; }
+        .section { margin: 20px 0; }
+    </style>
+</head>
+<body>
+<pre>
+<span class="header">info.ersn.net</span>
+
+Real-time API server providing road conditions and weather information 
+for the Ebbett's Pass region.
+
+<span class="header">Repository:</span>
+<a href="https://github.com/dpup/info.ersn.net">https://github.com/dpup/info.ersn.net</a>
+
+<span class="header">API Endpoints:</span>
+
+Roads API:
+  <a href="/api/v1/roads">GET /api/v1/roads</a>                 - List all monitored roads
+  <a href="/api/v1/roads/hwy4-angels-murphys">GET /api/v1/roads/{road_id}</a>       - Get specific road details
+
+Weather API:
+  <a href="/api/v1/weather">GET /api/v1/weather</a>               - Current weather for all locations
+  <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>        - Active weather alerts
+
+<span class="header">Data Sources:</span>
+  • Google Routes API    - Traffic conditions and travel times
+  • OpenWeatherMap API   - Weather data and alerts  
+  • Caltrans KML Feeds   - Lane closures and CHP incidents
+
+<span class="header">Example Usage:</span>
+  curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>
+  curl <a href="/api/v1/weather">https://info.ersn.net/api/v1/weather</a>
+</pre>
+</body>
+</html>`
+
+	fmt.Fprint(w, html)
 }
