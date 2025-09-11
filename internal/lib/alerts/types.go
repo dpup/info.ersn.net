@@ -15,13 +15,14 @@ type RawAlert struct {
 
 // StructuredDescription represents AI-processed alert information in standardized format
 type StructuredDescription struct {
-	TimeReported   string            `json:"time_reported,omitempty"`
-	Details        string            `json:"details"`
-	Location       string            `json:"location"`
-	LastUpdate     string            `json:"last_update,omitempty"`
-	Impact         string            `json:"impact"`         // enum: none, light, moderate, severe
-	Duration       string            `json:"duration"`       // enum: unknown, < 1 hour, several hours, ongoing
-	AdditionalInfo map[string]string `json:"additional_info,omitempty"`
+	TimeReported     string            `json:"time_reported,omitempty"`
+	Details          string            `json:"details"`
+	Location         string            `json:"location"`
+	LastUpdate       string            `json:"last_update,omitempty"`
+	Impact           string            `json:"impact"`         // enum: none, light, moderate, severe
+	Duration         string            `json:"duration"`       // enum: unknown, < 1 hour, several hours, ongoing
+	AdditionalInfo   map[string]string `json:"additional_info,omitempty"`
+	CondensedSummary string            `json:"condensed_summary,omitempty"`
 }
 
 // EnhancedAlert represents a fully processed alert with AI enhancement
@@ -45,8 +46,4 @@ type AlertEnhancer interface {
 	HealthCheck(ctx context.Context) error
 }
 
-// NewAlertEnhancer creates a new AlertEnhancer implementation
-// This will initially return nil to make tests fail (TDD RED phase)
-func NewAlertEnhancer(apiKey, model string) AlertEnhancer {
-	return nil // This will cause tests to fail - RED phase of TDD
-}
+// NewAlertEnhancer is implemented in enhancer.go

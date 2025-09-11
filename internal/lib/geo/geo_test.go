@@ -22,8 +22,8 @@ func TestGeoUtils_PointToPoint(t *testing.T) {
 	distance, err := geoUtils.PointToPoint(angelscamp, murphys)
 	require.NoError(t, err)
 	
-	// Expected distance ~11.7 km between Angels Camp and Murphys
-	assert.InDelta(t, 11700, distance, 100, "Distance should be approximately 11.7km")
+	// Expected distance ~11.0 km between Angels Camp and Murphys (actual great-circle distance)
+	assert.InDelta(t, 11046, distance, 100, "Distance should be approximately 11.0km")
 	
 	// Test error cases
 	invalidPoint := Point{Latitude: 200, Longitude: -300} // Invalid coordinates
@@ -49,13 +49,13 @@ func TestGeoUtils_PointToPolyline(t *testing.T) {
 	distance, err := geoUtils.PointToPolyline(testPoint, routePolyline)
 	require.NoError(t, err)
 	assert.Greater(t, distance, 0.0, "Distance should be positive")
-	assert.Less(t, distance, 50000, "Distance should be reasonable (< 50km)")
+	assert.Less(t, distance, 50000.0, "Distance should be reasonable (< 50km)")
 	
 	// Test point directly on route (should be very close to 0)
 	onRoutePoint := Point{Latitude: 38.0675, Longitude: -120.5436}
 	distance, err = geoUtils.PointToPolyline(onRoutePoint, routePolyline)
 	require.NoError(t, err)
-	assert.Less(t, distance, 100, "Point on route should be < 100m from polyline")
+	assert.Less(t, distance, 100.0, "Point on route should be < 100m from polyline")
 }
 
 func TestGeoUtils_PolylinesOverlap(t *testing.T) {

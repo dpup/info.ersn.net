@@ -55,8 +55,4 @@ type RouteMatcher interface {
 	UpdateRouteGeometry(ctx context.Context, routeID string, newPolyline geo.Polyline) error
 }
 
-// NewRouteMatcher creates a new RouteMatcher implementation
-// This will initially return nil to make tests fail (TDD RED phase)
-func NewRouteMatcher() RouteMatcher {
-	return nil // This will cause tests to fail - RED phase of TDD
-}
+// NewRouteMatcher is implemented in matcher.go

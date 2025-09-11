@@ -40,8 +40,4 @@ type GeoUtils interface {
 	ClosestPointOnPolyline(point Point, polyline Polyline) (Point, error)
 }
 
-// NewGeoUtils creates a new GeoUtils implementation
-// This will initially return nil to make tests fail (TDD RED phase)
-func NewGeoUtils() GeoUtils {
-	return nil // This will cause tests to fail - RED phase of TDD
-}
+// NewGeoUtils is implemented in geo.go

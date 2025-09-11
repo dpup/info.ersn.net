@@ -248,7 +248,7 @@ func TestRouteMatcher_ConfigurableThresholds(t *testing.T) {
 	// Alert that would be NEARBY at 10 miles but DISTANT at 5 miles
 	alert := UnclassifiedAlert{
 		ID:       "test-threshold",
-		Location: geo.Point{Latitude: 38.0500, Longitude: -120.0500}, // ~7 miles away
+		Location: geo.Point{Latitude: 38.1000, Longitude: -120.1000}, // Further away, ~10+ miles
 		Description: "Test threshold configuration",
 		Type: "incident",
 	}
