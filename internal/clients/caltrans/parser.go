@@ -162,7 +162,7 @@ func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType Calt
 	if err != nil {
 		return nil, fmt.Errorf("failed to download KML: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("HTTP error %d downloading KML from %s", resp.StatusCode, url)

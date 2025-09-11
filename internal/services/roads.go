@@ -170,6 +170,7 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 	road := &api.Road{
 		Id:              monitoredRoad.ID,
 		Name:            monitoredRoad.Name,
+		Section:         monitoredRoad.Section,
 		Status:          s.mapRoadStatus(roadStatus),
 		DurationMinutes: durationMins,
 		DistanceKm:      distanceKm,
@@ -185,7 +186,7 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 // getTrafficData fetches traffic data from Google Routes API
 func (s *RoadsService) getTrafficData(ctx context.Context, monitoredRoad config.MonitoredRoad) (int32, int32, string, int32, error) {
 	if s.config.GoogleRoutes.APIKey == "" {
-		return 0, 0, "unknown", 0, fmt.Errorf("Google Routes API key not configured")
+		return 0, 0, "unknown", 0, fmt.Errorf("google Routes API key not configured")
 	}
 
 	roadData, err := s.googleClient.ComputeRoutes(ctx, 
@@ -333,7 +334,7 @@ func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config
 			Description: incident.DescriptionText,
 			StartTime:   timestamppb.New(incident.LastFetched), // Use fetch time as proxy
 			EndTime:     nil, // Usually not available in KML
-			AffectedSegments: []string{monitoredRoad.Name}, // Simplified
+			AffectedSegments: []string{fmt.Sprintf("%s - %s", monitoredRoad.Name, monitoredRoad.Section)}, // Simplified
 		}
 		alerts = append(alerts, alert)
 

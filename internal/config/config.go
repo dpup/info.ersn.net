@@ -50,6 +50,7 @@ type CaltransFeedConfig struct {
 // MonitoredRoad represents a road to monitor
 type MonitoredRoad struct {
 	Name        string           `yaml:"name"`
+	Section     string           `yaml:"section"`
 	ID          string           `yaml:"id"`
 	Origin      CoordinatesYAML  `yaml:"origin"`
 	Destination CoordinatesYAML  `yaml:"destination"`

@@ -46,14 +46,15 @@ message GetRoadResponse {
 // Data models
 message Road {
   string id = 1;
-  string name = 2;
-  RoadStatus status = 3;              // Current road status
-  int32 duration_minutes = 4;         // Current travel time in minutes
-  int32 distance_km = 5;              // Route distance in kilometers
-  CongestionLevel congestion_level = 6; // Traffic congestion level
-  int32 delay_minutes = 7;            // Additional time due to traffic (0 = no delays)
-  ChainControlStatus chain_control = 8; // Chain control requirements
-  repeated RoadAlert alerts = 9;      // Combined from multiple sources
+  string name = 2;                    // Highway/road name (e.g., "Hwy 4")
+  string section = 3;                 // Section description (e.g., "Arnold to Bear Valley")
+  RoadStatus status = 4;              // Current road status
+  int32 duration_minutes = 5;         // Current travel time in minutes
+  int32 distance_km = 6;              // Route distance in kilometers
+  CongestionLevel congestion_level = 7; // Traffic congestion level
+  int32 delay_minutes = 8;            // Additional time due to traffic (0 = no delays)
+  ChainControlStatus chain_control = 9; // Chain control requirements
+  repeated RoadAlert alerts = 10;     // Combined from multiple sources
 }
 
 

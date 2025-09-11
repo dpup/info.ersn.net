@@ -18,7 +18,7 @@ func TestGoogleRoutesClient_ComputeRoutes_Integration(t *testing.T) {
 	}
 	
 	// This test MUST fail until Google Routes client is implemented
-	client := &google.Client{} // No implementation yet - will cause compilation error
+	client := google.NewClient("") // Test with empty API key - will fail gracefully
 	
 	// Test route: Seattle to Portland (from research.md line 158-159)
 	origin := &api.Coordinates{
@@ -55,7 +55,7 @@ func TestGoogleRoutesClient_FieldMaskRequirement_Integration(t *testing.T) {
 	}
 	
 	// This test verifies the critical field mask requirement from research.md line 44
-	client := &google.Client{} // No implementation yet - will cause compilation error
+	client := google.NewClient("") // Test with empty API key - will fail gracefully
 	
 	origin := &api.Coordinates{Latitude: 47.6062, Longitude: -122.3321}
 	destination := &api.Coordinates{Latitude: 45.5152, Longitude: -122.6784}
@@ -73,7 +73,7 @@ func TestGoogleRoutesClient_RateLimiting_Integration(t *testing.T) {
 	}
 	
 	// This test verifies rate limiting behavior from research.md line 56
-	client := &google.Client{} // No implementation yet - will cause compilation error
+	client := google.NewClient("") // Test with empty API key - will fail gracefully
 	
 	origin := &api.Coordinates{Latitude: 47.6062, Longitude: -122.3321}
 	destination := &api.Coordinates{Latitude: 45.5152, Longitude: -122.6784}

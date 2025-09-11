@@ -18,7 +18,8 @@ roads:
       refresh_interval: "5m"   # More frequent, incidents change quickly
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
   monitored_roads:
-    - name: "Hwy 4 - Angels Camp to Murphys"
+    - name: "Hwy 4"
+      section: "Angels Camp to Murphys"
       id: "hwy4-angels-murphys"
       origin:
         latitude: 38.067400
@@ -26,7 +27,8 @@ roads:
       destination:
         latitude: 38.139117
         longitude: -120.456111
-    - name: "Hwy 4 - Murphys to Arnold"  
+    - name: "Hwy 4"
+      section: "Murphys to Arnold"  
       id: "hwy4-murphys-arnold"
       origin:
         latitude: 38.139117
@@ -34,7 +36,8 @@ roads:
       destination:
         latitude: 38.265006
         longitude: -120.333654
-    - name: "Hwy 4 - Arnold to Bear Valley"
+    - name: "Hwy 4"
+      section: "Arnold to Bear Valley"
       id: "hwy4-arnold-bearvalley"
       origin:
         latitude: 38.265006

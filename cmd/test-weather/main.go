@@ -69,7 +69,7 @@ func main() {
 	}
 
 	fmt.Printf("✅ GetCurrentWeather successful!\n")
-	fmt.Printf("Temperature: %.1f°C (feels like %.1f°C)\n", 
+	fmt.Printf("Temperature: %d°C (feels like %d°C)\n", 
 		current.TemperatureCelsius, current.FeelsLikeCelsius)
 	fmt.Printf("Condition: %s\n", current.WeatherMain)
 	fmt.Printf("Description: %s\n", current.WeatherDescription)
@@ -135,7 +135,7 @@ func main() {
 			fmt.Printf("  ❌ Error: %v\n", err)
 			continue
 		}
-		fmt.Printf("  ✅ %s: %.1f°C, %s\n", 
+		fmt.Printf("  ✅ %s: %d°C, %s\n", 
 			loc.Name, weather.TemperatureCelsius, weather.WeatherMain)
 	}
 

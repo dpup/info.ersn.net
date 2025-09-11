@@ -17,7 +17,7 @@ func TestWeatherClient_GetCurrentWeather_Integration(t *testing.T) {
 	}
 	
 	// This test MUST fail until OpenWeatherMap client is implemented
-	client := &weather.Client{} // No implementation yet - will cause compilation error
+	client := weather.NewClient("") // Test with empty API key - will fail gracefully
 	
 	// Test coordinates: Seattle (from research.md line 166)
 	coordinates := &api.Coordinates{
@@ -49,7 +49,7 @@ func TestWeatherClient_GetCurrentWeather_Integration(t *testing.T) {
 	require.LessOrEqual(t, weatherData.WindDirectionDegrees, int32(360), "Wind direction should be <= 360")
 	
 	// Visibility should be positive
-	require.Greater(t, weatherData.VisibilityMeters, int32(0), "Visibility should be positive")
+	require.Greater(t, weatherData.VisibilityKm, int32(0), "Visibility should be positive")
 }
 
 // TestWeatherClient_GetWeatherAlerts tests weather alerts from One Call API 3.0
@@ -58,7 +58,7 @@ func TestWeatherClient_GetWeatherAlerts_Integration(t *testing.T) {
 		t.Skip("Skipping integration test in short mode")
 	}
 	
-	client := &weather.Client{} // No implementation yet - will cause compilation error
+	client := weather.NewClient("") // Test with empty API key - will fail gracefully
 	
 	// Test coordinates: Seattle
 	coordinates := &api.Coordinates{
@@ -112,7 +112,7 @@ func TestWeatherClient_RateLimiting_Integration(t *testing.T) {
 		t.Skip("Skipping rate limiting test in short mode")
 	}
 	
-	client := &weather.Client{} // No implementation yet - will cause compilation error
+	client := weather.NewClient("") // Test with empty API key - will fail gracefully
 	
 	coordinates := &api.Coordinates{Latitude: 47.6062, Longitude: -122.3321}
 	
@@ -131,7 +131,7 @@ func TestWeatherClient_CoordinatePrecision_Integration(t *testing.T) {
 		t.Skip("Skipping integration test in short mode")
 	}
 	
-	client := &weather.Client{} // No implementation yet - will cause compilation error
+	client := weather.NewClient("") // Test with empty API key - will fail gracefully
 	
 	// Test high precision coordinates (6+ decimal places per research.md line 96)
 	coordinates := &api.Coordinates{

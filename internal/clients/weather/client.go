@@ -54,7 +54,7 @@ func (c *Client) GetCurrentWeather(ctx context.Context, coordinates *api.Coordin
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Handle rate limiting and errors per research.md line 100
 	if resp.StatusCode == 429 {
@@ -98,7 +98,7 @@ func (c *Client) GetWeatherAlerts(ctx context.Context, coordinates *api.Coordina
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute alerts request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == 429 {
 		return nil, fmt.Errorf("rate limit exceeded (60/minute)")

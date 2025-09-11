@@ -93,7 +93,7 @@ func (c *Client) ComputeRoutes(ctx context.Context, origin, destination *api.Coo
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Handle rate limiting and errors per research.md line 57
 	if resp.StatusCode == 429 {
