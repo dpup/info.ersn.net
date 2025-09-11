@@ -93,20 +93,39 @@ run: server
 	./$(SERVER_BINARY)
 
 # Run server in background for testing
-run-bg: server
+run-bg: server stop
 	@echo "Starting server in background..."
 	@nohup ./$(SERVER_BINARY) > server.log 2>&1 & echo $$! > server.pid
 	@sleep 2
-	@echo "Server started in background (PID: $$(cat server.pid))"
-	@echo "Server logs: tail -f server.log"
-	@echo "Use 'make stop' to stop the server"
+	@if [ -f server.pid ] && kill -0 $$(cat server.pid) 2>/dev/null; then \
+		echo "Server started in background (PID: $$(cat server.pid))"; \
+		echo "Server logs: tail -f server.log"; \
+		echo "Use 'make stop' to stop the server"; \
+	else \
+		echo "Failed to start server"; \
+		rm -f server.pid; \
+		exit 1; \
+	fi
 
 # Stop background server
 stop:
-	@if [ -f server.pid ]; then \
-		kill $$(cat server.pid) && rm server.pid && echo "Server stopped"; \
-	else \
-		echo "No server PID file found"; \
+	@echo "Stopping server..."
+	@STOPPED=false; \
+	if [ -f server.pid ]; then \
+		PID=$$(cat server.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && echo "Stopped server (PID: $$PID)"; \
+			STOPPED=true; \
+		fi; \
+		rm -f server.pid; \
+	fi; \
+	PORT_PID=$$(lsof -ti :8080 2>/dev/null); \
+	if [ -n "$$PORT_PID" ]; then \
+		kill $$PORT_PID 2>/dev/null && echo "Stopped process on port 8080 (PID: $$PORT_PID)"; \
+		STOPPED=true; \
+	fi; \
+	if [ "$$STOPPED" = "false" ]; then \
+		echo "No running server found"; \
 	fi
 
 # Test server startup (quick test that exits after a few seconds)
@@ -181,8 +200,8 @@ help:
 	@echo ""
 	@echo "Development targets:"
 	@echo "  run         - Run server (blocks until stopped with Ctrl+C)"
-	@echo "  run-bg      - Run server in background"
-	@echo "  stop        - Stop background server"
+	@echo "  run-bg      - Run server in background (stops existing server first)"
+	@echo "  stop        - Stop background server (handles orphaned processes)"
 	@echo "  test-server - Quick server startup test (3 seconds)"
 	@echo "  dev         - Run server in development mode with auto-restart"
 	@echo "  lint        - Run Go linting tools"
