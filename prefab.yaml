@@ -27,8 +27,9 @@ roads:
     stale_threshold: "10m"
     api_key: ""  # Set via PF__ROADS__GOOGLE_ROUTES__API_KEY env var
   caltrans_feeds:
+    # TODO: Re-enable chain_controls in winter when actual chain requirement data is available
     chain_controls:
-      refresh_interval: "30m"  # Less frequent, changes slowly
+      refresh_interval: "30m"  # Less frequent, changes slowly (UNUSED - no winter data available)
       url: "https://quickmap.dot.ca.gov/data/cc.kml"
     lane_closures:
       refresh_interval: "10m"

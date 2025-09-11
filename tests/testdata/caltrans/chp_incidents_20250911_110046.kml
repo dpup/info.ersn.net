@@ -1,0 +1,1674 @@
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<name>CHP Incidents</name>
+<Style id="chp">
+  <LabelStyle><scale>0</scale></LabelStyle>
+  <IconStyle><Icon>
+    <href>https://quickmap.dot.ca.gov/img/chp-32x32.png</href>
+    <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+  </Icon></IconStyle>
+</Style>
+<Style id="emergency">
+  <IconStyle><Icon>
+    <href>https://quickmap.dot.ca.gov/img/emergency.png</href>
+    <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+  </Icon></IconStyle>
+</Style>
+<Style id="full-closure">
+  <IconStyle><Icon>
+    <href>https://quickmap.dot.ca.gov/img/full-closure-32x32.png</href>
+    <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+  </Icon></IconStyle>
+</Style>
+<Placemark>
+  <name>CHP Incident 250911SA0460</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:54AM <br> 1125-Traffic Hazard <br> I80 E / Jeo Northgate Blvd </p>
+  <p align="left">Sep 11 2025 10:55AM [4] NO VEHS NEARBY<br />Sep 11 2025 10:55AM [2] 1125 C/D<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.471451,38.641281,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0450</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:49AM <br> 1166-Defective Traffic Signals <br> Watt Ave / Peacekeeper Way </p>
+  <p align="left">Sep 11 2025 10:51AM [2] 1039 CORDS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.382732,38.660806,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0440</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:43AM <br> 1179-Trfc Collision-1141 Enrt <br> 7225 Us50 </p>
+  <p align="left">Sep 11 2025 10:59AM [19] EXTREME BACK LL -- DOES NOT HAVE WRECKER THAT CAN MAKE ETA // SKIPPING [Shared]<br />Sep 11 2025 10:56AM [18] [Rotation Request Comment] 1039 Extreme Tow (XXX) XXX-XXXX [Shared]<br />Sep 11 2025 10:55AM [17] 44-R10 PTY 97 AT EID POLLARD  (XXX) XXX-XXXX COP VEH DOWN OF RDWY 15 FT STEEP ENBANKMENT  START 1185  [Shared]<br />Sep 11 2025 10:43AM [2] EDSO STARTED FIRE <br />Sep 11 2025 10:43AM [1] VEH O/T  ON ROOF<br />Sep 11 2025 10:43AM [8] [Appended, 10:44:14] [4] NOT VIS FRM RD<br />Sep 11 2025 10:43AM [6] [Appended, 10:44:14] [2] SIL PASS VEH OFF RHS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.550226,38.764438,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0438</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:41AM <br> 1125-Traffic Hazard <br> Sr65 S / Blue Oaks Blvd E Onr </p>
+  <p align="left">Sep 11 2025 10:42AM [1] TIRE TREAD IN 1 LN<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.294943,38.792752,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0424</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:32AM <br> 1179-Trfc Collision-1141 Enrt <br> 3638 Forni Rd </p>
+  <p align="left">Sep 11 2025 10:47AM [17] [CHP] has closed their incident [250911SA0427]<br />Sep 11 2025 10:36AM [9] 1022 LN 8 [Shared]<br />Sep 11 2025 10:34AM [4] RP WAS ON FOOT WHO HEARD IT / POSS VEH ARE NO LONGER 97<br />Sep 11 2025 10:33AM [21] [Appended, 10:47:07] [3] VEH VS UNK <br />Sep 11 2025 10:33AM [1] TC <br />Sep 11 2025 10:33AM [20] [Appended, 10:47:07] [2] RP ADV THE VEH WAS 23103 PRIOR TO TC <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.834049,38.712343,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0402</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:21AM <br> 1182-Trfc Collision-No Inj <br> Watt Ave / Roseville Rd </p>
+  <p align="left">Sep 11 2025 10:38AM [12] A46-010 RDWY OPEN  [Shared]<br />Sep 11 2025 10:25AM [9] [Appended, 10:26:04] [3] UNK IF 1125 <br />Sep 11 2025 10:24AM [5] ONE VEH WILL NEED 1185 // ADV WILL CAL THEIR OWN<br />Sep 11 2025 10:22AM [2] 1125 #1 LN <br />Sep 11 2025 10:22AM [1] 03 BLU CHEV TAHOW VS SIL BMW SD  VS BLU TESLA SUV <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.382913,38.657407,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0388</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:09AM <br> 20002-Hit and Run No Injuries <br> 9982 Valderama Ct </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.320457,38.468433,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0235</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:06AM <br> CZP-Assist with Construction <br> Sr49 / Lauren Ln </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.852809,38.609265,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0187</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:18AM <br> MZP-Assist CT with Maintenance <br> 6 Massie Ct </p>
+  <p align="left">Sep 11 2025  7:18AM [1] MAZEEP OUT OF THE CAL TRANS YARD IN WEST SAC, MZP-3 (MELANO 23054), PV 1365373, BEG MIL 301956, UNTIL APPROX 1300 HOURS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.420832,38.475209,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0175</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:06AM <br> MZP-Assist CT with Maintenance <br> 13739 Andrew Stevens Dr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.729857,38.670388,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0172</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:58AM <br> 1183-Trfc Collision-Unkn Inj <br> 9650 Arlisson Dr </p>
+  <p align="left">Sep 11 2025  9:00AM [44] 1039 BT ETA 30-40 <br />Sep 11 2025  8:53AM [36] A58-501 180: 13 TOYT SIENNA SIL 2 PLTS 14602.6 RINCON TOW 18596 <br />Sep 11 2025  8:28AM [32] CORR LN 24 SUBJ TOOK PILLS PRIOR TO GOING 1015 <br />Sep 11 2025  8:04AM [23] 1039 A/C WILL CB W/ ETA<br />Sep 11 2025  8:02AM [22] 58-501 DOG<br />Sep 11 2025  7:58AM [18] [Rotation Request Comment] 1039 RINCON TOWING (XXX) XXX-XXXX<br />Sep 11 2025  7:57AM [17] A58-501 1185 OFCR HARLESS 1015 <br />Sep 11 2025  7:01AM [5] VEH VS TREE<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.337775,38.557616,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0160</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:50AM <br> MZP-Assist CT with Maintenance <br> 3031 Lo Hi Way </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.830514,38.721063,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0133</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:25AM <br> MZP-Assist CT with Maintenance <br> Sr160 / Sr12 </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.676428,38.155185,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0120</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:04AM <br> MZP-Assist CT with Maintenance <br> 9440 Indian Hill Rd </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.127759,38.872075,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SA0119</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:03AM <br> MZP-Assist CT with Maintenance <br> 11363 Mccourtney Rd </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.07684,39.20472,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911UK0036</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:51AM <br> 1179-Trfc Collision-1141 Enrt <br> SR20 / Stokes Rd </p>
+  <p align="left">Sep 11 2025 10:54AM [20] [Appended, 10:55:02] [4] XRAY WITH ARM INJ<br />Sep 11 2025 10:54AM [19] [Appended, 10:55:02] [3] 1125 WB<br />Sep 11 2025 10:53AM [18] [Appended, 10:55:02] [2] FORD EDGE VS CHEV MAL<br />Sep 11 2025 10:53AM [17] [Appended, 10:55:02] [1] HEAD ON TC<br />Sep 11 2025 10:52AM [11] 1039 CDF ST HELENA [Shared]<br />Sep 11 2025 10:52AM [4] POSS INJURIES <br />Sep 11 2025 10:52AM [3] 1125<br />Sep 11 2025 10:52AM [1] 2 VEH TC<br />Sep 11 2025 10:51AM [8] [Appended, 10:52:36] [2] FORNTAL VEH TC / AIRBAGS DEPLOYE D<br />Sep 11 2025 10:51AM [7] [Appended, 10:52:36] [1] FORD VEH TC NOTIFICATION <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.86559,39.127666,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911UK0029</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:06AM <br> 1125-Traffic Hazard <br> 500 MM175 W LAK R5.00 </p>
+  <p align="left">Sep 11 2025 10:22AM [22] 7-047 O/W VEH [Shared]<br />Sep 11 2025 10:13AM [19] [Appended, 10:13:56] [4] ** ROLING 1125 ***<br />Sep 11 2025 10:10AM [11] 10 CPZ NB JNO GREEN BRIDGE<br />Sep 11 2025 10:06AM [1] ** ROLLING 1125 **<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.941515,38.995194,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911HM0036</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:47AM <br> ANIMAL-Live or Dead Animal <br> Us101 S / Tompkins Hill Rd Ofr </p>
+  <p align="left">Sep 11 2025 10:47AM [10] [Appended, 10:48:49] [3] ON RHS <br />Sep 11 2025 10:47AM [9] [Appended, 10:48:49] [2] BLK COW <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-124.211989,40.710465,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911HM0034</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:41AM <br> 1183-Trfc Collision-Unkn Inj <br> Airport Rd Ofr / Us101 S </p>
+  <p align="left">Sep 11 2025 10:42AM [3] UNK IF 1125 <br />Sep 11 2025 10:42AM [2] WHI MERZ VS WHI SUV <br />Sep 11 2025 10:41AM [1] TC <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-124.116377,40.971902,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911HM0027</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:54AM <br> 1182-Trfc Collision-No Inj <br> Summer Ln / Scenic Creek Dr </p>
+  <p align="left">Sep 11 2025  8:56AM [4] SCHOOL BUS TC <br />Sep 11 2025  8:55AM [2] SOMETHING HIT MIRROR <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-124.190784,41.776247,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911HM0020</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:45AM <br> MZP-Assist CT with Maintenance <br> 6400 Mm101 N Hum 64.00 </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-124.205074,40.619954,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911ST0091</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:29AM <br> 1182-Trfc Collision-No Inj <br> Sr88 / Omo Ranch Rd </p>
+  <p align="left">Sep 11 2025 10:33AM [4] BLK SUV THAT HIT DEER IS PULLED OVER TO RHS AND GETTING OWN 1185<br />Sep 11 2025 10:32AM [3] DEER IS 1144 IN THE WB LN<br />Sep 11 2025 10:31AM [2] DEER IS STILL IS 1125 IN WB LN<br />Sep 11 2025 10:29AM [1] VEH VS DEER<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.442157,38.527977,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911CH0026</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:09AM <br> MZP-Assist CT with Maintenance <br> 2535 Notre Dame Blvd </p>
+  <p align="left">Sep 11 2025  7:09AM [1] 104-R3 ID 22635 VEH 1618849 SM 67179 TILL 1300<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.795286,39.713828,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911CH0021</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:58AM <br> 1182-Trfc Collision-No Inj <br> 1176 MM20 E COL 11.80 </p>
+  <p align="left">Sep 11 2025 10:46AM [37] 39-51 1185 97<br />Sep 11 2025  7:29AM [29] [Notification] [CHP]-TMC COPIES. FOR LANE CLOSURE? [Shared]<br />Sep 11 2025  7:29AM [27] 39-52 BOX IS NO LONGER 1125 BUT THE GRAPES ARE [Shared]<br />Sep 11 2025  7:28AM [25] A39-052 CT STILL NEEDED - MULT GRAPES ALL OVER IN THE EB LANE [Shared]<br />Sep 11 2025  7:20AM [21] 39-52 1 BOX IS STILL 1125 [Shared]<br />Sep 11 2025  7:00AM [6] APPEARS NEG INJ <br />Sep 11 2025  7:00AM [5] BINS AND GRAPES  1125 <br />Sep 11 2025  6:59AM [2] SEMI ROLLED TL <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.308695,39.107451,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911CH0019</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:53AM <br> MZP-Assist CT with Maintenance <br> I5 N / College City Ofr </p>
+  <p align="left">Sep 11 2025  7:03AM [2] 39-R3 ID 22070 VEH 1590504 SM 99775<br />Sep 11 2025  6:54AM [1] 39-R2 ID 18981 VEH 1619141 SM 61387  TILL 1500 <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.052197,39.009905,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911CH0016</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:50AM <br> MZP-Assist CT with Maintenance <br> 1001 N Beale Rd </p>
+  <p align="left">Sep 11 2025  5:50AM [1] 43-R1 ID 15976 VEH 1656880 SM 24273 TILL 1530<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.578161,39.126359,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911CH0012</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  4:22AM <br> MZP-Assist CT with Maintenance <br> SR99 S / SKYWAY RD OFR </p>
+  <p align="left">Sep 11 2025  7:12AM [4] 104-R4 ID 23012 VEH 1548655<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.804036,39.719043,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SU0007</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:53AM <br> 1182-Trfc Collision-No Inj <br> Sr139 / Lookout Hackamore Rd </p>
+  <p align="left">Sep 11 2025  7:48AM [34] [Appended, 07:48:47] [14] 60-16 97 W/ TS TRAFFIC SOLUTION TK<br />Sep 11 2025  7:42AM [32] [Appended, 07:48:47] [12] PER GOOGLE MAPS NEG SR91 BUT THERE IS CRD 91 (BEIBER LOOKOUT RD) <br />Sep 11 2025  7:34AM [26] [Appended, 07:48:47] [6] UNK IF 1125 OR NOT <br />Sep 11 2025  7:34AM [24] [Appended, 07:48:47] [4]  TS TRAFFIC SOLUTIONS TRUCK - UNK IF SEMI TRUCK OR OTHER <br />Sep 11 2025  7:32AM [23] [Appended, 07:48:47] [3] AND A TRUCK HAS HIT A COW AND CALF<br />Sep 11 2025  7:32AM [22] [Appended, 07:48:47] [2] WE HAVE CATTLE ON OPEN RANGE ON SR91 <br />Sep 11 2025  6:56AM [4] BR VS COW <br />Sep 11 2025  6:56AM [3] [Notification] [CHP]-Problem changed from 1125-Traffic Hazard to 1182-Trfc Collision-No Inj by CHP<br />Sep 11 2025  3:32AM [17] [Appended, 06:57:48] [10] 1039 ALTURAS OFC<br />Sep 11 2025  3:31AM [14] [Appended, 06:57:48] [7] 1039 ALTURAS OFC<br />Sep 11 2025  3:30AM [12] [Appended, 06:57:48] [5] RP ADV 1125 GLASS AND DEBRIS NEG VEHS IN THE AREA<br />Sep 11 2025  3:29AM [11] [Appended, 06:57:48] [4] 1039 MCSO THEY ARE ATT TO CALL OUT C/R<br />Sep 11 2025  3:29AM [10] [Appended, 06:57:48] [3] 1039 ALTURAS OFC ADV TO CALL OUT C/R<br />Sep 11 2025  3:27AM [8] [Appended, 06:57:48] [1] VEH VS 1144 COW THAT WAS 1125<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.153019,41.539895,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SU0004</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  4:46AM <br> CZP-Assist with Construction <br> Sr89 / Calpine Rd </p>
+  <p align="left">Sep 11 2025  6:36AM [5] 20-S2 SET UP IN THE AREA OF MPM 28-29 PER WORKER THIS MAY BE THE ONLY QUINCY CLOSURE TODAY<br />Sep 11 2025  6:22AM [4] D20-021 ENRT TO CZP VEH 1713271 BM 269<br />Sep 11 2025  4:46AM [1] VEH 1713263 BM 892 UNTIL 1900HRS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.433262,39.664651,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911YK0007</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:39AM <br> CZP-Assist with Construction <br> Us97 / Grass Lake Ct Yard </p>
+  <p align="left">Sep 11 2025  6:40AM [1] VEH ID 0297 / SM - 180629<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.19345,41.632257,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910YK0055</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025 11:25PM <br> 1182-Trfc Collision-No Inj <br> 0 Sr139 </p>
+  <p align="left">Sep 11 2025  1:38AM [38] C41-046 1185 / 97<br />Sep 11 2025 12:02AM [27] [Rotation Request Comment] 1039 ACE [Shared]<br />Sep 10 2025 11:56PM [24] [Notification] [CHP]-Problem changed from 1179-Trfc Collision-1141 Enrt to 1182-Trfc Collision-No Inj by CHP [Shared]<br />Sep 10 2025 11:56PM [23] PER CALFIRE ON SCENE ONE PATIENT OO VEH NON INJURY [Shared]<br />Sep 10 2025 11:43PM [20] [Rotation Request Comment] 1039 BLK BUTTE DRIVER WILL 1021 [Shared]<br />Sep 10 2025 11:38PM [19] 1039 41-46 LL REQ START 1185  [Shared]<br />Sep 10 2025 11:36PM [17] WITH DOG FOOD  [Shared]<br />Sep 10 2025 11:35PM [15] UNSURE IF DRIVER ABLE TO GET OO VEH  [Shared]<br />Sep 10 2025 11:35PM [14] COMPLETELY OFF RDWY  [Shared]<br />Sep 10 2025 11:34PM [13] SEMI TRUCK ON ITS PASSENGER SIDE  [Shared]<br />Sep 10 2025 11:33PM [7] POSS OCCUPIED / RP CAN HEAR SOMEONE IN THE VEH<br />Sep 10 2025 11:30PM [5] 1039 41-46 WILL BE ENRT <br />Sep 10 2025 11:28PM [4] 1039 CF <br />Sep 10 2025 11:26PM [2] OPEN LINE <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.302155,41.752396,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911TK0010</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:39AM <br> MZP-Assist CT with Maintenance <br> 10152 E Keiser Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.183004,39.331061,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911TK0007</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:18AM <br> CZP-Assist with Construction <br> Sr28 / Sr267 </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.031515,39.237967,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911TK0006</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:07AM <br> MZP-Assist CT with Maintenance <br> Eb Jwo Blue Canyon </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.713725,39.273467,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911TK0005</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:40AM <br> MZP-Assist CT with Maintenance <br> 10152 E Keiser Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.183004,39.331061,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911TK0004</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:26AM <br> CZP-Assist with Construction <br> 0 SR89 </p>
+  <p align="left">Sep 11 2025  5:27AM [1] 80-R1 VEH 170986 BM 3335 TILL 1900<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.281502,39.505313,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911TK0002</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  4:59AM <br> MZP-Assist CT with Maintenance <br> I80 E / KINGVALE OFR </p>
+  <p align="left">Sep 11 2025  5:00AM [1] 70-R1 OID 20567 VEH 1611817 BM 82534 TILL 1630<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.448574,39.313691,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GGFSP0124</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:55AM <br> 1182-Trfc Collision-No Inj <br> Us101 S / Marsh Rd Onr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.180838,37.483323,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0561</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:53AM <br> 1182-Trfc Collision-No Inj <br> Us101 S / Marsh Rd Onr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.180838,37.483323,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0559</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:53AM <br> 1125-Traffic Hazard <br> I80 W / Richards Blvd N Ofr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.732687,38.542615,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0564</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:52AM <br> 1183-Trfc Collision-Unkn Inj <br> Us101 S / Third St Onr </p>
+  <p align="left">Sep 11 2025 10:57AM [7] INVLD IN WHI BOX TK ADV 1182/DECLINE 1141/ VEH DRIVABLE<br />Sep 11 2025 10:56AM [4] INVLD IN TOYT 1182/ DECLINE 1141 / VEH DRIVABLE<br />Sep 11 2025 10:54AM [2] RHS<br />Sep 11 2025 10:54AM [1] WHI TOYT CAM VS WHI BOX TK 26 FOOT<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.398495,37.71554,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0555</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:51AM <br> ANIMAL-Live or Dead Animal <br> Us101 N / Willow Rd N Onr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.155076,37.468911,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0562</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:50AM <br> BREAK-Traffic Break <br> Tamalpais Dr W Onr / Us101 N </p>
+  <p align="left">Sep 11 2025 10:57AM [5] PER RP / OUT W/ 1125 TRLR REQ BRK SO THE CAN HOOK UP TRLR<br />Sep 11 2025 10:53AM [2] CALTRANS HAS TL HOODED UP IN NARROW LANE<br />Sep 11 2025 10:52AM [1] CALTRANS ASKING FOR TRFC BREAK START JSO TAMALPAIS DR ONR <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.515251,37.928312,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0547</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:49AM <br> 20002-Hit and Run No Injuries <br> Us101 N / San Bruno Ave Ofr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.400645,37.62345,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0548</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:48AM <br> FIRE-Report of Fire <br> Sr12 / Madrone Rd </p>
+  <p align="left">Sep 11 2025 10:49AM [1] BRUSH FIRE ON RHS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.497811,38.343925,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0543</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:44AM <br> FIRE-Report of Fire <br> Sr24 W / Martin Luther King Onr </p>
+  <p align="left">Sep 11 2025 10:59AM [26] [Notification] [CHP]-PER ANOTHER CALLER *** EB 24 ON 51ST OFR *** FLAMES ON LHS OF THE OFR / XFR OFD [Shared]<br />Sep 11 2025 10:58AM [24] XFER TO FIRE  [Shared]<br />Sep 11 2025 10:52AM [20] XFER OAK FIRE  [Shared]<br />Sep 11 2025 10:49AM [13] XFER FIRE  [Shared]<br />Sep 11 2025 10:48AM [6] PER ANOTHER -EB 24 AT 51ST ON CITY STREETS /VISUAL OF SMOKE [Shared]<br />Sep 11 2025 10:48AM [10] [Appended, 10:48:54] [4] [Address:  0 I580 W SR24 E CON] [Medium] [Officer Safety] ***POSS OFCR SAFETY ISSUE ON RAMP BEHIND CHP OFFICE***<br />Sep 11 2025 10:48AM [9] [Appended, 10:48:54] [3] XFER OAK FIRE<br />Sep 11 2025 10:47AM [7] [Appended, 10:48:54] [1] [Address:  0 I580 W SR24 E CON] [Medium] [Officer Safety] ***POSS OFCR SAFETY ISSUE ON RAMP BEHIND CHP OFFICE***<br />Sep 11 2025 10:46AM [3] XFER OAK FIRE <br />Sep 11 2025 10:45AM [1] SMOKE UNDER FRWY<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.267867,37.826726,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0511</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:15AM <br> 1125-Traffic Hazard <br> River Rd / Trenton Rd </p>
+  <p align="left">Sep 11 2025 10:36AM [18] [Rotation Request Comment] 1039 Sebastopol Tow (XXX) XXX-XXXX [Shared]<br />Sep 11 2025 10:35AM [17] A17-032 PART BLKG WB LN 1185 EXP  [Shared]<br />Sep 11 2025 10:31AM [13] TRYING TO GET VEH OO RDWY <br />Sep 11 2025 10:31AM [12] [Notification] [CHP]-PER ANOTHER MALE OO VEH  PUSHING THE VEH <br />Sep 11 2025 10:15AM [3] PART BLKG RDWY<br />Sep 11 2025 10:15AM [2] OOG <br />Sep 11 2025 10:15AM [1] WHI PK TK ON RHS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.887042,38.491146,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0398</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:06AM <br> CLOSURE of a Road <br> Sr24 W / Saint Stephens Dr Onr </p>
+  <p align="left">Sep 11 2025  9:07AM [1] ONR CLOSED TIL 1400 / CLEARING ILLEGAL DUMPING<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#full-closure</styleUrl>
+  <Point><coordinates>-122.174599,37.890168,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0369</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:48AM <br> MZP-Assist CT with Maintenance <br> I680 S / Bollinger Canyon E Onr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.963575,37.75706,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0236</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:26AM <br> CLOSURE of a Road <br> Sr1 / Burke Ave </p>
+  <p align="left">Sep 11 2025  7:27AM [3] WILL BE CLOSING THE SB LN AND DOING 1 WAY TRFC CONTROL <br />Sep 11 2025  7:27AM [2] CLOSURE FRM 0700 TO 1500 FOR SHOULDER REPAIR<br />Sep 11 2025  7:26AM [1] CLOSURE FRM BURK AVE TO VISTA POINT <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#full-closure</styleUrl>
+  <Point><coordinates>-123.124451,38.450465,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0206</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:59AM <br> MZP-Assist CT with Maintenance <br> 2434 Whipple Rd </p>
+  <p align="left">Sep 11 2025 10:59AM [21] 1039 AWS - 1036M BENCH WARR - PC 496DA - $2500 BAIL / CITEABLE OO ALAMEDA COUNTY<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.061627,37.60656,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0199</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:53AM <br> MZP-Assist CT with Maintenance <br> Sr84 / University Ave Ofr </p>
+  <p align="left">Sep 11 2025  6:53AM [2] [Intersection:  Sr84 / University Ave Ofr] [Medium] [Information] PLEASE CHECK CHP JURISDICTION FOR ANY INCIDENTS INVOLVING GENERAL CRIME ON LAND SOUTH OF SR84 BETWEEN WILLOW RD and UNIVERSITY AVE, AKA "THE FIELDS".<br />Sep 11 2025  6:53AM [1] [Intersection:  SR84] [Medium] [Information] PLEASE CHECK CHP JURISDICTION FOR ANY INCIDENTS INVOLVING GENERAL CRIME ON LAND SOUTH OF SR84 BETWEEN WILLOW RD and UNIVERSITY AVE, AKA "THE FIELDS".<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.144035,37.485017,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911GG0131</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:14AM <br> MZP-Assist CT with Maintenance <br> Sr128 / Geyserville Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.917498,38.714537,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910GG1801</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025 11:37PM <br> CZP-Assist with Construction <br> I80 E / Toll Plaza (tp) </p>
+  <p align="left">Sep 10 2025 11:38PM [1] 22-CZP3  VEH  122073 BM  103240 TIL  1400 <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-122.226636,38.069178,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910GG1039</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025  3:09PM <br> WIND Advisory <br> I580 E / NORTH FLYNN RD OFR </p>
+  <p align="left">Sep 10 2025  3:10PM [2] 1039 DO TCC<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.662296,37.71868,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911VT0115</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:51AM <br> 1125A-Animal Hazard <br> Us101 S / So Lewis Rd </p>
+  <p align="left">Sep 11 2025 10:53AM [1] LARGE POSSUM IN 1 LN<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.034167,34.216667,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911VT0031</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:31AM <br> MZP-Assist CT with Maintenance <br> 610 Spring Rd </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.874632,34.282974,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910VT0268</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><p align="left">Sep 10 2025 11:11PM <br> CLOSURE of a Road <br> 4656 Valentine Rd </p>
+  <p align="left">Sep 11 2025  9:09AM [7] ^ NEW ETO IS APPROX 1300 hrs <br />Sep 11 2025  1:28AM [6] ^UNKOWN ETO EXACT FOR 118 OR BRADLEY - APPROXIMATING 4 HOURS (0530) <br />Sep 11 2025  1:27AM [5] ^BRADLEY RD AT BERYLWOOD RD <br />Sep 11 2025  1:27AM [4] ^WB SR118 AT SR34 <br />Sep 11 2025  1:27AM [3] ^EB SR118 AT AGGEN <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#full-closure</styleUrl>
+  <Point><coordinates>-119.228308,34.260689,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MY0120</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:40AM <br> 1125-Traffic Hazard <br> Crg12 / Elkhorn Rd </p>
+  <p align="left">Sep 11 2025 10:45AM [7] RP THINKS THERE SHOULD BE ETTER SIGNAGE AND A BETTER WEY TO BLOCK OFF THIS DIP ON THE RDWY <br />Sep 11 2025 10:44AM [6] THIS IS FOR VEHS TURNING ONTO ELKHORN FRM HALL RD <br />Sep 11 2025 10:43AM [5] 1 VEH DID GET STUCK AND HAD TO BE PULLED OUT W/A TRUCK<br />Sep 11 2025 10:43AM [4] VEHS ARE IGNORING THIS AND TRYING TO MAKE THE TURN / NEARLY CAUSING A TC<br />Sep 11 2025 10:41AM [2] ROAD WORK BEING DONE IN THIS AREA <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.743614,36.868606,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MY0102</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:47AM <br> 1013-Road/Weather Conditions <br> Us101 S / Sr25 </p>
+  <p align="left">Sep 11 2025  9:49AM [6] 1039 DOTCC<br />Sep 11 2025  9:48AM [3] PLEASE ACTIVATE SIGN ON SB SID ADV SLOW TRAFFIC AHEAD / TRAFFIC IS STILL BACKED UP PAST BETABEL FROM EALIER TC<br />Sep 11 2025  9:47AM [2] [Geographic Area:  US101 S / SR25] [Medium] [Information] When Santa Clara CO FD is listed as the Fire Agency in ECT - They handle all fire calls except vegetation fires.  Transfer veg fires to Calfire MH.<br />Sep 11 2025  9:47AM [1] [Geographic Area:  0 US101 S / SR25] [Medium] [Information] When Santa Clara CO FD is listed as the Fire Agency in ECT - They handle all fire calls except vegetation fires.  Transfer veg fires to Calfire MH.<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.551788,36.963797,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MY0058</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:25AM <br> MZP-Assist CT with Maintenance <br> US101 N  / SGTS OC </p>
+  <p align="left">Sep 11 2025  9:45AM [6] [Geographic Area:  US101 N  / SGTS OC] [Medium] [Information] When Santa Clara CO FD is listed as the Fire Agency in ECT - They handle all fire calls except vegetation fires.  Transfer veg fires to Calfire MH.<br />Sep 11 2025  9:45AM [5] [Geographic Area:  0 US101 N  / SGTS OC] [Medium] [Information] When Santa Clara CO FD is listed as the Fire Agency in ECT - They handle all fire calls except vegetation fires.  Transfer veg fires to Calfire MH.<br />Sep 11 2025  9:45AM [4] MOWING CD NB AT SGTS NEG 1125 <br />Sep 11 2025  7:25AM [1] [Geographic Area:  11155 NO NAME UNO] [Medium] [Information] When Santa Clara CO FD is listed as the Fire Agency in ECT - They handle all fire calls except vegetation fires.  Transfer veg fires to Calfire MH.<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.5475,36.929167,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MY0051</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:48AM <br> MZP-Assist CT with Maintenance <br> Us101 N / Espinosa Gnfld </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.228889,36.308611,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MY0037</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:46AM <br> MZP-Assist CT with Maintenance <br> SR17 S / Glenwood Cutoff </p>
+  <p align="left">Sep 11 2025  5:46AM [1] [Premise:  Caltrans Sncz [195 CAPITOLA RD EXT]] [Medium] [Information] SSP SAFETY SERVICE PROGRAM<br />Sep 11 2025  5:46AM [2] [Premise:  0 CALTRANS SNCZ [195 CAPITOLA RD EXT]] [Medium] [Information] SSP SAFETY SERVICE PROGRAM<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-121.976669,37.099923,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SL0043</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:21AM <br> CZP-Assist with Construction <br> Foxen Canyon Rd / Sr154 </p>
+  <p align="left">Sep 11 2025  9:21AM [1] 0900-1600 HRS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.122938,34.667973,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SL0036</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:05AM <br> CZP-Assist with Construction <br> Us101 S / Palmer Rd </p>
+  <p align="left">Sep 11 2025  9:26AM [2] 14-S2 #1 LN CLOSED 300 FT SB JNO SOLOMON<br />Sep 11 2025  9:05AM [1] 14-S2 VEH 1633337 BM 37287<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.333029,34.791584,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911VT0058</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:42AM <br> 20002-Hit and Run No Injuries <br> SR1 / US101 S SR1 OFR </p>
+  <p align="left">Sep 11 2025 10:46AM [26] LPD ADVS LAST CALL OF SERVICE IN 2020 FOR SUSP VEH<br />Sep 11 2025  9:13AM [21] A3-004 1098,  2 VEH 20002<br />Sep 11 2025  8:17AM [19] C74 RP SENT PHOTO OF BACK OF THE VEH // HAVE BLU/RED LOGO ON BACK OF VEH PG TRUCKING INC.  //  CONTRACT W/POSTAL SERVICE // C74 WILL BE ENRT TO HUB ON STORKE FOR FOLLOW UP<br />Sep 11 2025  8:02AM [17] CO-C74 UTL TO LAS VARAS // SPOKE W/RP NO FURTHER IDENTIFYING INFO // VEH LEFT TC SCENE AT APPROX 0730<br />Sep 11 2025  7:46AM [6] VV  CONTRACTOR FOR CT - AVILA TRAFFIC SAFETY TK  // 1023 IN THE DIRT LOT   NEXT TO SR1 OFR<br />Sep 11 2025  7:43AM [2] SV DID PULL OVER  AT THE OFR   THEN TOOK OFF  <br />Sep 11 2025  7:43AM [1] OCCD SB 101 JNO SR1 OFR APPROX 10 AGO   <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.226324,34.509479,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911SL0023</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:57AM <br> CZP-Assist with Construction <br> US101 N / MONTEREY ST OFR </p>
+  <p align="left">Sep 11 2025  7:11AM [5] 9-N8 VEH 2367 BM 33617<br />Sep 11 2025  6:57AM [1] 0730-1500 HRS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.650512,35.291741,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LAFSP0076</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:55AM <br> 1125-Traffic Hazard <br> I10 E / Del Mar Ave </p>
+  <p align="left">Sep 11 2025 10:55AM [1] EB 10 AT DEL MAR - GP / BLK CHEV PK / 10-6<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.099592,34.07175,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LAFSP0075</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:54AM <br> 1183-Trfc Collision-Unkn Inj <br> I210 W / Lone Hill Ave </p>
+  <p align="left">Sep 11 2025 10:53AM [1] [1] 3 VEH TC // BLKING HOV LN[Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.828757,34.121033,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0834</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:53AM <br> 1125-Traffic Hazard <br> La105159 I105 W / Lakewood Blvd </p>
+  <p align="left">Sep 11 2025 10:56AM [8] [Notification] [CHP]-PER DUPE- BGE VEH W/ OPEN BED DROPPED COUCH - POSS GOING BACK TO 1020 ABOVE  [Shared]<br />Sep 11 2025 10:55AM [6] PER DUPE LARGE SOFA BLKNG THE #2 LN  [Shared]<br />Sep 11 2025 10:53AM [2] NO STOPPED VEH <br />Sep 11 2025 10:53AM [1] LARGE WOODEN OBJ IN # 3 LN <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.142285,33.913239,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0837</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:52AM <br> 1182-Trfc Collision-No Inj <br> I5 N / Indiana St </p>
+  <p align="left">Sep 11 2025 10:53AM [2] BOTH ON RS<br />Sep 11 2025 10:53AM [1] 2 V EH TC<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.192255,34.020302,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0833</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:52AM <br> 1183-Trfc Collision-Unkn Inj <br> I210 W / Lone Hill Ave </p>
+  <p align="left">Sep 11 2025 10:53AM [1] 3 VEH TC // BLKING HOV LN<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.828757,34.121033,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0830</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:46AM <br> 1125-Traffic Hazard <br> I210 W / Sr210 W Sr57 S Con </p>
+  <p align="left">Sep 11 2025 10:58AM [18] 38C - EXITING LONE HILL / SOLO TC [Shared]<br />Sep 11 2025 10:58AM [17] A81-207 FSP TAKING VEH OFF AT LONEHILL  [Shared]<br />Sep 11 2025 10:51AM [16] 38C 97 - TRAFFIC HOT / WB JEO 57 [Shared]<br />Sep 11 2025 10:51AM [13] [FSP] has closed their incident [250911LAFSP0074]<br />Sep 11 2025 10:50AM [4] PLS ROLL FSP BT 602-038 [Shared]<br />Sep 11 2025 10:49AM [1] RP IN GRN VW SD IN CD // VEH HAS FLT TIRE<br />Sep 11 2025 10:44AM [7] [Appended, 10:51:02] [1]  HOV  LN  GRN VW  SEDAN   HIT CD  <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.812914,34.119879,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LAFSP0072</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:45AM <br> 1182-Trfc Collision-No Inj <br> I210 W / SR57 N </p>
+  <p align="left">Sep 11 2025 10:58AM [19] 38C - EXITING LONE HILL / SOLO TC [Shared]<br />Sep 11 2025 10:58AM [18] A81-207 FSP TAKING VEH OFF AT LONEHILL  [Shared]<br />Sep 11 2025 10:51AM [17] 38C 97 - TRAFFIC HOT / WB JEO 57 [Shared]<br />Sep 11 2025 10:51AM [8] [FSP] has closed their incident [250911LAFSP0074]<br />Sep 11 2025 10:51AM [7] [CHP] has closed their incident [250911LA0818]<br />Sep 11 2025 10:50AM [13] [Appended, 10:51:04] [4] PLS ROLL FSP BT 602-038 [Shared]<br />Sep 11 2025 10:49AM [10] [Appended, 10:51:04] [1] [1] RP IN GRN VW SD IN CD // VEH HAS FLT TIRE[Shared]<br />Sep 11 2025 10:44AM [1] [1]  HOV  LN  GRN VW  SEDAN   HIT CD  [Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.838627,34.119821,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0804</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:40AM <br> 1125-Traffic Hazard <br> Sr2 S / I5 S Sr2 W Con </p>
+  <p align="left">Sep 11 2025 10:40AM [5] 50C REQ BREAK AT FLETCHER ** [Shared]<br />Sep 11 2025 10:39AM [3] [3] 50C REQ BREAK AT SAN FERNANDO RD [Shared]<br />Sep 11 2025 10:39AM [2] [2] 50C PTY HAS LEFT FLT TIRE NEG SPARE - REQ CHP FOR BREAK TO MOVE PTY TO RS [Shared]<br />Sep 11 2025 10:37AM [1] [1] SB 2 AT 5 TK IN CD  / TURNING AT SAN FERNANDO[Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.252252,34.098546,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0809</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:39AM <br> 1183-Trfc Collision-Unkn Inj <br> 26730 Old Rock Rd </p>
+  <p align="left">Sep 11 2025 10:54AM [7] 1039 LACORDS CPYS<br />Sep 11 2025 10:50AM [5] [Rotation Request Comment] 1039 ECO TOW (XXX) XXX-XXXX ENRT W/ TRK<br />Sep 11 2025 10:49AM [4] 78-506 REQ 1185 FOR WHI VW JETTA HALF WAY UP THE SIDEWALK<br />Sep 11 2025 10:41AM [3] ELDERLY XRAY DRIVER OO VEH <br />Sep 11 2025 10:41AM [2] WHI VW JETTA VS STREET SIGN <br />Sep 11 2025 10:39AM [1] SOLO VEH TC<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.592787,34.404436,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0802</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:37AM <br> 1125-Traffic Hazard <br> Sr91 E / Wo Lakewood Blvd </p>
+  <p align="left">Sep 11 2025 10:39AM [1] LOOSE  CONCRETE ON # 3 LN  <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.147722,33.876957,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LAFSP0071</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:37AM <br> 1125-Traffic Hazard <br> Sr2 S / I5 S Sr2 W Con </p>
+  <p align="left">Sep 11 2025 10:40AM [5] 50C REQ BREAK AT FLETCHER ** [Shared]<br />Sep 11 2025 10:39AM [3] 50C REQ BREAK AT SAN FERNANDO RD <br />Sep 11 2025 10:39AM [2] 50C PTY HAS LEFT FLT TIRE NEG SPARE - REQ CHP FOR BREAK TO MOVE PTY TO RS <br />Sep 11 2025 10:37AM [1] SB 2 AT 5 TK IN CD  / TURNING AT SAN FERNANDO<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.252252,34.098546,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0777</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:18AM <br> 1166-Defective Traffic Signals <br> I210 W / Pennsylvania Ave Ofr </p>
+  <p align="left">Sep 11 2025 10:23AM [3] 10  -39  GLDLPD   FOR    OFR   <br />Sep 11 2025 10:19AM [1] OFR   AND   3  WAY  SIGNALS    BLACKED  OUT <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.244968,34.221334,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0778</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:17AM <br> 20002-Hit and Run No Injuries <br> 4281 Bandini Blvd </p>
+  <p align="left">Sep 11 2025 10:18AM [1] SUSP VEH:  SEMI TK TRLR PLT/4HB3346<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.186114,34.001967,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LAFSP0068</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:15AM <br> 1183-Trfc Collision-Unkn Inj <br> I605 S / SR60 </p>
+  <p align="left">Sep 11 2025 10:54AM [26] [Rotation Request Comment] 1039 CITYWIDE TOW (XXX) XXX-XXXX ENRT W/ TRK [Shared]<br />Sep 11 2025 10:52AM [25] A82-620 REQ 1185 FOR A TESLA W/MAJ FRONT END DAMAGE ALL WHEELS LOCKED UP // ADV PARTIES OFF ON PECK [Shared]<br />Sep 11 2025 10:41AM [22] [Notification] [CHP]-Problem changed from 20002-Hit and Run No Injuries to 1182-Trfc Collision-No Inj [Shared]<br />Sep 11 2025 10:41AM [21] A82-620 NEG 20002 // ALL VEHS INVLD 97 [Shared]<br />Sep 11 2025 10:30AM [18] [Appended, 10:32:41] [4] WHI TESLA MODEL S  VS GRY TESLA  MODEL Y BLKG # 2 LN   [Shared]<br />Sep 11 2025 10:23AM [14] A82-620  W/A VISUAL // CORR 1020 SB JNO SR60 BLKNG [Shared]<br />Sep 11 2025 10:21AM [15] [Appended, 10:32:41] [1] OPEN LINE N/R DISCD/ RECALL [Shared]<br />Sep 11 2025 10:17AM [3] [FSP] has closed their incident [250911LAFSP0067]<br />Sep 11 2025 10:15AM [1] 2 TESLAS IN #2 LN<br />Sep 11 2025 10:14AM [7] [Appended, 10:17:02] [3] [3] BLKG # 3 LN [Shared]<br />Sep 11 2025 10:14AM [6] [Appended, 10:17:02] [2] [2] SV - UNK VEH [Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.027405,34.033964,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0775</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:14AM <br> 20002-Hit and Run No Injuries <br> Sepulveda Blvd / Dartford Way </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.47983,34.132624,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0770</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:13AM <br> 1182-Trfc Collision-No Inj <br> I605 S / I605 S Sr60 Con </p>
+  <p align="left">Sep 11 2025 10:54AM [23] [Rotation Request Comment] 1039 CITYWIDE TOW (XXX) XXX-XXXX ENRT W/ TRK [Shared]<br />Sep 11 2025 10:52AM [22] A82-620 REQ 1185 FOR A TESLA W/MAJ FRONT END DAMAGE ALL WHEELS LOCKED UP // ADV PARTIES OFF ON PECK [Shared]<br />Sep 11 2025 10:41AM [19] [Notification] [CHP]-Problem changed from 20002-Hit and Run No Injuries to 1182-Trfc Collision-No Inj [Shared]<br />Sep 11 2025 10:41AM [18] A82-620 NEG 20002 // ALL VEHS INVLD 97 [Shared]<br />Sep 11 2025 10:30AM [15] [Appended, 10:32:41] [4] WHI TESLA MODEL S  VS GRY TESLA  MODEL Y BLKG # 2 LN  <br />Sep 11 2025 10:23AM [11] A82-620  W/A VISUAL // CORR 1020 SB JNO SR60 BLKNG [Shared]<br />Sep 11 2025 10:21AM [12] [Appended, 10:32:41] [1] OPEN LINE N/R DISCD/ RECALL<br />Sep 11 2025 10:17AM [9] [FSP] has closed their incident [250911LAFSP0067]<br />Sep 11 2025 10:14AM [3] BLKG # 3 LN <br />Sep 11 2025 10:14AM [2] SV - UNK VEH <br />Sep 11 2025 10:14AM [1] VV - GRY TESLA MODEL Y  // 2ND UNK VEH<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.023745,34.036763,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0753</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:02AM <br> 20002-Hit and Run No Injuries <br> 13116 Fairgrove Ave </p>
+  <p align="left">Sep 11 2025 10:25AM [22] 1039 RP --- STILL 1097 JSO I/S --- 13116 FAIRGROVE  JSO FRAZIER -- [Shared]<br />Sep 11 2025 10:16AM [19] RP BACK LL ADVISED HE HAD FOLLOWED SV TO ABOVE 1020/ HE TRIED TO MAKE CONTACT WITH DRIVER OF SV AND DRIVER ATTEMPTED TO HIT HIM WITH HER VEH/ RP ADVISED VEH TOOK OFF AND  HAS FOOTAGE OF INCIDENT [Shared]<br />Sep 11 2025 10:11AM [17] ----- POSS WITNESS INFO IN SUPPLEMENTAL FIELD -- PTY STATED WHI BMW WAS 23103 PRIOR TO TC  ----  [Shared]<br />Sep 11 2025 10:06AM [10] [Appended, 10:06:41] [3] UNK IF BLKING<br />Sep 11 2025 10:05AM [9] [Appended, 10:06:41] [2] WHI BMW WAS 23103 PRIOR TO TC <br />Sep 11 2025 10:05AM [8] [Appended, 10:06:41] [1] WHI BMW SUV VS GRY TOYT TUN <br />Sep 11 2025 10:04AM [4] SV LN 2<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.987757,34.069296,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0715</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:47AM <br> 1179-Trfc Collision-1141 Enrt <br> I10 W / S Robertson Blvd </p>
+  <p align="left">Sep 11 2025 10:15AM [10] [Notification] [CHP]-3A SO#38987147 PRO TOW UNK ETA <br />Sep 11 2025 10:05AM [8] CORR TO LINE 7 ** 97 W/ FIRE BLKG HOV LN<br />Sep 11 2025  9:54AM [6] [Notification] [CHP]-[5] 1039 QUICKSILVER TOW 310-478 -1201 ENRT W/ FB TRK<br />Sep 11 2025  9:53AM [5] 1039 QUICKSILVER TOW 310-478 -1201 ENRT W/ FB TRK<br />Sep 11 2025  9:52AM [4] 63 REQ 1 1185 FLT/BD FOR MC<br />Sep 11 2025  9:49AM [1] RP VEH MC RIDER ON THE RS  // VS TAN NISS SUV<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.391136,34.030837,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0696</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:40AM <br> 1182-Trfc Collision-No Inj <br> Crenshaw Blvd / Manhattan Beach Blvd </p>
+  <p align="left">Sep 11 2025 10:18AM [6] RP RECALLING FOR ETA - ADVSD UNITS ARE 10-6 W/   LOG /727 AND WILL RESPOND ASAP- NO ETA AT THE MOMENT [Shared]<br />Sep 11 2025  9:42AM [3] 3200 BLOCK OF MANHATTAN BEACH <br />Sep 11 2025  9:41AM [1] 2 VEH TC  //  WHI SD VS UNK<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.326602,33.88739,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LAFSP0058</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:33AM <br> 1179-Trfc Collision-1141 Enrt <br> I5 N / LAKEWOOD BLVD OFR </p>
+  <p align="left">Sep 11 2025 10:52AM [31] [CHP] has closed their incident [250911LA0682]<br />Sep 11 2025 10:43AM [30] A83-500  3 VEH 1182 [Shared]<br />Sep 11 2025  9:58AM [29] CHP  ID 20014 16B  MOVED VEH  TO R/S [Shared]<br />Sep 11 2025  9:56AM [28] [Rotation Request Comment] 1039 A and F TOWING (XXX) XXX-XXXX ENRT WITH FLTBED // 20 OR LESS [Shared]<br />Sep 11 2025  9:55AM [27] 83-650 REQ 1185 FOR AUDI - ALL WHEEL DRIVE  [Shared]<br />Sep 11 2025  9:52AM [26] A83-650 RDWY CLR  [Shared]<br />Sep 11 2025  9:46AM [25] 1039 DOWNEY FD // CPYS 1022 [Shared]<br />Sep 11 2025  9:45AM [24] 83-650 1022 FIRE [Shared]<br />Sep 11 2025  9:41AM [23] 83-650 97 // BLKG THE # 1 LN [Shared]<br />Sep 11 2025  9:37AM [20] [Notification] [FSP]-FSP  1097 NB  5 JSO  LAKEWOOD   [Shared]<br />Sep 11 2025  9:34AM [9] [Appended, 09:35:36] [2] BLKG LNS  [Shared]<br />Sep 11 2025  9:34AM [8] [Appended, 09:35:36] [1] GRY AUDI A5 VS UNK VEH VS UNK VEH  [Shared]<br />Sep 11 2025  9:33AM [13] [Appended, 09:36:32] [3] OPEN LINE / NEG ANSWER [Shared]<br />Sep 11 2025  9:32AM [2] [2] ALL VEHS BLKG #1 LN [Shared]<br />Sep 11 2025  9:32AM [1] [1] THREE VEH TC - GRY VOLKS ATLAS VS GRY AUDI VS ADTL VEH[Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.109039,33.956024,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0669</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:25AM <br> 1144-Fatality <br> SR108 / LEAVITT MEADOWS PACK STATION </p>
+  <p align="left">Sep 11 2025  9:28AM [68] [CHP] has closed their incident [250911MR0089]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.55403,38.324469,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0614</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:50AM <br> BREAK-Traffic Break <br> I10 W / Dudley St Ofr </p>
+  <p align="left">Sep 11 2025  8:51AM [1] CT REQ BREAK TO START AT WHITE TO SET UP RAMP CLOSURE AT DUDLEY<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.775346,34.072817,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0596</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:40AM <br> SIG Alert <br> Us101 N / W Sunset Blvd Ofr </p>
+  <p align="left">Sep 11 2025  9:31AM [6] SIG ALERT EXTENDED FOR 5 HRS <br />Sep 11 2025  9:31AM [5] SIG ALERT UPDATED ON THE BLU;<br />Sep 11 2025  8:43AM [4] SIG ALERT ISSUED ON THE BLU <br />Sep 11 2025  8:42AM [3] 15-072 SIG ALERT FOR #3/4 LNS APPROX 1 HR NB 101 JNO WESTERN<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.313956,34.097467,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0580</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:29AM <br> 1182-Trfc Collision-No Inj <br> 406 N Azusa Ave </p>
+  <p align="left">Sep 11 2025  8:30AM [1] SCHOOL BUS INVLD W/ THREE STUDENTS ON-BOARD VS CONSTRUCTION STOP SIGN<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.90755,34.128138,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0545</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:13AM <br> MZP-Assist CT with Maintenance <br> Sr60 E / Santa Anita Ave Onr </p>
+  <p align="left">Sep 11 2025  8:13AM [2] SHUTTING DOWN SB SANTA ANITA ONR TO EB 60 -- FOR LANDSCAPING <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.052233,34.039713,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0504</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:49AM <br> 1179-Trfc Collision-1141 Enrt <br> Us101 N / W Sunset Blvd Ofr </p>
+  <p align="left">Sep 11 2025  9:31AM [28] TMC COPIES SIG UPDATE - 1039 MEDIA<br />Sep 11 2025  9:30AM [27] SIG ALERT UPDATED ON THE BLU <br />Sep 11 2025  9:28AM [26] A15-072 CT SUPERVISOR 97 AND ADVS IMMED HAZ AND NEED TO EXT'D SIG FOR 5 HRS FOR #3/4 LNS [Shared]<br />Sep 11 2025  8:52AM [24] [Notification] [CHP]-LA CAR CARRIER LL ADVISED ARE AN EXIT AWAY // ADIVED STUCK IN HEAVY / REQ IF CHP CAN OPEN UP A LANE  [Shared]<br />Sep 11 2025  8:43AM [22] TMC COPIES SIG - 1039 MEDIA [Shared]<br />Sep 11 2025  8:43AM [21] SIG ALERT ISSUED ON THE BLU [Shared]<br />Sep 11 2025  8:40AM [18] A15-072 LILA,PLS ISSUE SIG FOR #3/4 LNS  FOR APPROX 1 HR  NB 101 JNO WESTERN [Shared]<br />Sep 11 2025  8:40AM [17] [Notification] [CHP]-10-4, pls 1023 for eta [Shared]<br />Sep 11 2025  8:39AM [16] [FSP] has closed their incident [250911LAFSP0037]<br />Sep 11 2025  8:39AM [14] PER 15-72 THERE IS A LRG CRACK IN #3 LN  JNO WESTERN // 15-72   HOLDING #3/4 LN // ISSUE  SIG FOR 1HR [Shared]<br />Sep 11 2025  8:19AM [13] [Rotation Request Comment] 1039 LA Car Carrier Inc  (XXX) XXX-XXXX ETA 25 OR LESS [Shared]<br />Sep 11 2025  8:16AM [12] PER 15-72 ROLL 1185 [Shared]<br />Sep 11 2025  7:56AM [11] 1039 LAFD OP- 210 INC- 354  [Shared]<br />Sep 11 2025  7:55AM [10] UNK DEBRI HIT VEHS WINDSHIELD  [Shared]<br />Sep 11 2025  7:51AM [2] STOPPED ON RHS<br />Sep 11 2025  7:50AM [1] GRY HOND CRV VS UNK OBJ<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.313956,34.097467,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0501</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:48AM <br> MZP-Assist CT with Maintenance <br> Caltrans-no Ho (moorpark) </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.374738,34.150369,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0426</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:04AM <br> MZP-Assist CT with Maintenance <br> I210 E / Michillinda Ave </p>
+  <p align="left">Sep 11 2025  8:31AM [3] UNTIL 1300 HRS <br />Sep 11 2025  8:30AM [2] HOV LANE CLOSED FROM MICHILINDA TO SANTA ANITA  UNTIL 1300 HRS <br />Sep 11 2025  7:05AM [1] UNTIL 1100 HRS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.067704,34.148542,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0423</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:02AM <br> MZP-Assist CT with Maintenance <br> 4425 E 3rd St </p>
+  <p align="left">Sep 11 2025  7:54AM [3] [Appended, 07:59:42] [1] TILL APPROX 1300 HRS <br />Sep 11 2025  7:03AM [1] TIL 1330 HRS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.16893,34.033287,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0406</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:52AM <br> MZP-Assist CT with Maintenance <br> Caltrans-la (15th St) </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.240618,34.023854,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0380</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:42AM <br> MZP-Assist CT with Maintenance <br> Caltrans-la-riverside Dr </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.250379,34.100413,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0375</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:37AM <br> MZP-Assist CT with Maintenance <br> Caltrans-la (heliotrope) </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.295362,34.08203,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0371</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:36AM <br> MZP-Assist CT with Maintenance <br> Caltrans-altadena </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.168639,34.18218,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0358</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:30AM <br> MZP-Assist CT with Maintenance <br> Caltrans-torrance (bailey Dr) </p>
+  <p align="left">Sep 11 2025  6:31AM [1] 79-E61 AND 79-E19 UNTIL APPROX 1430 HRS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.347052,33.866803,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0341</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:20AM <br> MZP-Assist CT with Maintenance <br> Caltrans-north Hills </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.469563,34.28657,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0336</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:19AM <br> MZP-Assist CT with Maintenance <br> SR91 W / ARTESIA BLVD </p>
+  <p align="left">Sep 11 2025  8:08AM [2] WB 91 FM COYOTE CREEK TO ARTESIA TIL 1400HRS -- SAFETY MEETING CONDUCTED ---- RS  WORK ONLY NO LNS AFFECTED <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.060137,33.87325,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0339</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:19AM <br> MZP-Assist CT with Maintenance <br> Caltrans-north Hills </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.469563,34.28657,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0303</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:03AM <br> MZP-Assist CT with Maintenance <br> 2122 Windsor Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.168701,34.182205,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0282</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:53AM <br> MZP-Assist CT with Maintenance <br> 2130 Windsor Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.168666,34.182381,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0263</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:40AM <br> MZP-Assist CT with Maintenance <br> SR14 N / WARD RD OFR </p>
+  <p align="left">Sep 11 2025  7:05AM [2] CT SETTING UP HARD CLOSURE // NB 14 AT WARD OFR TIL 1500 HRS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.228371,34.500534,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0252</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:36AM <br> MZP-Assist CT with Maintenance <br> Sr91 W / Wo Paramount Blvd </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.16377,33.876086,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0249</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:35AM <br> MZP-Assist CT with Maintenance <br> 5360 W Imperial Hwy </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.367531,33.930907,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0246</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:33AM <br> MZP-Assist CT with Maintenance <br> Caltrans-wla-s Sepulveda </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.430971,34.031048,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0242</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  5:31AM <br> MZP-Assist CT with Maintenance <br> Caltrans-long Beach (santa Fe) </p>
+  <p align="left">Sep 11 2025  7:20AM [4] SB 405 TO SB 710 CLOSED FOR MAINTENANCE 1300 HOURS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.216158,33.826786,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911LA0001</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025 11:59PM <br> 1013-Road/Weather Conditions <br> Media Log </p>
+  <p align="left">Sep 11 2025  9:31AM [12] SIGALERT UPDATE IN HOLLYWOOD: NB US-101 NORTH OF WESTERN AVENUE. THE #3/4 LANES WILL BE BLOCKED FOR APPROXIMATELY AN ADDITIONAL 5 HOURS DUE TO A TRAFFIC COLLISION. - REF LOG 0504<br />Sep 11 2025 12:00AM [1] ^MEDIA LOG FOR SEPTEMBER 11, 2025<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.227297,34.144921,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910LA2368</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025  9:41PM <br> CZP-Assist with Construction <br> I405 N / Wilshire Blvd </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.451951,34.055686,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911FR0122</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:51AM <br> 1125-Traffic Hazard <br> Grangeville Blvd / 6th Ave </p>
+  <p align="left">Sep 11 2025 10:55AM [3] RP ADVS THE TRACKS GROSS GRANGEVILLE NEAR A DAIRY CLOSE TO 6TH AVE <br />Sep 11 2025 10:53AM [1] APPEARS A SPIKE COMING OO THE RAIL RD TRACKS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.565065,36.342769,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911FR0121</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:50AM <br> 1179-Trfc Collision-1141 Enrt <br> 5274 Avenue 304 </p>
+  <p align="left">Sep 11 2025 10:59AM [16] [Notification] [CHP]-PER TUL CO FIRE // TWO WITNESS ON SCENE ADVS XRAY WAS 23103 PRIOR TO TC<br />Sep 11 2025 10:58AM [14] A67-093 MARKHAM JNOAVE 304  RESIDENCE WAS STRUCK STILL INTACT /START 1185<br />Sep 11 2025 10:52AM [10] XFR CALLER TO TUL CO FIRE  <br />Sep 11 2025 10:52AM [9] [Notification] [CHP]-Problem changed from 1182-Trfc Collision-No Inj to 1179-Trfc Collision-1141 Enrt by CHP<br />Sep 11 2025 10:51AM [3] VEH IS A SIL TOYT RAV4 <br />Sep 11 2025 10:51AM [2] VEH WENT THRU FENCE AND HIT SIDE OF HOUSE <br />Sep 11 2025 10:50AM [1] VEH INTO RESIDENCE <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.454371,36.341756,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911FR0109</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:16AM <br> 20002-Hit and Run No Injuries <br> 2513 E Rose Ave </p>
+  <p align="left">Sep 11 2025 10:18AM [2] POSS SEMI TK INVD<br />Sep 11 2025 10:17AM [1] VEH VS POLE.<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.744877,36.569174,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911FR0105</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:08AM <br> 1182-Trfc Collision-No Inj <br> E Vino Ave / S Reed Ave </p>
+  <p align="left">Sep 11 2025 10:19AM [6] 65-061 1185 FOR PK W/ MODERATE RIGHT SIDE DMG / VEH VS FIRE VEH 1182<br />Sep 11 2025 10:17AM [5] 65-061 PARTIAL 1125 / FIRE IS 97<br />Sep 11 2025 10:09AM [2] NEG 1125 <br />Sep 11 2025 10:09AM [1] BRUSH RIG AND CIVILIAN VEH <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.457499,36.658534,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911FR0053</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:46AM <br> 1181-Trfc Collision-Minor Inj <br> Sr41 / E Adams Ave </p>
+  <p align="left">Sep 11 2025  9:30AM [25] [Notification] [CHP]-Problem changed from 1179-Trfc Collision-1141 Enrt to 1181-Trfc Collision-Minor Inj by CHP [Shared]<br />Sep 11 2025  7:49AM [12] 1039 CAL FIRE LINE 3  [Shared]<br />Sep 11 2025  7:46AM [2] 1039 EMS FOR EQUIP <br />Sep 11 2025  7:46AM [1] ,, NOT INV / BOTH LANES 1125 / START 1141 / 1185 X3<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.785896,36.634246,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911FR0043</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:58AM <br> MZP-Assist CT with Maintenance <br> 1380 E Fortune Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.76409,36.689097,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MR0117</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:46AM <br> 1125-Traffic Hazard <br> Sr99 N / W 4th St Ofr </p>
+  <p align="left">Sep 11 2025 10:48AM [4] 1039 30 <br />Sep 11 2025 10:47AM [2] SLOW LN <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.063044,36.959955,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MR0096</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:39AM <br> 1125-Traffic Hazard <br> SR152 / Road 4 </p>
+  <p align="left">Sep 11 2025 10:27AM [59] A66-010 INQ ON THE COST TO TOW VEH TO SANTA CLARA  [Shared]<br />Sep 11 2025 10:21AM [56] [Rotation Request Comment] 1039 EPPLERS (XXX) XXX-XXXX [Shared]<br />Sep 11 2025 10:21AM [55] 1185  [Shared]<br />Sep 11 2025 10:14AM [44] 10 WB AT ROAD 4  [Shared]<br />Sep 11 2025 10:14AM [43] 11 HAD PARTY FLAG DOWN THE RP - VEH NOW EB SR152 AT SR59  [Shared]<br />Sep 11 2025 10:09AM [37] 13 VIS EB SR152 / VEH TAKING SR59 NB [Shared]<br />Sep 11 2025 10:08AM [34] 10 AT 152 / ROAD 13 [Shared]<br />Sep 11 2025 10:08AM [29] [Notification] [CHP]-ADDTL RP ADV NOW PASSING RD 4 - APPRCH SR59 [Shared]<br />Sep 11 2025 10:05AM [23] [Notification] [CHP]-PER ANOTHER, VEH IS NOW WB ON SR152 PASSING ROAD 7 [Shared]<br />Sep 11 2025 10:02AM [20] [Notification] [CHP]-RP LL AGAIN // LS TURNING ONTO ROAD 7 FINALLY PULLED OVER [Shared]<br />Sep 11 2025  9:54AM [17] [Notification] [CHP]-[16] Incident 250911MR0096 was reopened. Comment: Incident Reopened : ADDTL RP ON LL ADV VEH IS WB SR152 PASSING ROBERTSON / THROWING SPARKS POSS ON FIRE [Shared] [Shared]<br />Sep 11 2025  9:54AM [16] Incident 250911MR0096 was reopened. Comment: Incident Reopened : ADDTL RP ON LL ADV VEH IS WB SR152 PASSING ROBERTSON / THROWING SPARKS POSS ON FIRE [Shared]<br />Sep 11 2025  9:40AM [4] ADDTL RP BACK ON LL ADV VEH IS AT 65 ON THE RIM  [Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.473404,37.083501,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MR0080</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:57AM <br> 1125A-Animal Hazard <br> Road 30 / Avenue 21 </p>
+  <p align="left">Sep 11 2025  8:59AM [2] 1039 MRA SO FOR AC <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.001901,37.054109,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911MR0046</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:20AM <br> MZP-Assist CT with Maintenance <br> SR99 N / HATCH RD EAST OFR </p>
+  <p align="left">Sep 11 2025  8:11AM [2] 48-090 NB JSO HATCH CLOSING #1<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-120.974271,37.607045,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BF0066</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:15AM <br> 1166-Defective Traffic Signals <br> Beale Ave / Bernard St </p>
+  <p align="left">Sep 11 2025 10:27AM [6] PGE WEBSITE NOW SHOWING WIDE SPREAD POWER OUTAGE IN AREA / NO ETA TO RESTORE<br />Sep 11 2025 10:17AM [3] 1039 CORDS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.985024,35.390421,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BF0035</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:08AM <br> MZP-Assist CT with Maintenance <br> Nb I5 At Copus Rd </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.036944,35.095,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BF0030</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:45AM <br> MZP-Assist CT with Maintenance <br> 9855 Compagnoni St </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.024794,35.265234,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BF0017</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  3:41AM <br> TADV-Traffic Advisory <br> Bakersfield Traffic Advisories </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.024794,35.265234,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OC0172</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:58AM <br> 1125-Traffic Hazard <br> Sr22 W / Sr57 </p>
+  <p align="left">Sep 11 2025 10:59AM [1] LARGE DISHWASHER  ///MIDDLE LANE - GRY PKTK PULLED TO RS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.877501,33.779087,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OCFSP0030</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:57AM <br> 1125-Traffic Hazard <br> Sr22 W / Glassell St </p>
+  <p align="left">Sep 11 2025 10:57AM [4] [Appended, 10:58:05] [1] LRG FRIDGE BOX IN #2 LN [Shared]<br />Sep 11 2025 10:57AM [2] [2] GRY TRK THAT DROPPED IT IS NOW IN CD TRYING TO RETIEVE IT [Shared]<br />Sep 11 2025 10:57AM [7] [Appended, 10:58:06] [2] BOX IN MIDDLE LN  [Shared]<br />Sep 11 2025 10:56AM [1] [1] FRIDGE IN #2 LN [Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.853037,33.775743,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OC0166</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:55AM <br> 1125-Traffic Hazard <br> Sr22 W / Glassell St </p>
+  <p align="left">Sep 11 2025 10:57AM [4] [Appended, 10:58:05] [1] LRG FRIDGE BOX IN #2 LN<br />Sep 11 2025 10:57AM [2] GRY TRK THAT DROPPED IT IS NOW IN CD TRYING TO RETIEVE IT <br />Sep 11 2025 10:57AM [7] [Appended, 10:58:06] [2] BOX IN MIDDLE LN <br />Sep 11 2025 10:56AM [1] FRIDGE IN #2 LN <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.853037,33.775743,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OC0167</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:55AM <br> CFIRE-Car Fire <br> Goldenwest St Ofr / Bolsa Av Onr </p>
+  <p align="left">Sep 11 2025 10:55AM [1] WHI TOYT COA , ON FIRE , ON RS OF ONR <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.002905,33.742726,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OCFSP0026</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:09AM <br> 1125-Traffic Hazard <br> Sr55 N / 17th St </p>
+  <p align="left">Sep 11 2025 10:37AM [11] A86-551 RDWY CLR  [Shared]<br />Sep 11 2025 10:37AM [10] [CHP] has closed their incident [250911OC0148]<br />Sep 11 2025 10:08AM [1] [1] 3 BOXES IN #4 LN [Shared]<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.830894,33.759808,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OC0069</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:55AM <br> MZP-Assist CT with Maintenance <br> E Santa Clara Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.837929,33.767403,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OC0039</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:08AM <br> MZP-Assist CT with Maintenance <br> E Santa Clara Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.837929,33.767403,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OC0003</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><p align="left">Sep 11 2025 12:02AM <br> CLOSURE of a Road <br> 6681 Marine Way </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#full-closure</styleUrl>
+  <Point><coordinates>-117.757184,33.677582,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911OC0002</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 12:02AM <br> 1013-Road/Weather Conditions <br> 6681 Marine Way </p>
+  <p align="left">Sep 11 2025  5:12AM [1] ^TMC MEDIA LINE IS OPEN (XXX) XXX-XXXX<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.757184,33.677582,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911INFSP0145</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:57AM <br> 1125-Traffic Hazard <br> I15 S No / Limonite Ave Exit 103 </p>
+  <p align="left">Sep 11 2025 10:57AM [1] GRY BMW IN CD WILL AV<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.549062,33.985198,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911IN0282</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:47AM <br> 1125-Traffic Hazard <br> Sr60 E Wo / Ramona Ave </p>
+  <p align="left">Sep 11 2025 10:48AM [1] TIRE TREAD #2 and #4 <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.712334,34.029792,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911IN0278</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:31AM <br> 20002-Hit and Run No Injuries <br> Sr38 / Woodland Trl </p>
+  <p align="left">Sep 11 2025 10:35AM [8] RP STATES ALL OCCRD ON BRIDGE -- CANNOT PROV EXACT 1020 <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-116.889004,34.262709,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911IN0242</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:54AM <br> 1125-Traffic Hazard <br> I15 S So / Cajon Scales </p>
+  <p align="left">Sep 11 2025  9:54AM [2] A75-152 1125 #5 LN <br />Sep 11 2025  9:54AM [1] REQ 1185 HD<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.462112,34.303299,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911IN0213</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:04AM <br> CLOSURE of a Road <br> I210 W Wo / Highland Ave Arden </p>
+  <p align="left">Sep 11 2025  9:04AM [2] [Notification] [CHP]-Problem changed from INFO-Information to CLOSURE of a Road by CHP<br />Sep 11 2025  9:04AM [1] ,WB JWO HIGHLAND 3 LN AND DEL ROSA OFR<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#full-closure</styleUrl>
+  <Point><coordinates>-117.240972,34.138023,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911IN0055</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  4:45AM <br> 1013-Road/Weather Conditions <br> 13892 Victoria St </p>
+  <p align="left">Sep 11 2025  4:45AM [1] MEDIA LINES ARE OPEN (XXX) XXX-XXXX<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.503342,34.128313,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BC0306</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:57AM <br> 1125-Traffic Hazard <br> Sr15 S / Sr94 No </p>
+  <p align="left">Sep 11 2025 10:59AM [1] TIRE #2   <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.117043,32.721025,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BC0277</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:20AM <br> 1125-Traffic Hazard <br> Sr52 W / Summit </p>
+  <p align="left">Sep 11 2025 10:21AM [1] PLANK OF WOOD IN #1 LN<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.064069,32.854736,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BC0244</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:46AM <br> 1182-Trfc Collision-No Inj <br> I5 S / Manchester No </p>
+  <p align="left">Sep 11 2025  9:48AM [5] BOTH VEHS DRIVEABLE WILL 1023 IN CD <br />Sep 11 2025  9:48AM [4] GRY HOND CIV  // LBLU VOLK // BOTH IN CD FOR 1110<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.271046,33.016033,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BC0088</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:41AM <br> MZP-Assist CT with Maintenance <br> I5 N / Harbor (ocn) </p>
+  <p align="left">Sep 11 2025  9:03AM [4] 92-MZP3 TAKING THE  #1 NB 5 JNO HARBOR TO THE SANTA MARGARITA BRIDGE <br />Sep 11 2025  6:41AM [2] [Premise:  I5 N / Harbor (ocn) [I5 N HARBOR (OCN)]] [Medium] [Information] THIS LOC IS IN OCEANSIDE/CAMP PENDLETON AREA. VISIBLE LANDMARKS ARE COASTER STATION BETWEEN NB AND SB LANES, CAMP PEN NAVAL HOSPITAL<br />Sep 11 2025  6:41AM [1] [Premise:  0 I5 N [I5 N HARBOR (OCN)]] [Medium] [Information] THIS LOC IS IN OCEANSIDE/CAMP PENDLETON AREA. VISIBLE LANDMARKS ARE COASTER STATION BETWEEN NB AND SB LANES, CAMP PEN NAVAL HOSPITAL<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.387186,33.210583,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BC0083</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  6:37AM <br> MZP-Assist CT with Maintenance <br> 5902 Kearny Villa Rd </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.128056,32.839985,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BC0046</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  4:13AM <br> MZP-Assist CT with Maintenance <br> I15 N / Sr78 </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.104662,33.127108,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BC0002</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 12:00AM <br> 1013-Road/Weather Conditions <br> Media Log </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.120842,32.783489,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910BC0846</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025 10:03PM <br> CZP-Assist with Construction <br> Sr78 W / Mar Vista </p>
+  <p align="left">Sep 10 2025 10:32PM [1] 92-S6 WILL BE RUNNING A BREAK FOR CT ON THE EB SIDE<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.230322,33.18125,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910BC0785</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025  7:56PM <br> CZP-Assist with Construction <br> I15 N / Sr78 No </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.105366,33.130005,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910BC0775</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025  7:47PM <br> CZP-Assist with Construction <br> Sr76 / I15 </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.159089,33.331144,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910BC0707</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025  6:38PM <br> MZP-Assist CT with Maintenance <br> 8502 Railroad Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-116.971309,32.829686,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BI0031</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:39AM <br> 1182-Trfc Collision-No Inj <br> Us395 / Topaz Ag Station </p>
+  <p align="left">Sep 11 2025 10:40AM [1] 2 VEH 1182 / BOTH PRTYS STANDING BY REQ 1110<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.54822,38.681846,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BI0014</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  7:09AM <br> 1144-Fatality <br> SR108 / LEAVITT MEADOWS PACK STATION </p>
+  <p align="left">Sep 11 2025  9:52AM [66] LATE ENTRY ID-121 TRANS TO 71-12 <br />Sep 11 2025  7:57AM [46] CT ADVS CLOSURE SET FROM MM  5 TO 7  [Shared]<br />Sep 11 2025  7:53AM [45] 1039 MERCED  [Shared]<br />Sep 11 2025  7:53AM [44] PER 71-12 108 WILL BE TEMP CLOSED  [Shared]<br />Sep 11 2025  7:50AM [43] 1039 SILVER STATE W/ INFO [Shared]<br />Sep 11 2025  7:49AM [42] 71-013 INFO FOR 1185 30FT BOX TRK LOADED UNK AMOUNT METAL AND STEAL  [Shared]<br />Sep 11 2025  7:46AM [40] 71-12 REQ CMS SIGNS TO REFLECT ACCIDENT AHEAD / 1039 CT [Shared]<br />Sep 11 2025  7:44AM [39] 1039 SILVER STATE WITH UPDATES  [Shared]<br />Sep 11 2025  7:43AM [38] 1039 MONO1  [Shared]<br />Sep 11 2025  7:39AM [35] LATE ENTRY 71-14 WAS 97 WITH ONE PRTY OUTSIDE THE TRK WITH SHOUDLER INJ  [Shared]<br />Sep 11 2025  7:38AM [33] 71-S2 COPIES , REQ TO NOTIFY 71-S3 // 1039 71-S3 [Shared]<br />Sep 11 2025  7:22AM [25] [Rotation Request Comment] 1039 SILVER STATE [Shared]<br />Sep 11 2025  7:19AM [22] 71-014 REQ 1185 HD - SILVER STATE  [Shared]<br />Sep 11 2025  7:18AM [21] 1039 CT  [Shared]<br />Sep 11 2025  7:16AM [14] [Notification] [CHP]-Problem changed from 1183-Trfc Collision-Unkn Inj to 1179-Trfc Collision-1141 Enrt by CHP [Shared]<br />Sep 11 2025  7:16AM [18] [Appended, 07:18:29] [1] VEH ROLLED <br />Sep 11 2025  7:15AM [13] PER DUPE , SEMI TRK ROLLED OVER BLOCKING RDWY  [Shared]<br />Sep 11 2025  7:14AM [11] COORDS SHOWING JWO LEAVITT MEADOWS ON SHARP CURVE , JSO RDWY <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-119.55403,38.324469,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BI0007</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  4:46AM <br> CZP-Assist with Construction <br> Us395 / Olancha </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-118.009589,36.285814,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BS0065</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:35AM <br> 1182-Trfc Collision-No Inj <br> I40 E / Mountain Springs Rd Ofr </p>
+  <p align="left">Sep 11 2025 10:59AM [8] [Notification] [CHP]-Problem changed from 1183-Trfc Collision-Unkn Inj to 1182-Trfc Collision-No Inj by CHP<br />Sep 11 2025 10:36AM [1] WHI TOYT SUB  VEH WENT OFF RS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-115.056232,34.829006,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BS0056</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:56AM <br> 1179-Trfc Collision-1141 Enrt <br> Larrea Ave / Nicholson Dr </p>
+  <p align="left">Sep 11 2025  9:57AM [2] FIRE ENRT<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-116.083864,34.140652,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BS0050</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:42AM <br> 1182-Trfc Collision-No Inj <br> 0 I15 S </p>
+  <p align="left">Sep 11 2025 10:37AM [19] [Rotation Request Comment] 1039 KEN'S TOWING (XXX) XXX-XXXX<br />Sep 11 2025 10:36AM [17] A73-075B 1185 <br />Sep 11 2025  9:59AM [11] RP RECALLED ADVG XRAY OO TEH DODGE CHARGER KEEPS GETTING IN VEH / WONT GIVE RP ANY INFO<br />Sep 11 2025  9:44AM [4] ALSO ON RHS <br />Sep 11 2025  9:44AM [3] VS A DODG CHARGER GRY <br />Sep 11 2025  9:43AM [2] ON RHS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-116.153697,35.193503,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911BS0035</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  8:41AM <br> 1179-Trfc Collision-1141 Enrt <br> Sr138 / Wintergreen Rd </p>
+  <p align="left">Sep 11 2025 10:54AM [24] [Notification] [CHP]-LEMS ETA 20 MIN N<br />Sep 11 2025 10:49AM [22] 1039 LEMS <br />Sep 11 2025 10:48AM [21] [Notification] [CHP]-52 1015 AS OF 1038 HRS 23153F VC REQ LEMS TO ER BED 9 <br />Sep 11 2025  9:29AM [17] A12-052  XPOR TO ST MARYS BY FIRE COP ENRT FOR FOLLOW UP <br />Sep 11 2025  8:58AM [12] 52 CORRECTION ON VEH // WHI FORD CROWN VIC<br />Sep 11 2025  8:58AM [11] [Rotation Request Comment] 1039 HOOKED ON TOWING (XXX) XXX-XXXX<br />Sep 11 2025  8:57AM [10] A12-052 1185 TOYT PK <br />Sep 11 2025  8:44AM [4] VEH WENT OFF RDWY<br />Sep 11 2025  8:44AM [3] FATHER  BROKEN DENTURES DUE TO TC  <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-117.624986,34.429066,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250910BS0145</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 10 2025  6:16PM <br> CZP-Assist with Construction <br> 2300 Mm247 N Sbd 23.00 </p>
+  <p align="left">Sep 10 2025  6:17PM [1] 106-E11 TIL 0600 HRS <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-116.594006,34.369196,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911IC0041</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025 10:16AM <br> 1182-Trfc Collision-No Inj <br> Sr74 / Oak Knl </p>
+  <p align="left">Sep 11 2025 10:20AM [4] 1039 97101 FROM PINYON<br />Sep 11 2025 10:17AM [1] VEH VS FIRE TK NEG 1125 PLT#9UMB295<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-116.71416,33.696723,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911EC0024</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  9:39AM <br> 1181-Trfc Collision-Minor Inj <br> SR78 / Blythe Ogilby Rd </p>
+  <p align="left">Sep 11 2025 10:52AM [59] [Notification] [CHP]-Problem changed from 1179-Trfc Collision-1141 Enrt to 1181-Trfc Collision-Minor Inj by CHP [Shared]<br />Sep 11 2025 10:49AM [55] A85-021 RDWY IS OPEN<br />Sep 11 2025 10:23AM [54] A85-021 1185 IS 97 [Shared]<br />Sep 11 2025 10:19AM [53] A85-021 WILL BE SWITCHING TO CHANNEL 2 FOR TRAFFIC CONTROL [Shared]<br />Sep 11 2025 10:13AM [43] JIMBO'S TOW IS ENRT OGILBY/WALKER WAY [Shared]<br />Sep 11 2025 10:10AM [40] CHECKPOINT IS CLOSED  [Shared]<br />Sep 11 2025 10:09AM [39] 85-21 ETA FOR 1185 [Shared]<br />Sep 11 2025 10:06AM [36] 85-21 WILL BE DOING ONE WAY TRAFFIC CONTROL  [Shared]<br />Sep 11 2025  9:52AM [34] 85-21 VEH BLOCKING WB LN // WILL BE PARKING AT TOP OF HILL FOR 1184 [Shared]<br />Sep 11 2025  9:46AM [27] 85-21 ENRT FRM 78/VISTA MINE RD TO ASSIST [Shared]<br />Sep 11 2025  9:46AM [26] 1039 amr [Shared]<br />Sep 11 2025  9:45AM [23] VEH ON ITS TOP PER THE DRIVER  [Shared]<br />Sep 11 2025  9:45AM [20] LL 1185 [Shared]<br />Sep 11 2025  9:44AM [19] VEH 1125 SB LANE  [Shared]<br />Sep 11 2025  9:44AM [17] SINGLE PERSON IN THE VEH <br />Sep 11 2025  9:43AM [13] DRIVER IS OUT OF THE VEH <br />Sep 11 2025  9:42AM [10] 116-82 CPZ START 1185 <br />Sep 11 2025  9:41AM [6] SINGLE VEH ROLLOVER <br />Sep 11 2025  9:41AM [5] [Notification] [CHP]-Problem changed from 1183-Trfc Collision-Unkn Inj to 1179-Trfc Collision-1141 Enrt by CHP<br />Sep 11 2025  9:40AM [4] 1125 <br />Sep 11 2025  9:40AM [2] DRIVER IS TRYING TO GET OUT OF THE VEH <br />Sep 11 2025  9:39AM [1] VEH ROLLOVER <br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-114.880482,33.133185,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911EC0009</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  4:54AM <br> MZP-Assist CT with Maintenance <br> 2331 N Imperial Ave </p>
+  <p align="left"> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-115.570192,32.820653,0</coordinates></Point>
+</Placemark>
+<Placemark>
+  <name>CHP Incident 250911EC0007</name>
+  <description><![CDATA[
+  <div style="font-size:1.15em;"><img src="https://quickmap.dot.ca.gov/img/chp-32x32.png" style="float:left"><p align="left">Sep 11 2025  3:32AM <br> 1013-Road/Weather Conditions <br> 0 I8 W </p>
+  <p align="left">Sep 11 2025  3:32AM [1] ,,COOL,CLR,STRONG GUSTY WINDS,TA FOR ALL VEHS<br /> </p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/CHP_Badge_logo.png" height="30"></p>
+  <p class="update-stamp">Last updated: 09/11/2025 11:00am </p></div>]]>
+  </description>
+  <styleUrl>#chp</styleUrl>
+  <Point><coordinates>-116.077622,32.690821,0</coordinates></Point>
+</Placemark>
+</Document>
+</kml>

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -339,10 +338,8 @@ func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config
 		alerts = append(alerts, alert)
 
 		// Update route status based on incident type
-		if incident.FeedType == caltrans.CHAIN_CONTROL {
-			chainControl = s.extractChainControlStatus(incident.DescriptionText)
-		}
-
+		// TODO: Re-enable chain control processing in winter when actual data is available
+		
 		// Update road status for closures
 		if incident.FeedType == caltrans.LANE_CLOSURE && 
 			 (incident.ParsedStatus == "closed" || incident.ParsedStatus == "closure") {
@@ -381,21 +378,22 @@ func (s *RoadsService) mapIncidentToSeverity(incident caltrans.CaltransIncident)
 	return api.AlertSeverity_INFO
 }
 
+// TODO: Re-enable for winter chain control processing
 // extractChainControlStatus determines chain control requirements from description
-func (s *RoadsService) extractChainControlStatus(description string) string {
-	lowerDesc := strings.ToLower(description)
-	
-	if strings.Contains(lowerDesc, "chain control required") || 
-	   strings.Contains(lowerDesc, "chains required") {
-		return "required"
-	}
-	if strings.Contains(lowerDesc, "chain control advised") || 
-	   strings.Contains(lowerDesc, "chains advised") {
-		return "advised"
-	}
-	if strings.Contains(lowerDesc, "chain control in effect") {
-		return "required"
-	}
-	
-	return "none"
-}
+// func (s *RoadsService) extractChainControlStatus(description string) string {
+// 	lowerDesc := strings.ToLower(description)
+// 	
+// 	if strings.Contains(lowerDesc, "chain control required") || 
+// 	   strings.Contains(lowerDesc, "chains required") {
+// 		return "required"
+// 	}
+// 	if strings.Contains(lowerDesc, "chain control advised") || 
+// 	   strings.Contains(lowerDesc, "chains advised") {
+// 		return "advised"
+// 	}
+// 	if strings.Contains(lowerDesc, "chain control in effect") {
+// 		return "required"
+// 	}
+// 	
+// 	return "none"
+// }

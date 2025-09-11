@@ -77,7 +77,7 @@ test-google: $(TEST_GOOGLE_BINARY)
 	./$(TEST_GOOGLE_BINARY) --config=prefab.yaml $(if $(ROUTE_ID),--route-id=$(ROUTE_ID)) $(if $(VERBOSE),--verbose)
 
 test-caltrans: $(TEST_CALTRANS_BINARY)
-	./$(TEST_CALTRANS_BINARY) --config=prefab.yaml $(if $(VERBOSE),--verbose) $(if $(FORMAT),--format=$(FORMAT))
+	./$(TEST_CALTRANS_BINARY) $(if $(OFFLINE),-offline) $(if $(FEED),-feed=$(FEED)) $(if $(FILTER),-filter) $(if $(LAT),-lat=$(LAT)) $(if $(LON),-lon=$(LON)) $(if $(RADIUS),-radius=$(RADIUS))
 
 test-weather: $(TEST_WEATHER_BINARY)
 	./$(TEST_WEATHER_BINARY) --config=prefab.yaml $(if $(LOCATION_ID),--location-id=$(LOCATION_ID)) $(if $(VERBOSE),--verbose)
@@ -85,6 +85,32 @@ test-weather: $(TEST_WEATHER_BINARY)
 # Validate configuration without API calls
 test-config:
 	@echo "Configuration validation not yet implemented"
+
+# Fetch timestamped test data snapshots from live Caltrans feeds
+fetch-test-data:
+	@echo "Fetching KML test data snapshots..."
+	@mkdir -p tests/testdata/caltrans
+	$(eval TIMESTAMP := $(shell date +%Y%m%d_%H%M%S))
+	@echo "Timestamp: $(TIMESTAMP)"
+	@curl -s "https://quickmap.dot.ca.gov/data/lcs2way.kml" > tests/testdata/caltrans/lane_closures_$(TIMESTAMP).kml
+	@curl -s "https://quickmap.dot.ca.gov/data/chp-only.kml" > tests/testdata/caltrans/chp_incidents_$(TIMESTAMP).kml
+	@curl -s "https://quickmap.dot.ca.gov/data/cc.kml" > tests/testdata/caltrans/chain_controls_$(TIMESTAMP).kml
+	@echo "✅ Timestamped test data snapshots saved"
+	@echo "New files:"
+	@ls -la tests/testdata/caltrans/*$(TIMESTAMP).kml
+	@echo ""
+	@echo "To use these snapshots for testing, run:"
+	@echo "  make use-latest-test-data"
+
+# Update symlinks to use the most recent timestamped test data
+use-latest-test-data:
+	@echo "Updating symlinks to use latest test data..."
+	@cd tests/testdata/caltrans && \
+	ln -sf $$(ls -1 lane_closures_*.kml | tail -1) lane_closures.kml && \
+	ln -sf $$(ls -1 chp_incidents_*.kml | tail -1) chp_incidents.kml && \
+	ln -sf $$(ls -1 chain_controls_*.kml | tail -1) chain_controls.kml
+	@echo "✅ Symlinks updated to latest snapshots:"
+	@ls -la tests/testdata/caltrans/*.kml | grep -E "(lane_closures|chp_incidents|chain_controls)\.kml"
 
 ## Development Targets
 
