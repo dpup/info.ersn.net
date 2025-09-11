@@ -74,13 +74,13 @@ test:
 
 # Test individual API clients (optional parameters)
 test-google: $(TEST_GOOGLE_BINARY)
-	./$(TEST_GOOGLE_BINARY) --config=config.yaml $(if $(ROUTE_ID),--route-id=$(ROUTE_ID)) $(if $(VERBOSE),--verbose)
+	./$(TEST_GOOGLE_BINARY) --config=prefab.yaml $(if $(ROUTE_ID),--route-id=$(ROUTE_ID)) $(if $(VERBOSE),--verbose)
 
 test-caltrans: $(TEST_CALTRANS_BINARY)
-	./$(TEST_CALTRANS_BINARY) --config=config.yaml $(if $(VERBOSE),--verbose) $(if $(FORMAT),--format=$(FORMAT))
+	./$(TEST_CALTRANS_BINARY) --config=prefab.yaml $(if $(VERBOSE),--verbose) $(if $(FORMAT),--format=$(FORMAT))
 
 test-weather: $(TEST_WEATHER_BINARY)
-	./$(TEST_WEATHER_BINARY) --config=config.yaml $(if $(LOCATION_ID),--location-id=$(LOCATION_ID)) $(if $(VERBOSE),--verbose)
+	./$(TEST_WEATHER_BINARY) --config=prefab.yaml $(if $(LOCATION_ID),--location-id=$(LOCATION_ID)) $(if $(VERBOSE),--verbose)
 
 # Validate configuration without API calls
 test-config:
@@ -140,7 +140,7 @@ test-server: server
 # Run server in development mode with auto-restart
 dev: server
 	@echo "Development mode with auto-restart not yet implemented"
-	@echo "For now, use: make run CONFIG=config.yaml"
+	@echo "For now, use: make run CONFIG=prefab.yaml"
 
 # Go code formatting
 fmt:

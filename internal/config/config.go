@@ -9,73 +9,73 @@ import (
 // Config represents the complete server configuration
 // Structure matches research.md YAML configuration (lines 112-146)
 type Config struct {
-	Server  ServerConfig  `yaml:"server"`
-	Roads   RoadsConfig   `yaml:"roads"`
-	Weather WeatherConfig `yaml:"weather"`
+	Server  ServerConfig  `yaml:"server" koanf:"server"`
+	Roads   RoadsConfig   `yaml:"roads" koanf:"roads"`
+	Weather WeatherConfig `yaml:"weather" koanf:"weather"`
 }
 
 // ServerConfig holds server-specific settings
 type ServerConfig struct {
-	Port        int      `yaml:"port"`
-	CorsOrigins []string `yaml:"cors_origins"`
+	Port        int      `yaml:"port" koanf:"port"`
+	CorsOrigins []string `yaml:"cors_origins" koanf:"cors_origins"`
 }
 
 // RoadsConfig holds road monitoring configuration
 type RoadsConfig struct {
-	GoogleRoutes   GoogleConfig      `yaml:"google_routes"`
-	CaltransFeeds  CaltransConfig    `yaml:"caltrans_feeds"`
-	MonitoredRoads []MonitoredRoad   `yaml:"monitored_roads"`
+	GoogleRoutes   GoogleConfig      `yaml:"google_routes" koanf:"google_routes"`
+	CaltransFeeds  CaltransConfig    `yaml:"caltrans_feeds" koanf:"caltrans_feeds"`
+	MonitoredRoads []MonitoredRoad   `yaml:"monitored_roads" koanf:"monitored_roads"`
 }
 
 // GoogleConfig holds Google Routes API settings
 type GoogleConfig struct {
-	RefreshInterval time.Duration `yaml:"refresh_interval"`
-	StaleThreshold  time.Duration `yaml:"stale_threshold"`
-	APIKey          string        `yaml:"api_key"`
+	RefreshInterval time.Duration `yaml:"refresh_interval" koanf:"refresh_interval"`
+	StaleThreshold  time.Duration `yaml:"stale_threshold" koanf:"stale_threshold"`
+	APIKey          string        `yaml:"api_key" koanf:"api_key"`
 }
 
 // CaltransConfig holds Caltrans KML feed settings
 type CaltransConfig struct {
-	ChainControls CaltransFeedConfig `yaml:"chain_controls"`
-	LaneClosures  CaltransFeedConfig `yaml:"lane_closures"`
-	CHPIncidents  CaltransFeedConfig `yaml:"chp_incidents"`
+	ChainControls CaltransFeedConfig `yaml:"chain_controls" koanf:"chain_controls"`
+	LaneClosures  CaltransFeedConfig `yaml:"lane_closures" koanf:"lane_closures"`
+	CHPIncidents  CaltransFeedConfig `yaml:"chp_incidents" koanf:"chp_incidents"`
 }
 
 // CaltransFeedConfig holds individual feed configuration
 type CaltransFeedConfig struct {
-	RefreshInterval time.Duration `yaml:"refresh_interval"`
-	URL             string        `yaml:"url"`
+	RefreshInterval time.Duration `yaml:"refresh_interval" koanf:"refresh_interval"`
+	URL             string        `yaml:"url" koanf:"url"`
 }
 
 // MonitoredRoad represents a road to monitor
 type MonitoredRoad struct {
-	Name        string           `yaml:"name"`
-	Section     string           `yaml:"section"`
-	ID          string           `yaml:"id"`
-	Origin      CoordinatesYAML  `yaml:"origin"`
-	Destination CoordinatesYAML  `yaml:"destination"`
+	Name        string           `yaml:"name" koanf:"name"`
+	Section     string           `yaml:"section" koanf:"section"`
+	ID          string           `yaml:"id" koanf:"id"`
+	Origin      CoordinatesYAML  `yaml:"origin" koanf:"origin"`
+	Destination CoordinatesYAML  `yaml:"destination" koanf:"destination"`
 }
 
 // WeatherConfig holds weather monitoring configuration  
 type WeatherConfig struct {
-	RefreshInterval    time.Duration     `yaml:"refresh_interval"`
-	StaleThreshold     time.Duration     `yaml:"stale_threshold"`
-	OpenWeatherAPIKey  string            `yaml:"openweather_api_key"`
-	Locations          []WeatherLocation `yaml:"locations"`
+	RefreshInterval    time.Duration     `yaml:"refresh_interval" koanf:"refresh_interval"`
+	StaleThreshold     time.Duration     `yaml:"stale_threshold" koanf:"stale_threshold"`
+	OpenWeatherAPIKey  string            `yaml:"openweather_api_key" koanf:"openweather_api_key"`
+	Locations          []WeatherLocation `yaml:"locations" koanf:"locations"`
 }
 
 // WeatherLocation represents a location to monitor for weather
 type WeatherLocation struct {
-	ID   string  `yaml:"id"`
-	Name string  `yaml:"name"`
-	Lat  float64 `yaml:"lat"`
-	Lon  float64 `yaml:"lon"`
+	ID   string  `yaml:"id" koanf:"id"`
+	Name string  `yaml:"name" koanf:"name"`
+	Lat  float64 `yaml:"lat" koanf:"lat"`
+	Lon  float64 `yaml:"lon" koanf:"lon"`
 }
 
 // CoordinatesYAML represents lat/lon coordinates in YAML config
 type CoordinatesYAML struct {
-	Latitude  float64 `yaml:"latitude"`
-	Longitude float64 `yaml:"longitude"`
+	Latitude  float64 `yaml:"latitude" koanf:"latitude"`
+	Longitude float64 `yaml:"longitude" koanf:"longitude"`
 }
 
 // ToProto converts CoordinatesYAML to protobuf Coordinates

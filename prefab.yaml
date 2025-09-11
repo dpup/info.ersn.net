@@ -1,12 +1,31 @@
 server:
   port: 8080
-  cors_origins: ["*"]
 
+security:
+  xFrameOptions: DENY  # X-Frame-Options header
+  
+  # CORS settings
+  corsOrigins:
+    - https://ersn.net
+    - http://localhost:8080
+  corsAllowedMethods:
+    - GET
+  corsAllowedHeaders:
+    - x-csrf-protection
+  corsAllowCredentials: true
+  corsMaxAge: 72h
+  
+  # HSTS settings
+  hstsExpiration: 31536000s
+  hstsIncludeSubdomains: true
+  hstsPreload: true
+
+# App Config
 roads:
   google_routes:
     refresh_interval: "5m"
     stale_threshold: "10m"
-    # API key loaded from GOOGLE_API_KEY environment variable
+    api_key: ""  # Set via PF__ROADS__GOOGLE_ROUTES__API_KEY env var
   caltrans_feeds:
     chain_controls:
       refresh_interval: "30m"  # Less frequent, changes slowly
@@ -49,7 +68,7 @@ roads:
 weather:
   refresh_interval: "5m"
   stale_threshold: "10m"
-  # API key loaded from OPENWEATHER_API_KEY environment variable
+  openweather_api_key: ""  # Set via PF__WEATHER__OPENWEATHER_API_KEY env var
   locations:
     - id: "murphys"
       name: "Murphys, CA"
