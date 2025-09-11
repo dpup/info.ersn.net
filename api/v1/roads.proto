@@ -23,6 +23,13 @@ service RoadsService {
       get: "/api/v1/roads/{road_id}"
     };
   }
+
+  // GetProcessingMetrics returns alert processing metrics
+  rpc GetProcessingMetrics(GetProcessingMetricsRequest) returns (ProcessingMetrics) {
+    option (google.api.http) = {
+      get: "/api/v1/roads/metrics"
+    };
+  }
 }
 
 // Request messages
@@ -31,6 +38,8 @@ message ListRoadsRequest {}
 message GetRoadRequest {
   string road_id = 1;
 }
+
+message GetProcessingMetricsRequest {}
 
 // Response messages
 message ListRoadsResponse {
@@ -41,6 +50,14 @@ message ListRoadsResponse {
 message GetRoadResponse {
   Road road = 1;
   google.protobuf.Timestamp last_updated = 2;
+}
+
+message ProcessingMetrics {
+  int64 total_raw_alerts = 1;
+  int64 filtered_alerts = 2;
+  int64 enhanced_alerts = 3;
+  int64 enhancement_failures = 4;
+  double avg_processing_time_ms = 5;
 }
 
 // Data models
@@ -64,11 +81,17 @@ message RoadAlert {
   string id = 1;
   AlertType type = 2;
   AlertSeverity severity = 3;
-  string title = 4;
-  string description = 5;
-  google.protobuf.Timestamp start_time = 6;
-  google.protobuf.Timestamp end_time = 7;
-  repeated string affected_segments = 8;
+  AlertClassification classification = 4;  // NEW: On route vs nearby
+  string title = 5;
+  string original_description = 6;         // NEW: Raw Caltrans description
+  string description = 7;                  // UPDATED: Now AI-processed description
+  string condensed_summary = 8;            // NEW: Short format for mobile
+  google.protobuf.Timestamp start_time = 9;
+  google.protobuf.Timestamp end_time = 10;
+  google.protobuf.Timestamp last_updated = 11;
+  repeated string affected_segments = 12;
+  Coordinates location = 13;
+  map<string, string> metadata = 14;      // NEW: Dynamic key-value pairs
 }
 
 message TrafficIncident {
@@ -117,4 +140,10 @@ enum AlertSeverity {
   INFO = 1;
   WARNING = 2;
   CRITICAL = 3;
+}
+
+enum AlertClassification {
+  ALERT_CLASSIFICATION_UNSPECIFIED = 0;
+  ON_ROUTE = 1;      // Directly affects route path
+  NEARBY = 2;        // In surrounding area but not blocking route
 }

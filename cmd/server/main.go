@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/dpup/prefab"
@@ -141,5 +142,7 @@ Weather API:
 </body>
 </html>`
 
-	fmt.Fprint(w, html)
+	if _, err := fmt.Fprint(w, html); err != nil {
+		slog.Error("Failed to write homepage HTML", "error", err)
+	}
 }
