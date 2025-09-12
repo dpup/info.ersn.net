@@ -36,7 +36,7 @@ func NewAsyncAlertEnhancer(store IncidentStore, hasher IncidentContentHasher, al
 		store:            store,
 		hasher:           hasher,
 		enhancer:         alertEnhancer,
-		enhancementQueue: make(chan interface{}, 500), // Buffer for 500 enhancements
+		enhancementQueue: make(chan interface{}, 2000), // Buffer for 2,000 enhancements (route-filtered)
 		maxConcurrent:    3,                           // Limit OpenAI concurrent requests
 		timeout:          45 * time.Second,            // OpenAI timeout
 	}

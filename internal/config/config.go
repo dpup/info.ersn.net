@@ -21,11 +21,11 @@ type ServerConfig struct {
 
 // RoadsConfig holds road monitoring configuration
 type RoadsConfig struct {
-	GoogleRoutes   GoogleConfig      `koanf:"googleRoutes"`
-	CaltransFeeds  CaltransConfig    `koanf:"caltrans_feeds"`
-	OpenAI         OpenAIConfig      `koanf:"openai"`
-	Store          StoreConfig       `koanf:"store"`
-	MonitoredRoads []MonitoredRoad   `koanf:"monitored_roads"`
+	GoogleRoutes   GoogleConfig    `koanf:"googleRoutes"`
+	CaltransFeeds  CaltransConfig  `koanf:"caltrans_feeds"`
+	OpenAI         OpenAIConfig    `koanf:"openai"`
+	Store          StoreConfig     `koanf:"store"`
+	MonitoredRoads []MonitoredRoad `koanf:"monitored_roads"`
 }
 
 // GoogleConfig holds Google Routes API settings
@@ -50,28 +50,27 @@ type CaltransFeedConfig struct {
 
 // OpenAIConfig holds OpenAI API settings for alert enhancement
 type OpenAIConfig struct {
-	APIKey      string        `koanf:"apiKey"`
-	Model       string        `koanf:"model"`
-	Timeout     time.Duration `koanf:"timeout"`
-	MaxRetries  int           `koanf:"maxRetries"`
-	Enabled     bool          `koanf:"enabled"`
+	APIKey     string        `koanf:"apiKey"`
+	Model      string        `koanf:"model"`
+	Timeout    time.Duration `koanf:"timeout"`
+	MaxRetries int           `koanf:"maxRetries"`
 }
 
 // MonitoredRoad represents a road to monitor
 type MonitoredRoad struct {
-	Name        string           `koanf:"name"`
-	Section     string           `koanf:"section"`
-	ID          string           `koanf:"id"`
-	Origin      CoordinatesYAML  `koanf:"origin"`
-	Destination CoordinatesYAML  `koanf:"destination"`
+	Name        string          `koanf:"name"`
+	Section     string          `koanf:"section"`
+	ID          string          `koanf:"id"`
+	Origin      CoordinatesYAML `koanf:"origin"`
+	Destination CoordinatesYAML `koanf:"destination"`
 }
 
-// WeatherConfig holds weather monitoring configuration  
+// WeatherConfig holds weather monitoring configuration
 type WeatherConfig struct {
-	RefreshInterval    time.Duration     `koanf:"refresh_interval"`
-	StaleThreshold     time.Duration     `koanf:"stale_threshold"`
-	OpenWeatherAPIKey  string            `koanf:"openweatherApiKey"`
-	Locations          []WeatherLocation `koanf:"locations"`
+	RefreshInterval   time.Duration     `koanf:"refreshInterval"`
+	StaleThreshold    time.Duration     `koanf:"staleThreshold"`
+	OpenWeatherAPIKey string            `koanf:"openweatherApiKey"`
+	Locations         []WeatherLocation `koanf:"locations"`
 }
 
 // WeatherLocation represents a location to monitor for weather
@@ -108,9 +107,9 @@ func (w WeatherLocation) ToProto() *api.Coordinates {
 type StoreConfig struct {
 	ProcessingIntervalMinutes int  `koanf:"processing_interval_minutes"`
 	MaxConcurrentOpenAI       int  `koanf:"max_concurrent_openai"`
-	CacheTTLHours            int  `koanf:"cache_ttl_hours"`
-	PrefetchEnabled          bool `koanf:"prefetch_enabled"`
-	OpenAITimeoutSeconds     int  `koanf:"openai_timeout_seconds"`
+	CacheTTLHours             int  `koanf:"cache_ttl_hours"`
+	PrefetchEnabled           bool `koanf:"prefetch_enabled"`
+	OpenAITimeoutSeconds      int  `koanf:"openai_timeout_seconds"`
 }
 
 // GetDefaultStoreConfig returns recommended configuration values
@@ -118,9 +117,8 @@ func GetDefaultStoreConfig() StoreConfig {
 	return StoreConfig{
 		ProcessingIntervalMinutes: 5,    // Check for new incidents every 5 minutes
 		MaxConcurrentOpenAI:       3,    // Conservative to avoid rate limits
-		CacheTTLHours:            1,    // 1 hour after incident disappears
-		PrefetchEnabled:          true, // Proactive processing recommended
-		OpenAITimeoutSeconds:     30,   // Reasonable timeout for OpenAI calls
+		CacheTTLHours:             1,    // 1 hour after incident disappears
+		PrefetchEnabled:           true, // Proactive processing recommended
+		OpenAITimeoutSeconds:      30,   // Reasonable timeout for OpenAI calls
 	}
 }
-

@@ -104,9 +104,8 @@ type IncidentBatchProcessor interface {
 	// Identifies new incidents and queues them for background processing
 	ProcessIncidentBatch(ctx context.Context, incidents []interface{}) error
 	
-	// PrefetchCommonIncidents proactively processes likely incidents
-	// Based on historical patterns, route definitions, seasonal incidents
-	PrefetchCommonIncidents(ctx context.Context) error
+	// WarmCacheWithCurrentFeed processes current feed data to warm the cache
+	WarmCacheWithCurrentFeed(ctx context.Context, incidents []interface{}) error
 	
 	// GetProcessingStats returns background processing performance metrics
 	GetProcessingStats(ctx context.Context) (BatchProcessingStats, error)

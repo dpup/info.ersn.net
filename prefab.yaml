@@ -38,7 +38,6 @@ roads:
       refresh_interval: "5m"   # More frequent, incidents change quickly
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
   openai:
-    enabled: true             # Set to true to enable AI alert enhancement
     apiKey: ""                # Set via PF__ROADS__OPENAI__API_KEY env var
     model: "gpt-3.5-turbo"    # OpenAI model for alert enhancement
     timeout: "30s"            # Timeout for API calls

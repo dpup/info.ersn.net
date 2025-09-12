@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"log/slog"
@@ -14,6 +15,7 @@ import (
 	"github.com/dpup/info.ersn.net/server/internal/clients/google"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
 	"github.com/dpup/info.ersn.net/server/internal/config"
+	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
 	"github.com/dpup/info.ersn.net/server/internal/services"
 )
 
@@ -22,20 +24,42 @@ func main() {
 	appConfig := loadConfig()
 
 	// Initialize cache
-	cache := cache.NewCache()
+	cacheInstance := cache.NewCache()
 
 	// Initialize external API clients
 	googleClient := google.NewClient(appConfig.Roads.GoogleRoutes.APIKey)
 	caltransClient := caltrans.NewFeedParser()
 	weatherClient := weather.NewClient(appConfig.Weather.OpenWeatherAPIKey)
 
-	// Initialize gRPC services
-	roadsService := services.NewRoadsService(googleClient, caltransClient, cache, &appConfig.Roads)
-	weatherService := services.NewWeatherService(weatherClient, cache, &appConfig.Weather)
+	// Initialize OpenAI enhancer with caching (required for service)
+	if appConfig.Roads.OpenAI.APIKey == "" {
+		log.Fatal("OpenAI API key is required in configuration for incident enhancement")
+	}
+
+	model := appConfig.Roads.OpenAI.Model
+
+	// Create basic OpenAI enhancer
+	baseEnhancer := alerts.NewAlertEnhancer(appConfig.Roads.OpenAI.APIKey, model)
+	
+	// Wrap with content-based caching to eliminate duplicate OpenAI calls
+	alertCacheAdapter := cache.NewAlertCacheAdapter(cacheInstance)
+	cachedEnhancer := alerts.NewCachedAlertEnhancer(baseEnhancer, alertCacheAdapter)
+	
+	log.Printf("OpenAI enhancement enabled with content-based caching (model: %s)", model)
+
+	// Initialize gRPC services  
+	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, &appConfig.Roads, cachedEnhancer)
+	weatherService := services.NewWeatherService(weatherClient, cacheInstance, &appConfig.Weather)
 
 	log.Printf("Live Data API Server starting")
 	log.Printf("Roads monitored: %d", len(appConfig.Roads.MonitoredRoads))
 	log.Printf("Weather locations: %d", len(appConfig.Weather.Locations))
+
+	// Start periodic refresh to maintain cache warmth (replaces complex cache warmer)
+	periodicRefresh := services.NewPeriodicRefreshService(roadsService, &appConfig.Roads)
+	if err := periodicRefresh.StartPeriodicRefresh(context.Background()); err != nil {
+		log.Printf("Failed to start periodic refresh: %v", err)
+	}
 
 	// Create Prefab server with GRPC reflection enabled
 	// Server configuration (port, etc.) will be loaded from prefab.yaml/env vars
@@ -72,12 +96,10 @@ func loadConfig() *config.Config {
 	if err := prefab.Config.Unmarshal("roads", &appConfig.Roads); err != nil {
 		log.Fatalf("Failed to unmarshal roads section: %v", err)
 	}
-	
 
 	if err := prefab.Config.Unmarshal("weather", &appConfig.Weather); err != nil {
 		log.Fatalf("Failed to unmarshal weather section: %v", err)
 	}
-	
 
 	return appConfig
 }

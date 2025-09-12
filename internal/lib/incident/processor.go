@@ -34,7 +34,7 @@ func NewBackgroundIncidentProcessor(store IncidentStore, hasher IncidentContentH
 		store:         store,
 		hasher:        hasher,
 		enhancer:      enhancer,
-		queue:         make(chan interface{}, 1000), // Buffer for 1000 incidents
+		queue:         make(chan interface{}, 5000), // Buffer for 5,000 incidents (route-filtered)
 		maxConcurrent: 5,                           // Default concurrent workers
 		timeout:       30 * time.Second,            // Default processing timeout
 	}
@@ -104,11 +104,37 @@ func (p *incidentBatchProcessor) ProcessIncidentBatch(ctx context.Context, incid
 	return nil
 }
 
-// PrefetchCommonIncidents proactively processes likely incidents
-func (p *incidentBatchProcessor) PrefetchCommonIncidents(ctx context.Context) error {
-	// This would typically load historical incident patterns
-	// For now, we implement a placeholder
-	log.Printf("Prefetch common incidents: placeholder implementation")
+// WarmCacheWithCurrentFeed processes current feed data to warm the cache
+func (p *incidentBatchProcessor) WarmCacheWithCurrentFeed(ctx context.Context, incidents []interface{}) error {
+	if len(incidents) == 0 {
+		log.Printf("Cache warming: no incidents provided")
+		return nil
+	}
+	
+	log.Printf("Starting cache warming with %d current feed incidents...", len(incidents))
+	
+	// Process incidents through the background pipeline
+	processed := 0
+	for _, incident := range incidents {
+		select {
+		case <-ctx.Done():
+			log.Printf("Cache warming cancelled after processing %d incidents", processed)
+			return ctx.Err()
+		case p.queue <- incident:
+			processed++
+		default:
+			// Queue is full - skip this incident
+			log.Printf("Queue full during cache warming, skipped incident")
+		}
+	}
+	
+	log.Printf("Cache warming queued %d incidents for background processing", processed)
+	
+	// Update statistics
+	p.statsMu.Lock()
+	p.stats.QueuedIncidents += int64(processed)
+	p.statsMu.Unlock()
+	
 	return nil
 }
 

@@ -276,7 +276,11 @@ func (c *Cache) GetProcessedIncident(contentHash, stage string) (*ProcessedIncid
 	
 	// Increment serve count
 	entry.ServeCount++
-	c.SetProcessedIncident(contentHash, stage, entry) // Update with new count
+	if err := c.SetProcessedIncident(contentHash, stage, entry); err != nil {
+		// Log error but don't fail the request since we already have the data
+		// TODO: Add proper logging once logger is available in cache package
+		fmt.Printf("Failed to update serve count in cache: %v\n", err)
+	}
 	
 	return &entry, true, nil
 }
@@ -336,4 +340,32 @@ func (c *Cache) ExpireOldProcessedIncidents() int {
 	}
 	
 	return removed
+}
+
+// Simplified Content-Based Caching Methods
+// These replace the complex incident processing infrastructure
+
+// SetEnhancedAlert caches an OpenAI-enhanced alert with content-based key
+func (c *Cache) SetEnhancedAlert(contentHash string, enhanced interface{}, ttl time.Duration) error {
+	key := fmt.Sprintf("enhanced_alert:%s", contentHash)
+	return c.Set(key, enhanced, ttl, "enhanced_alert")
+}
+
+// GetEnhancedAlert retrieves a cached enhanced alert by content hash
+func (c *Cache) GetEnhancedAlert(contentHash string) (interface{}, bool, error) {
+	key := fmt.Sprintf("enhanced_alert:%s", contentHash)
+	
+	var enhanced interface{}
+	found, err := c.Get(key, &enhanced)
+	if err != nil {
+		return nil, false, err
+	}
+	
+	return enhanced, found, nil
+}
+
+// IsEnhancedAlertCached checks if an enhanced alert exists without retrieving it
+func (c *Cache) IsEnhancedAlertCached(contentHash string) bool {
+	key := fmt.Sprintf("enhanced_alert:%s", contentHash)
+	return !c.IsStale(key)
 }

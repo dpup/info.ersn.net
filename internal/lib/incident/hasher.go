@@ -205,7 +205,7 @@ func (h *incidentContentHasher) extractFromStruct(incident interface{}) (*incide
 		}
 		
 		switch fieldName {
-		case "description":
+		case "description", "descriptiontext":
 			if field.Kind() == reflect.String {
 				data.Description = field.String()
 			}
@@ -216,6 +216,37 @@ func (h *incidentContentHasher) extractFromStruct(incident interface{}) (*incide
 		case "category":
 			if field.Kind() == reflect.String {
 				data.Category = field.String()
+			}
+		case "feedtype":
+			// Handle CaltransIncident FeedType field
+			if field.Kind() == reflect.Int {
+				feedType := int(field.Int())
+				// Map feed type to category string
+				switch feedType {
+				case 0: // CHAIN_CONTROL
+					data.Category = "chain_control"
+				case 1: // LANE_CLOSURE
+					data.Category = "lane_closure"
+				case 2: // CHP_INCIDENT
+					data.Category = "chp_incident"
+				default:
+					data.Category = "unknown"
+				}
+			}
+		case "coordinates":
+			// Handle CaltransIncident Coordinates field (api.Coordinates struct)
+			if field.Kind() == reflect.Ptr && !field.IsNil() {
+				coords := field.Interface()
+				// Extract lat/lng from api.Coordinates struct
+				coordsValue := reflect.ValueOf(coords).Elem()
+				if coordsValue.IsValid() {
+					if latField := coordsValue.FieldByName("Latitude"); latField.IsValid() {
+						data.Latitude = h.extractFloat64(latField.Interface())
+					}
+					if lngField := coordsValue.FieldByName("Longitude"); lngField.IsValid() {
+						data.Longitude = h.extractFloat64(lngField.Interface())
+					}
+				}
 			}
 		}
 	}

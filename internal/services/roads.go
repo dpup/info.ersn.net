@@ -33,17 +33,7 @@ type RoadsService struct {
 }
 
 // NewRoadsService creates a new RoadsService
-func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedParser, cache *cache.Cache, config *config.RoadsConfig) *RoadsService {
-	// Initialize alert enhancer if OpenAI is enabled and configured
-	var alertEnhancer alerts.AlertEnhancer
-
-	if config.OpenAI.Enabled && config.OpenAI.APIKey != "" {
-		alertEnhancer = alerts.NewAlertEnhancer(config.OpenAI.APIKey, config.OpenAI.Model)
-		log.Printf("OpenAI alert enhancement enabled with model: %s", config.OpenAI.Model)
-	} else {
-		log.Printf("OpenAI alert enhancement disabled")
-	}
-
+func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedParser, cache *cache.Cache, config *config.RoadsConfig, alertEnhancer alerts.AlertEnhancer) *RoadsService {
 	return &RoadsService{
 		googleClient:   googleClient,
 		caltransClient: caltransClient,
@@ -253,18 +243,17 @@ func (s *RoadsService) getTrafficDataWithPolyline(ctx context.Context, monitored
 func (s *RoadsService) classifyCongestionByDelay(delayMins int32) string {
 	switch {
 	case delayMins >= 20:
-		return "severe"  // 20+ minutes delay
+		return "severe" // 20+ minutes delay
 	case delayMins >= 10:
-		return "heavy"   // 10-19 minutes delay
+		return "heavy" // 10-19 minutes delay
 	case delayMins >= 5:
 		return "moderate" // 5-9 minutes delay
 	case delayMins >= 2:
-		return "light"   // 2-4 minutes delay
+		return "light" // 2-4 minutes delay
 	default:
-		return "clear"   // 0-1 minutes delay
+		return "clear" // 0-1 minutes delay
 	}
 }
-
 
 // mapRoadStatus converts string status to RoadStatus enum
 func (s *RoadsService) mapRoadStatus(status string) api.RoadStatus {
@@ -356,10 +345,6 @@ func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, mon
 	return s.processCaltransDataWithRoute(ctx, route, monitoredRoad)
 }
 
-// getCaltransData fetches road status, chain control, and alerts using route-aware classification (legacy method)
-func (s *RoadsService) getCaltransData(ctx context.Context, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, error) {
-	return s.getCaltransDataWithRouteGeometry(ctx, monitoredRoad, "")
-}
 
 // processCaltransDataWithRoute handles the actual Caltrans data processing with route information
 func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route routing.Route, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, error) {
@@ -460,7 +445,7 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 		Type:           alertType,
 		Severity:       api.AlertSeverity_WARNING, // Default, will be updated after AI enhancement
 		Classification: s.mapRoutingToAPIClassification(classifiedAlert.Classification),
-		Title:          classifiedAlert.Title, // Use real Caltrans title (e.g., "CHP Incident 250911GG0206")
+		Title:          classifiedAlert.Title,       // Use real Caltrans title (e.g., "CHP Incident 250911GG0206")
 		Description:    classifiedAlert.Description, // Will be enhanced below
 		StartTime:      timestamppb.New(startTime),
 		EndTime:        nil,
@@ -545,7 +530,7 @@ func (s *RoadsService) mapStringToAlertType(typeStr string) api.AlertType {
 func (s *RoadsService) determineAlertSeverity(classification routing.AlertClassification, impact string, alertType api.AlertType, description string) api.AlertSeverity {
 	// Base severity on impact level first, then adjust by classification
 	var baseSeverity api.AlertSeverity
-	
+
 	switch impact {
 	case "severe":
 		baseSeverity = api.AlertSeverity_CRITICAL
@@ -566,12 +551,12 @@ func (s *RoadsService) determineAlertSeverity(classification routing.AlertClassi
 			baseSeverity = api.AlertSeverity_WARNING
 		}
 	}
-	
+
 	// Downgrade if distant (far from route)
 	if classification == routing.Distant {
 		baseSeverity = api.AlertSeverity_INFO
 	}
-	
+
 	return baseSeverity
 }
 
