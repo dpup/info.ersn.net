@@ -39,7 +39,7 @@ roads:
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
   openai:
     apiKey: ""                # Set via PF__ROADS__OPENAI__API_KEY env var
-    model: "gpt-3.5-turbo"    # OpenAI model for alert enhancement
+    model: "gpt-4o-mini"      # OpenAI model for alert enhancement with JSON schema support
     timeout: "30s"            # Timeout for API calls
     maxRetries: 3             # Maximum retry attempts
   monitored_roads:

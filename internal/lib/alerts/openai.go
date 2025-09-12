@@ -34,7 +34,15 @@ Return valid JSON object with these exact fields:
 - last_update (string | null) – most recent update in ISO format
 - impact (enum) – "none" | "light" | "moderate" | "severe"
 - duration (enum) – "unknown" | "< 1 hour" | "several hours" | "ongoing"
-- additional_info (object) – key-value pairs for structured facts
+- additional_info (object) – key-value pairs for structured facts (keys: alphanumeric/._/- only, all values must be strings)
+
+Guidelines for additional_info metadata:
+• Use consistent field names across similar incidents (e.g., always "incident_type", not "incident_category")
+• Common useful fields: incident_type, emergency_services, vehicles_involved, lanes_blocked, injuries, roadway_status
+• For collisions: vehicle descriptions, lane numbers, injury status, emergency response
+• For construction: work_type, assistance_needed, roadway_status  
+• Values should be concise but descriptive (e.g., "green Toyota Prius", "lanes 1 and 2", "fire department and EMS")
+• Use lowercase for consistency except proper nouns (e.g., "traffic collision", "Toyota Camry")
 - condensed_summary (string) – 1-line summary (max 120 chars, no location, no times)
 
 How to write condensed summaries:
@@ -62,7 +70,7 @@ var AlertEnhancementSchema = openai.ChatCompletionResponseFormatJSONSchema{
 		"type": "object",
 		"properties": {
 			"time_reported": {
-				"type": "string",
+				"type": ["string", "null"],
 				"description": "ISO timestamp of when first reported, null if not available"
 			},
 			"details": {
@@ -94,7 +102,7 @@ var AlertEnhancementSchema = openai.ChatCompletionResponseFormatJSONSchema{
 				"additionalProperties": false
 			},
 			"last_update": {
-				"type": "string",
+				"type": ["string", "null"],
 				"description": "Most recent update in ISO format, null if not available"
 			},
 			"impact": {
@@ -109,10 +117,12 @@ var AlertEnhancementSchema = openai.ChatCompletionResponseFormatJSONSchema{
 			},
 			"additional_info": {
 				"type": "object",
-				"description": "Key-value pairs for structured facts"
+				"description": "Key-value pairs for structured facts",
+				"patternProperties": { "^[A-Za-z0-9._-]+$": { "type": "string" } },
+				"additionalProperties": false
 			}
 		},
-		"required": ["details", "location", "impact", "duration", "condensed_summary"],
+		"required": ["time_reported", "details", "location", "last_update", "impact", "duration", "condensed_summary"],
 		"additionalProperties": false
 	}`),
 }

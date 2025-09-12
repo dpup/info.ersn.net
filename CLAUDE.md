@@ -65,6 +65,8 @@ make stop
 make clean
 ```
 
+**IMPORTANT**: Always use `make run-bg` to start the server in background, not manual `./bin/server &` commands. The Makefile handles proper process management.
+
 ### Testing
 ```bash
 # Run all tests
