@@ -314,3 +314,121 @@ func TestExtractDates(t *testing.T) {
 		})
 	}
 }
+
+func TestExtractGeometry(t *testing.T) {
+	parser := NewFeedParser()
+
+	t.Run("Point geometry", func(t *testing.T) {
+		placemark := &Placemark{
+			Point: Point{
+				Coordinates: "-120.5000,38.1000,0",
+			},
+		}
+
+		coord, polyline := parser.extractGeometry(placemark)
+		
+		require.NotNil(t, coord)
+		assert.Equal(t, 38.1000, coord.Latitude)
+		assert.Equal(t, -120.5000, coord.Longitude)
+		assert.Nil(t, polyline)
+	})
+
+	t.Run("LineString geometry", func(t *testing.T) {
+		placemark := &Placemark{
+			LineString: LineString{
+				Coordinates: "-120.5000,38.1000,0 -120.4500,38.1200,0 -120.4000,38.1400,0",
+			},
+		}
+
+		coord, polyline := parser.extractGeometry(placemark)
+		
+		require.NotNil(t, coord)
+		require.NotNil(t, polyline)
+		assert.Equal(t, 38.1000, coord.Latitude) // First point
+		assert.Equal(t, 3, len(polyline.Points))
+		assert.Equal(t, 38.1400, polyline.Points[2].Latitude) // Last point
+	})
+
+	t.Run("Polygon geometry", func(t *testing.T) {
+		placemark := &Placemark{
+			Polygon: Polygon{
+				OuterBoundary: OuterBoundary{
+					LinearRing: LinearRing{
+						Coordinates: "-120.5000,38.1000,0 -120.4500,38.1200,0 -120.4000,38.1400,0 -120.5000,38.1000,0",
+					},
+				},
+			},
+		}
+
+		coord, polyline := parser.extractGeometry(placemark)
+		
+		require.NotNil(t, coord)
+		require.NotNil(t, polyline)
+		assert.Equal(t, 4, len(polyline.Points)) // Polygon with closing point
+	})
+
+	t.Run("MultiGeometry", func(t *testing.T) {
+		placemark := &Placemark{
+			MultiGeometry: MultiGeometry{
+				Points: []Point{
+					{Coordinates: "-120.5000,38.1000,0"},
+				},
+				LineStrings: []LineString{
+					{Coordinates: "-120.4500,38.1200,0 -120.4000,38.1400,0"},
+				},
+			},
+		}
+
+		coord, polyline := parser.extractGeometry(placemark)
+		
+		require.NotNil(t, coord)
+		require.NotNil(t, polyline)
+		assert.Equal(t, 3, len(polyline.Points)) // 1 point + 2 linestring points
+	})
+
+	t.Run("No geometry", func(t *testing.T) {
+		placemark := &Placemark{
+			Name: "Test placemark with no geometry",
+		}
+
+		coord, polyline := parser.extractGeometry(placemark)
+		
+		assert.Nil(t, coord)
+		assert.Nil(t, polyline)
+	})
+}
+
+func TestParseCoordinateList(t *testing.T) {
+	parser := NewFeedParser()
+
+	t.Run("Multiple coordinates", func(t *testing.T) {
+		coordString := "-120.5000,38.1000,0 -120.4500,38.1200,0 -120.4000,38.1400,0"
+		coords := parser.parseCoordinateList(coordString)
+		
+		require.Equal(t, 3, len(coords))
+		assert.Equal(t, 38.1000, coords[0].Latitude)
+		assert.Equal(t, -120.5000, coords[0].Longitude)
+		assert.Equal(t, 38.1400, coords[2].Latitude)
+		assert.Equal(t, -120.4000, coords[2].Longitude)
+	})
+
+	t.Run("Single coordinate", func(t *testing.T) {
+		coordString := "-120.5000,38.1000,0"
+		coords := parser.parseCoordinateList(coordString)
+		
+		require.Equal(t, 1, len(coords))
+		assert.Equal(t, 38.1000, coords[0].Latitude)
+		assert.Equal(t, -120.5000, coords[0].Longitude)
+	})
+
+	t.Run("Empty coordinate string", func(t *testing.T) {
+		coords := parser.parseCoordinateList("")
+		assert.Nil(t, coords)
+	})
+
+	t.Run("Invalid coordinates", func(t *testing.T) {
+		coordString := "invalid,coordinate,data"
+		coords := parser.parseCoordinateList(coordString)
+		assert.Empty(t, coords)
+	})
+}

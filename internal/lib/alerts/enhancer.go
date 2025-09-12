@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	openai "github.com/sashabaranov/go-openai"
@@ -22,7 +21,7 @@ func NewAlertEnhancer(apiKey, model string) AlertEnhancer {
 	if apiKey == "" {
 		return &alertEnhancer{client: nil, model: model} // Will cause errors - for testing
 	}
-	
+
 	client := openai.NewClient(apiKey)
 	return &alertEnhancer{
 		client: client,
@@ -36,28 +35,33 @@ func (a *alertEnhancer) EnhanceAlert(ctx context.Context, raw RawAlert) (Enhance
 		return EnhancedAlert{}, errors.New("OpenAI client not initialized - invalid API key")
 	}
 
-	// Create the system prompt for structured output
-	systemPrompt := `You are a traffic incident analyst specializing in converting technical road incident reports into clear, public-friendly descriptions. Extract structured information and generate readable summaries for travelers.
 
-Return valid JSON with these exact fields:
-- time_reported: Parse any timestamps (ISO format or null)
-- details: Core incident info without jargon
-- location: Human-readable location
-- last_update: Most recent update time (ISO or null)
-- impact: traffic impact level ("none", "light", "moderate", "severe")
-- duration: expected duration ("unknown", "< 1 hour", "several hours", "ongoing")
-- additional_info: Object with key-value pairs for specific details
-- condensed_summary: Single line format "Highway – Location: Description (time)" under 150 chars`
-
-	// Create user prompt with raw alert data
+	// Create user prompt with raw alert data as JSON
+	rawAlertJSON, _ := json.Marshal(raw)
 	userPrompt := fmt.Sprintf(`Parse this traffic incident report and return structured JSON:
 
-Original: %s
-Location Context: %s
+Raw Alert: %s
 
-Extract structured information following the schema. Focus on making the details field human-readable by removing technical abbreviations and jargon. Generate a condensed summary in the format: "Highway – Location: Brief description (time)".`,
-		raw.Description,
-		raw.Location)
+Extract structured information following the schema.
+Focus on making the details field human-readable by removing technical abbreviations and jargon.
+If a style_url is provided, incorporate the relevant traffic flow context from the StyleUrl definitions into your description (e.g., mention one-way control, lane restrictions, etc.).
+For the condensed summary, follow the examples provided - do NOT include location, keep it under 120 characters.`,
+		string(rawAlertJSON))
+
+	// Determine response format based on model capability
+	var responseFormat *openai.ChatCompletionResponseFormat
+	if a.model == "gpt-4o" || a.model == "gpt-4o-mini" {
+		// Use JSON Schema for models that support it
+		responseFormat = &openai.ChatCompletionResponseFormat{
+			Type:       openai.ChatCompletionResponseFormatTypeJSONSchema,
+			JSONSchema: &AlertEnhancementSchema,
+		}
+	} else {
+		// Fall back to JSON object for older models
+		responseFormat = &openai.ChatCompletionResponseFormat{
+			Type: openai.ChatCompletionResponseFormatTypeJSONObject,
+		}
+	}
 
 	// Make OpenAI API call with structured output request
 	resp, err := a.client.CreateChatCompletion(ctx, openai.ChatCompletionRequest{
@@ -65,18 +69,16 @@ Extract structured information following the schema. Focus on making the details
 		Messages: []openai.ChatCompletionMessage{
 			{
 				Role:    openai.ChatMessageRoleSystem,
-				Content: systemPrompt,
+				Content: SystemPrompt,
 			},
 			{
 				Role:    openai.ChatMessageRoleUser,
 				Content: userPrompt,
 			},
 		},
-		ResponseFormat: &openai.ChatCompletionResponseFormat{
-			Type: openai.ChatCompletionResponseFormatTypeJSONObject,
-		},
-		Temperature: 0.3, // Lower temperature for more consistent structured output
-		MaxTokens:   1000,
+		ResponseFormat: responseFormat,
+		Temperature:    0.3, // Lower temperature for more consistent structured output
+		MaxTokens:      1000,
 	})
 
 	if err != nil {
@@ -98,10 +100,15 @@ Extract structured information following the schema. Focus on making the details
 	if structured.Details == "" {
 		structured.Details = raw.Description // Fallback to original
 	}
-	if structured.Location == "" {
-		structured.Location = raw.Location // Fallback to original
+	if structured.Location.Description == "" {
+		structured.Location.Description = raw.Location // Fallback to original location string
 	}
-	
+	// Ensure coordinates are populated from raw alert location if missing
+	if structured.Location.Latitude == 0 && structured.Location.Longitude == 0 {
+		// This shouldn't happen if AI follows instructions, but safety fallback
+		structured.Location.Description = raw.Location
+	}
+
 	// Validate enum fields
 	if !isValidImpact(structured.Impact) {
 		structured.Impact = "unknown"
@@ -110,10 +117,13 @@ Extract structured information following the schema. Focus on making the details
 		structured.Duration = "unknown"
 	}
 
-	// Generate condensed summary if not provided or invalid
-	if structured.CondensedSummary == "" || len(structured.CondensedSummary) > 150 {
-		summary, _ := a.GenerateCondensedSummary(ctx, structured)
-		structured.CondensedSummary = summary
+	// Use AI-generated condensed summary (trust the AI to follow instructions)
+	// Only fallback to a simple format if completely missing
+	if structured.CondensedSummary == "" {
+		structured.CondensedSummary = structured.Details // Simple fallback
+		if len(structured.CondensedSummary) > 147 {
+			structured.CondensedSummary = structured.CondensedSummary[:147] + "..."
+		}
 	}
 
 	// Create enhanced alert
@@ -126,58 +136,6 @@ Extract structured information following the schema. Focus on making the details
 	}
 
 	return enhanced, nil
-}
-
-// GenerateCondensedSummary creates a short, formatted summary
-func (a *alertEnhancer) GenerateCondensedSummary(ctx context.Context, enhanced StructuredDescription) (string, error) {
-	// Extract highway/route info from location
-	highway := extractHighway(enhanced.Location)
-	
-	// Create basic summary format
-	location := enhanced.Location
-	if len(location) > 30 {
-		// Truncate long locations
-		location = location[:27] + "..."
-	}
-	
-	details := enhanced.Details
-	if len(details) > 50 {
-		// Truncate long details
-		details = details[:47] + "..."
-	}
-	
-	// Generate timestamp
-	timeStr := ""
-	if enhanced.TimeReported != "" {
-		if t, err := time.Parse(time.RFC3339, enhanced.TimeReported); err == nil {
-			timeStr = t.Format("Jan 2, 3:04 PM")
-		}
-	}
-	if timeStr == "" {
-		timeStr = time.Now().Format("Jan 2, 3:04 PM")
-	}
-	
-	// Format: "Highway – Location: Description (time)"
-	summary := fmt.Sprintf("%s – %s: %s (%s)", highway, location, details, timeStr)
-	
-	// Ensure under 150 characters
-	if len(summary) > 150 {
-		// Progressively truncate to fit
-		if len(details) > 20 {
-			details = details[:17] + "..."
-			summary = fmt.Sprintf("%s – %s: %s (%s)", highway, location, details, timeStr)
-		}
-		if len(summary) > 150 && len(location) > 15 {
-			location = location[:12] + "..."
-			summary = fmt.Sprintf("%s – %s: %s (%s)", highway, location, details, timeStr)
-		}
-		if len(summary) > 150 {
-			// Last resort: truncate entire summary
-			summary = summary[:147] + "..."
-		}
-	}
-	
-	return summary, nil
 }
 
 // HealthCheck verifies OpenAI API connectivity and rate limits
@@ -206,35 +164,6 @@ func (a *alertEnhancer) HealthCheck(ctx context.Context) error {
 }
 
 // Helper functions
-
-// extractHighway extracts highway/route information from location string
-func extractHighway(location string) string {
-	location = strings.ToUpper(location)
-	
-	// Common highway patterns
-	if strings.Contains(location, "HWY 4") || strings.Contains(location, "HIGHWAY 4") {
-		return "Hwy 4"
-	}
-	if strings.Contains(location, "HWY 49") || strings.Contains(location, "HIGHWAY 49") {
-		return "Hwy 49"
-	}
-	if strings.Contains(location, "US 50") || strings.Contains(location, "HIGHWAY 50") {
-		return "US 50"
-	}
-	if strings.Contains(location, "SR-65") || strings.Contains(location, "STATE ROUTE 65") {
-		return "SR-65"
-	}
-	
-	// Generic route extraction
-	if strings.Contains(location, "ROUTE ") {
-		return "Route"
-	}
-	if strings.Contains(location, "HIGHWAY") {
-		return "Highway"
-	}
-	
-	return "Road"
-}
 
 // isValidImpact validates impact enum values
 func isValidImpact(impact string) bool {

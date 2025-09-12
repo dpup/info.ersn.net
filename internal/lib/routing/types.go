@@ -29,9 +29,11 @@ type Route struct {
 // UnclassifiedAlert represents an alert before route classification
 type UnclassifiedAlert struct {
 	ID               string         `json:"id"`
+	Title            string         `json:"title"`                        // Original Caltrans title (e.g., "CHP Incident 250911GG0206")
 	Location         geo.Point      `json:"location"`
 	Description      string         `json:"description"`
 	Type             string         `json:"type"`
+	StyleUrl         string         `json:"style_url,omitempty"`          // KML style indicating closure type
 	AffectedPolyline *geo.Polyline  `json:"affected_polyline,omitempty"` // For closures/construction
 }
 

@@ -22,10 +22,11 @@ type Client struct {
 
 // RouteData represents the processed route information from Google Routes API
 type RouteData struct {
-	DurationSeconds int32
-	DistanceMeters  int32
-	Polyline        string
-	SpeedReadings   []SpeedReading
+	DurationSeconds       int32
+	StaticDurationSeconds int32
+	DistanceMeters        int32
+	Polyline              string
+	SpeedReadings         []SpeedReading
 }
 
 // SpeedReading represents traffic speed data for route segments
@@ -68,7 +69,7 @@ func (c *Client) ComputeRoutes(ctx context.Context, origin, destination *api.Coo
 			},
 		},
 		"travelMode":         "DRIVE",
-		"routingPreference":  "TRAFFIC_AWARE",
+		"routingPreference":  "TRAFFIC_AWARE_OPTIMAL",
 		"extraComputations":  []string{"TRAFFIC_ON_POLYLINE"},
 	}
 
@@ -85,7 +86,7 @@ func (c *Client) ComputeRoutes(ctx context.Context, origin, destination *api.Coo
 
 	// Critical: Field mask is REQUIRED or API returns errors (research.md line 44)
 	req.Header.Set("X-Goog-Api-Key", c.apiKey)
-	req.Header.Set("X-Goog-FieldMask", "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.travelAdvisory.speedReadingIntervals")
+	req.Header.Set("X-Goog-FieldMask", "routes.duration,routes.staticDuration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.travelAdvisory.speedReadingIntervals")
 	req.Header.Set("Content-Type", "application/json")
 
 	// Execute request with rate limiting awareness (3K QPM from research.md line 56)
@@ -125,6 +126,12 @@ func (c *Client) processRouteResponse(route GoogleRoute) (*RouteData, error) {
 		return nil, fmt.Errorf("failed to parse duration: %w", err)
 	}
 
+	// Parse static duration (baseline without traffic)
+	staticDurationSeconds, err := parseDuration(route.StaticDuration)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse static duration: %w", err)
+	}
+
 	// Process speed readings from traffic advisory
 	var speedReadings []SpeedReading
 	if route.TravelAdvisory != nil && len(route.TravelAdvisory.SpeedReadingIntervals) > 0 {
@@ -138,10 +145,11 @@ func (c *Client) processRouteResponse(route GoogleRoute) (*RouteData, error) {
 	}
 
 	return &RouteData{
-		DurationSeconds: durationSeconds,
-		DistanceMeters:  route.DistanceMeters,
-		Polyline:        route.Polyline.EncodedPolyline,
-		SpeedReadings:   speedReadings,
+		DurationSeconds:       durationSeconds,
+		StaticDurationSeconds: staticDurationSeconds,
+		DistanceMeters:        route.DistanceMeters,
+		Polyline:              route.Polyline.EncodedPolyline,
+		SpeedReadings:         speedReadings,
 	}, nil
 }
 
@@ -168,10 +176,11 @@ type GoogleRoutesResponse struct {
 
 // GoogleRoute represents a single route in the response
 type GoogleRoute struct {
-	Duration        string             `json:"duration"`
-	DistanceMeters  int32              `json:"distanceMeters"`
-	Polyline        GooglePolyline     `json:"polyline"`
-	TravelAdvisory  *GoogleTravelAdvisory `json:"travelAdvisory,omitempty"`
+	Duration         string             `json:"duration"`
+	StaticDuration   string             `json:"staticDuration"`
+	DistanceMeters   int32              `json:"distanceMeters"`
+	Polyline         GooglePolyline     `json:"polyline"`
+	TravelAdvisory   *GoogleTravelAdvisory `json:"travelAdvisory,omitempty"`
 }
 
 // GooglePolyline represents the route polyline

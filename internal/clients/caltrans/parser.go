@@ -44,7 +44,8 @@ type CaltransIncident struct {
 	DescriptionHtml string
 	DescriptionText string
 	StyleUrl        string
-	Coordinates     *api.Coordinates
+	Coordinates     *api.Coordinates  // Point location (for incidents)
+	AffectedArea    *api.Polyline     // Polyline/polygon for closures
 	ParsedStatus    string
 	ParsedDates     []string
 	LastFetched     time.Time
@@ -70,16 +71,52 @@ type Folder struct {
 }
 
 type Placemark struct {
-	XMLName     xml.Name `xml:"Placemark"`
-	Name        string   `xml:"name"`
-	Description string   `xml:"description"`
-	StyleURL    string   `xml:"styleUrl"`
-	Point       Point    `xml:"Point"`
+	XMLName      xml.Name      `xml:"Placemark"`
+	Name         string        `xml:"name"`
+	Description  string        `xml:"description"`
+	StyleURL     string        `xml:"styleUrl"`
+	Point        Point         `xml:"Point"`
+	LineString   LineString    `xml:"LineString"`
+	Polygon      Polygon       `xml:"Polygon"`
+	MultiGeometry MultiGeometry `xml:"MultiGeometry"`
 }
 
 type Point struct {
 	XMLName     xml.Name `xml:"Point"`
 	Coordinates string   `xml:"coordinates"`
+}
+
+type LineString struct {
+	XMLName     xml.Name `xml:"LineString"`
+	Coordinates string   `xml:"coordinates"`
+}
+
+type Polygon struct {
+	XMLName        xml.Name `xml:"Polygon"`
+	OuterBoundary  OuterBoundary `xml:"outerBoundaryIs"`
+	InnerBoundary  []InnerBoundary `xml:"innerBoundaryIs"`
+}
+
+type OuterBoundary struct {
+	XMLName    xml.Name   `xml:"outerBoundaryIs"`
+	LinearRing LinearRing `xml:"LinearRing"`
+}
+
+type InnerBoundary struct {
+	XMLName    xml.Name   `xml:"innerBoundaryIs"`
+	LinearRing LinearRing `xml:"LinearRing"`
+}
+
+type LinearRing struct {
+	XMLName     xml.Name `xml:"LinearRing"`
+	Coordinates string   `xml:"coordinates"`
+}
+
+type MultiGeometry struct {
+	XMLName     xml.Name     `xml:"MultiGeometry"`
+	Points      []Point      `xml:"Point"`
+	LineStrings []LineString `xml:"LineString"`
+	Polygons    []Polygon    `xml:"Polygon"`
 }
 
 // NewFeedParser creates a new Caltrans KML feed parser
@@ -208,9 +245,11 @@ func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType Calt
 // processPlacemark converts KML Placemark to CaltransIncident
 // Structure mapping per data-model.md lines 80-90
 func (p *FeedParser) processPlacemark(placemark *Placemark, feedType CaltransFeedType, fetchTime time.Time) *CaltransIncident {
-	// Extract coordinates from Point geometry
-	coordinates := p.parseCoordinates(placemark.Point.Coordinates)
-	if coordinates == nil {
+	// Extract geometry data (coordinates and polylines)
+	coordinates, polyline := p.extractGeometry(placemark)
+	
+	// Skip placemarks with no valid geometry
+	if coordinates == nil && polyline == nil {
 		return nil
 	}
 
@@ -231,10 +270,89 @@ func (p *FeedParser) processPlacemark(placemark *Placemark, feedType CaltransFee
 		DescriptionText: descriptionText,
 		StyleUrl:        placemark.StyleURL,
 		Coordinates:     coordinates,
+		AffectedArea:    polyline,
 		ParsedStatus:    parsedStatus,
 		ParsedDates:     parsedDates,
 		LastFetched:     fetchTime,
 	}
+}
+
+// extractGeometry extracts coordinate and polyline data from a placemark
+func (p *FeedParser) extractGeometry(placemark *Placemark) (*api.Coordinates, *api.Polyline) {
+	var pointCoord *api.Coordinates
+	var polyline *api.Polyline
+
+	// Handle Point geometry
+	if placemark.Point.Coordinates != "" {
+		pointCoord = p.parseCoordinates(placemark.Point.Coordinates)
+	}
+
+	// Handle LineString geometry (for linear closures)
+	if placemark.LineString.Coordinates != "" {
+		coords := p.parseCoordinateList(placemark.LineString.Coordinates)
+		if len(coords) > 0 {
+			polyline = &api.Polyline{Points: coords}
+			// Use first point as primary coordinate if no point geometry
+			if pointCoord == nil && len(coords) > 0 {
+				pointCoord = coords[0]
+			}
+		}
+	}
+
+	// Handle Polygon geometry (for area closures)
+	if placemark.Polygon.OuterBoundary.LinearRing.Coordinates != "" {
+		coords := p.parseCoordinateList(placemark.Polygon.OuterBoundary.LinearRing.Coordinates)
+		if len(coords) > 0 {
+			polyline = &api.Polyline{Points: coords}
+			// Use first point as primary coordinate if no point geometry
+			if pointCoord == nil && len(coords) > 0 {
+				pointCoord = coords[0]
+			}
+		}
+	}
+
+	// Handle MultiGeometry (complex geometries)
+	if len(placemark.MultiGeometry.Points) > 0 || 
+	   len(placemark.MultiGeometry.LineStrings) > 0 || 
+	   len(placemark.MultiGeometry.Polygons) > 0 {
+		
+		var allCoords []*api.Coordinates
+
+		// Collect all points from MultiGeometry
+		for _, point := range placemark.MultiGeometry.Points {
+			if coord := p.parseCoordinates(point.Coordinates); coord != nil {
+				allCoords = append(allCoords, coord)
+				if pointCoord == nil {
+					pointCoord = coord
+				}
+			}
+		}
+
+		// Collect all coordinates from LineStrings
+		for _, lineString := range placemark.MultiGeometry.LineStrings {
+			coords := p.parseCoordinateList(lineString.Coordinates)
+			allCoords = append(allCoords, coords...)
+			if pointCoord == nil && len(coords) > 0 {
+				pointCoord = coords[0]
+			}
+		}
+
+		// Collect all coordinates from Polygons
+		for _, polygon := range placemark.MultiGeometry.Polygons {
+			coords := p.parseCoordinateList(polygon.OuterBoundary.LinearRing.Coordinates)
+			allCoords = append(allCoords, coords...)
+			if pointCoord == nil && len(coords) > 0 {
+				pointCoord = coords[0]
+			}
+		}
+
+		// Create polyline from all collected coordinates
+		if len(allCoords) > 1 {
+			polyline = &api.Polyline{Points: allCoords}
+		}
+	}
+
+	return pointCoord, polyline
 }
 
 // parseCoordinates parses KML coordinate string "longitude,latitude,altitude"
@@ -264,6 +382,50 @@ func (p *FeedParser) parseCoordinates(coordString string) *api.Coordinates {
 		Latitude:  latitude,
 		Longitude: longitude,
 	}
+}
+
+// parseCoordinateList parses KML coordinate string with multiple coordinates
+// Format: "lon1,lat1,alt1 lon2,lat2,alt2 lon3,lat3,alt3"
+func (p *FeedParser) parseCoordinateList(coordString string) []*api.Coordinates {
+	coordString = strings.TrimSpace(coordString)
+	if coordString == "" {
+		return nil
+	}
+
+	var coordinates []*api.Coordinates
+
+	// Split by whitespace or newlines to get individual coordinate sets
+	coordSets := regexp.MustCompile(`\s+`).Split(coordString, -1)
+	
+	for _, coordSet := range coordSets {
+		coordSet = strings.TrimSpace(coordSet)
+		if coordSet == "" {
+			continue
+		}
+
+		// Parse individual coordinate set "longitude,latitude,altitude"
+		parts := strings.Split(coordSet, ",")
+		if len(parts) < 2 {
+			continue
+		}
+
+		longitude, err := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
+		if err != nil {
+			continue
+		}
+
+		latitude, err := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+		if err != nil {
+			continue
+		}
+
+		coordinates = append(coordinates, &api.Coordinates{
+			Latitude:  latitude,
+			Longitude: longitude,
+		})
+	}
+
+	return coordinates
 }
 
 // extractTextFromHTML removes HTML tags and decodes HTML entities

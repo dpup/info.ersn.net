@@ -174,3 +174,84 @@ func TestGeoUtils_EdgeCases(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 0.0, distance, "Distance from point to itself should be 0")
 }
+
+// Test polyline overlap detection with different waypoint frequencies
+func TestGeoUtils_PolylineOverlapWithDifferentFrequencies(t *testing.T) {
+	geoUtils := NewGeoUtils()
+	
+	// Simulate Google Routes polyline with high frequency waypoints (every ~100m)
+	googleRoute := Polyline{Points: []Point{
+		{Latitude: 38.0675, Longitude: -120.5436}, // Angels Camp
+		{Latitude: 38.0725, Longitude: -120.5386}, // 100m intervals
+		{Latitude: 38.0775, Longitude: -120.5336},
+		{Latitude: 38.0825, Longitude: -120.5286},
+		{Latitude: 38.0875, Longitude: -120.5236},
+		{Latitude: 38.0925, Longitude: -120.5186},
+		{Latitude: 38.0975, Longitude: -120.5136},
+		{Latitude: 38.1025, Longitude: -120.5086},
+		{Latitude: 38.1075, Longitude: -120.5036},
+		{Latitude: 38.1125, Longitude: -120.4986},
+		{Latitude: 38.1175, Longitude: -120.4936},
+		{Latitude: 38.1225, Longitude: -120.4886},
+		{Latitude: 38.1275, Longitude: -120.4836},
+		{Latitude: 38.1325, Longitude: -120.4786},
+		{Latitude: 38.1391, Longitude: -120.4561}, // Murphys
+	}}
+	
+	// Simulate Caltrans closure with low frequency waypoints (every ~500m)
+	caltransClosure := Polyline{Points: []Point{
+		{Latitude: 38.0700, Longitude: -120.5400}, // Slightly offset from route
+		{Latitude: 38.0950, Longitude: -120.5150}, // Large segments
+		{Latitude: 38.1200, Longitude: -120.4900},
+		{Latitude: 38.1350, Longitude: -120.4750},
+	}}
+	
+	// Test: Should detect overlap despite different waypoint frequencies
+	hasOverlap, segments, err := geoUtils.PolylinesOverlap(googleRoute, caltransClosure, 100.0)
+	require.NoError(t, err)
+	assert.True(t, hasOverlap, "Should detect overlap between polylines with different waypoint frequencies")
+	assert.Greater(t, len(segments), 0, "Should find overlap segments")
+	
+	// Test: Parallel roads that are too far apart
+	distantRoute := Polyline{Points: []Point{
+		{Latitude: 38.0675, Longitude: -120.4000}, // 1km+ away
+		{Latitude: 38.1391, Longitude: -120.3500},
+	}}
+	
+	hasOverlap, _, err = geoUtils.PolylinesOverlap(googleRoute, distantRoute, 100.0)
+	require.NoError(t, err)
+	assert.False(t, hasOverlap, "Should not detect overlap for distant parallel routes")
+}
+
+// Test overlap percentage calculation accuracy
+func TestGeoUtils_PolylineOverlapPercentageAccuracy(t *testing.T) {
+	geoUtils := NewGeoUtils()
+	
+	// Route from Angels Camp to Murphys
+	mainRoute := Polyline{Points: []Point{
+		{Latitude: 38.0675, Longitude: -120.5436},
+		{Latitude: 38.1391, Longitude: -120.4561},
+	}}
+	
+	// Closure covering exactly half the route
+	halfClosure := Polyline{Points: []Point{
+		{Latitude: 38.0675, Longitude: -120.5436}, // Same start
+		{Latitude: 38.1033, Longitude: -120.4999}, // Midpoint
+	}}
+	
+	percentage, err := geoUtils.PolylineOverlapPercentage(mainRoute, halfClosure, 50.0)
+	require.NoError(t, err)
+	
+	// Should be approximately 50% (allowing for some calculation variance)
+	assert.InDelta(t, 50.0, percentage, 10.0, "Half-closure should be approximately 50% overlap")
+	
+	// Test: No overlap case
+	noOverlapRoute := Polyline{Points: []Point{
+		{Latitude: 39.0000, Longitude: -121.0000}, // Completely different area
+		{Latitude: 39.1000, Longitude: -121.1000},
+	}}
+	
+	percentage, err = geoUtils.PolylineOverlapPercentage(mainRoute, noOverlapRoute, 50.0)
+	require.NoError(t, err)
+	assert.Equal(t, 0.0, percentage, "No overlap should return 0%")
+}

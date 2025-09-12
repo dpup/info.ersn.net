@@ -21,16 +21,17 @@ type ServerConfig struct {
 
 // RoadsConfig holds road monitoring configuration
 type RoadsConfig struct {
-	GoogleRoutes   GoogleConfig      `koanf:"google_routes"`
+	GoogleRoutes   GoogleConfig      `koanf:"googleRoutes"`
 	CaltransFeeds  CaltransConfig    `koanf:"caltrans_feeds"`
+	OpenAI         OpenAIConfig      `koanf:"openai"`
 	MonitoredRoads []MonitoredRoad   `koanf:"monitored_roads"`
 }
 
 // GoogleConfig holds Google Routes API settings
 type GoogleConfig struct {
-	RefreshInterval time.Duration `koanf:"refresh_interval"`
-	StaleThreshold  time.Duration `koanf:"stale_threshold"`
-	APIKey          string        `koanf:"api_key"`
+	RefreshInterval time.Duration `koanf:"refreshInterval"`
+	StaleThreshold  time.Duration `koanf:"staleThreshold"`
+	APIKey          string        `koanf:"apiKey"`
 }
 
 // CaltransConfig holds Caltrans KML feed settings
@@ -46,6 +47,15 @@ type CaltransFeedConfig struct {
 	URL             string        `koanf:"url"`
 }
 
+// OpenAIConfig holds OpenAI API settings for alert enhancement
+type OpenAIConfig struct {
+	APIKey      string        `koanf:"apiKey"`
+	Model       string        `koanf:"model"`
+	Timeout     time.Duration `koanf:"timeout"`
+	MaxRetries  int           `koanf:"maxRetries"`
+	Enabled     bool          `koanf:"enabled"`
+}
+
 // MonitoredRoad represents a road to monitor
 type MonitoredRoad struct {
 	Name        string           `koanf:"name"`
@@ -59,7 +69,7 @@ type MonitoredRoad struct {
 type WeatherConfig struct {
 	RefreshInterval    time.Duration     `koanf:"refresh_interval"`
 	StaleThreshold     time.Duration     `koanf:"stale_threshold"`
-	OpenWeatherAPIKey  string            `koanf:"openweather_api_key"`
+	OpenWeatherAPIKey  string            `koanf:"openweatherApiKey"`
 	Locations          []WeatherLocation `koanf:"locations"`
 }
 

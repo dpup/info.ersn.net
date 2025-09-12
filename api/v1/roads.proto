@@ -72,27 +72,35 @@ message Road {
   int32 delay_minutes = 8;            // Additional time due to traffic (0 = no delays)
   ChainControlStatus chain_control = 9; // Chain control requirements
   repeated RoadAlert alerts = 10;     // Combined from multiple sources
+  // Note: origin, destination, route_polyline, and max_alert_distance are kept internal for processing
 }
 
 
 // TrafficCondition merged into Road for simplicity
 
 message RoadAlert {
-  string id = 1;
-  AlertType type = 2;
-  AlertSeverity severity = 3;
-  AlertClassification classification = 4;  // NEW: On route vs nearby
-  string title = 5;
-  string original_description = 6;         // NEW: Raw Caltrans description
-  string description = 7;                  // UPDATED: Now AI-processed description
-  string condensed_summary = 8;            // NEW: Short format for mobile
-  google.protobuf.Timestamp start_time = 9;
-  google.protobuf.Timestamp end_time = 10;
-  google.protobuf.Timestamp last_updated = 11;
-  repeated string affected_segments = 12;
-  Coordinates location = 13;
-  map<string, string> metadata = 14;      // NEW: Dynamic key-value pairs
+  AlertType type = 1;
+  AlertSeverity severity = 2;
+  AlertClassification classification = 3;  // On route vs nearby vs distant
+  string title = 4;                        // Actual Caltrans title (e.g., "CHP Incident 250911GG0206")
+  string description = 5;                  // AI-processed description
+  string condensed_summary = 6;            // Short format for mobile
+  google.protobuf.Timestamp start_time = 7;
+  google.protobuf.Timestamp end_time = 8;
+  google.protobuf.Timestamp last_updated = 9;
+  Coordinates location = 10;               // Structured location with lat/lon
+  string location_description = 11;        // Human-friendly location description
+  string impact = 12;                      // AI-assessed impact: "none", "light", "moderate", "severe"
+  string duration = 13;                    // AI-assessed duration: "unknown", "< 1 hour", "several hours", "ongoing"
+  google.protobuf.Timestamp time_reported = 14;  // When incident was first reported
+  map<string, string> metadata = 15;      // Additional AI-generated key-value pairs only
+  // Note: id, original_description removed for cleaner API
+  // Note: affected_segments, affected_polyline, structured_data, enhancement_info, 
+  // distance_to_route, and affected_route_ids are kept internal for processing
 }
+
+// Note: StructuredDescription and EnhancementMetadata removed - AI-enhanced data 
+// now goes into the generic metadata map for simpler API structure
 
 message TrafficIncident {
   string id = 1;
@@ -144,6 +152,7 @@ enum AlertSeverity {
 
 enum AlertClassification {
   ALERT_CLASSIFICATION_UNSPECIFIED = 0;
-  ON_ROUTE = 1;      // Directly affects route path
-  NEARBY = 2;        // In surrounding area but not blocking route
+  ON_ROUTE = 1;      // Directly affects route path (< 100m from route)
+  NEARBY = 2;        // In surrounding area but not blocking route (< route threshold)
+  DISTANT = 3;       // Too far from route to be relevant (> route threshold)
 }

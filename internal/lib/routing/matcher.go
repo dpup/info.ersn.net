@@ -85,12 +85,12 @@ func (r *routeMatcher) classifyAlertAgainstRoute(alert UnclassifiedAlert, route 
 		return 0, false, errors.New("route must have at least 2 points")
 	}
 
-	// Handle different alert types
-	if alert.AffectedPolyline != nil {
-		// Polyline-based classification (closures, construction)
-		return r.classifyPolylineBasedAlert(alert, route)
+	// Handle different alert types: lane closures may have LineString polylines, incidents are points
+	if alert.AffectedPolyline != nil && len(alert.AffectedPolyline.Points) > 1 {
+		// Polyline-based classification for lane closures with LineString geometry
+		return r.classifyPolylineBasedAlertSimple(alert, route)
 	} else {
-		// Point-based classification (accidents, hazards)
+		// Point-based classification for incidents and single-point closures
 		return r.classifyPointBasedAlert(alert, route)
 	}
 }
@@ -109,49 +109,39 @@ func (r *routeMatcher) classifyPointBasedAlert(alert UnclassifiedAlert, route Ro
 	return distance, matches, nil
 }
 
-// classifyPolylineBasedAlert handles alerts with polyline coverage (closures, construction)
-func (r *routeMatcher) classifyPolylineBasedAlert(alert UnclassifiedAlert, route Route) (distance float64, matches bool, err error) {
-	// Calculate overlap percentage between alert polyline and route polyline
-	overlapPercentage, err := r.geoUtils.PolylineOverlapPercentage(route.Polyline, *alert.AffectedPolyline, 50.0)
-	if err != nil {
-		return 0, false, err
-	}
-
-	// If overlap percentage > 10%, consider it ON_ROUTE
-	if overlapPercentage > 10.0 {
-		distance = 0 // On route
-		matches = true
-		return distance, matches, nil
-	}
-
-	// Otherwise, calculate minimum distance between polylines
-	// Use the minimum distance from route points to alert polyline
-	minDist := float64(999999)
-	for _, routePoint := range route.Polyline.Points {
-		dist, err := r.geoUtils.PointToPolyline(routePoint, *alert.AffectedPolyline)
-		if err != nil {
-			continue
+// classifyPolylineBasedAlertSimple handles lane closures with LineString geometry using simple approach
+// Instead of complex overlap detection, check if any point along the Caltrans polyline is within threshold distance
+func (r *routeMatcher) classifyPolylineBasedAlertSimple(alert UnclassifiedAlert, route Route) (distance float64, matches bool, err error) {
+	// Find minimum distance by checking each point in the Caltrans polyline against the Google route
+	minDistance := float64(999999)
+	
+	for _, alertCoord := range alert.AffectedPolyline.Points {
+		// Convert API coordinate to geo.Point
+		alertPoint := geo.Point{
+			Latitude:  alertCoord.Latitude,
+			Longitude: alertCoord.Longitude,
 		}
-		if dist < minDist {
-			minDist = dist
-		}
-	}
-
-	// Also check alert polyline points to route polyline
-	for _, alertPoint := range alert.AffectedPolyline.Points {
+		
+		// Calculate distance from this Caltrans point to the Google route polyline  
 		dist, err := r.geoUtils.PointToPolyline(alertPoint, route.Polyline)
 		if err != nil {
-			continue
+			continue // Skip invalid points
 		}
-		if dist < minDist {
-			minDist = dist
+		
+		if dist < minDistance {
+			minDistance = dist
 		}
 	}
-
-	distance = minDist
-	matches = distance <= route.MaxDistance
-
-	return distance, matches, nil
+	
+	// If no valid points found, return error
+	if minDistance == 999999 {
+		return 0, false, errors.New("no valid points found in alert polyline")
+	}
+	
+	// Determine if it matches based on route's distance threshold
+	matches = minDistance <= route.MaxDistance
+	
+	return minDistance, matches, nil
 }
 
 // GetRouteAlerts returns alerts for a specific route, prioritizing ON_ROUTE alerts

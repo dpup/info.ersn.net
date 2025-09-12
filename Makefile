@@ -20,6 +20,9 @@ SERVER_BINARY=$(BUILD_DIR)/server
 TEST_GOOGLE_BINARY=$(BUILD_DIR)/test-google
 TEST_CALTRANS_BINARY=$(BUILD_DIR)/test-caltrans
 TEST_WEATHER_BINARY=$(BUILD_DIR)/test-weather
+TEST_GEO_UTILS_BINARY=$(BUILD_DIR)/test-geo-utils
+TEST_ALERT_ENHANCER_BINARY=$(BUILD_DIR)/test-alert-enhancer
+TEST_ROUTE_MATCHER_BINARY=$(BUILD_DIR)/test-route-matcher
 
 # Default target
 all: build
@@ -36,7 +39,7 @@ $(SERVER_BINARY): proto
 	$(GOBUILD) -o $(SERVER_BINARY) ./$(CMD_DIR)/server
 
 # Build CLI testing tools only
-tools: $(TEST_GOOGLE_BINARY) $(TEST_CALTRANS_BINARY) $(TEST_WEATHER_BINARY)
+tools: $(TEST_GOOGLE_BINARY) $(TEST_CALTRANS_BINARY) $(TEST_WEATHER_BINARY) $(TEST_GEO_UTILS_BINARY) $(TEST_ALERT_ENHANCER_BINARY) $(TEST_ROUTE_MATCHER_BINARY)
 
 $(TEST_GOOGLE_BINARY): proto
 	$(GOBUILD) -o $(TEST_GOOGLE_BINARY) ./$(CMD_DIR)/test-google
@@ -46,6 +49,15 @@ $(TEST_CALTRANS_BINARY): proto
 
 $(TEST_WEATHER_BINARY): proto
 	$(GOBUILD) -o $(TEST_WEATHER_BINARY) ./$(CMD_DIR)/test-weather
+
+$(TEST_GEO_UTILS_BINARY): proto
+	$(GOBUILD) -o $(TEST_GEO_UTILS_BINARY) ./$(CMD_DIR)/test-geo-utils
+
+$(TEST_ALERT_ENHANCER_BINARY): proto
+	$(GOBUILD) -o $(TEST_ALERT_ENHANCER_BINARY) ./$(CMD_DIR)/test-alert-enhancer
+
+$(TEST_ROUTE_MATCHER_BINARY): proto
+	$(GOBUILD) -o $(TEST_ROUTE_MATCHER_BINARY) ./$(CMD_DIR)/test-route-matcher
 
 # Generate protobuf code
 proto:
@@ -197,7 +209,10 @@ install: tools
 	cp $(TEST_GOOGLE_BINARY) /usr/local/bin/
 	cp $(TEST_CALTRANS_BINARY) /usr/local/bin/
 	cp $(TEST_WEATHER_BINARY) /usr/local/bin/
-	@echo "CLI tools installed: test-google, test-caltrans, test-weather"
+	cp $(TEST_GEO_UTILS_BINARY) /usr/local/bin/
+	cp $(TEST_ALERT_ENHANCER_BINARY) /usr/local/bin/
+	cp $(TEST_ROUTE_MATCHER_BINARY) /usr/local/bin/
+	@echo "CLI tools installed: test-google, test-caltrans, test-weather, test-geo-utils, test-alert-enhancer, test-route-matcher"
 
 ## Utility Targets
 

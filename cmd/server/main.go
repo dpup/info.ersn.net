@@ -72,10 +72,12 @@ func loadConfig() *config.Config {
 	if err := prefab.Config.Unmarshal("roads", &appConfig.Roads); err != nil {
 		log.Fatalf("Failed to unmarshal roads section: %v", err)
 	}
+	
 
 	if err := prefab.Config.Unmarshal("weather", &appConfig.Weather); err != nil {
 		log.Fatalf("Failed to unmarshal weather section: %v", err)
 	}
+	
 
 	return appConfig
 }

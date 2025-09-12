@@ -179,30 +179,61 @@ func (g *geoUtils) PolylinesOverlap(polyline1, polyline2 Polyline, thresholdMete
 	return hasOverlap, overlapSegments, nil
 }
 
-// segmentsOverlap checks if two line segments are within threshold distance
+// segmentsOverlap checks if two line segments are within threshold distance using proper interpolation
 func (g *geoUtils) segmentsOverlap(seg1Start, seg1End, seg2Start, seg2End Point, threshold float64) bool {
-	// Check if any endpoint of one segment is close to the other segment
-	dist1, _ := g.PointToPolyline(seg1Start, Polyline{Points: []Point{seg2Start, seg2End}})
-	if dist1 <= threshold {
+	// Calculate segment lengths to determine sampling frequency
+	seg1Length, _ := g.PointToPoint(seg1Start, seg1End)
+	seg2Length, _ := g.PointToPoint(seg2Start, seg2End)
+	
+	// Use adaptive sampling based on segment length and threshold
+	// Sample every 50 meters or threshold/2, whichever is smaller, but at least 3 samples per segment
+	maxSampleDistance := math.Min(50.0, threshold/2)
+	
+	// Sample segment 1 against segment 2
+	if g.sampleSegmentAgainstSegment(seg1Start, seg1End, seg2Start, seg2End, seg1Length, maxSampleDistance, threshold) {
 		return true
 	}
 	
-	dist2, _ := g.PointToPolyline(seg1End, Polyline{Points: []Point{seg2Start, seg2End}})
-	if dist2 <= threshold {
-		return true
-	}
-	
-	dist3, _ := g.PointToPolyline(seg2Start, Polyline{Points: []Point{seg1Start, seg1End}})
-	if dist3 <= threshold {
-		return true
-	}
-	
-	dist4, _ := g.PointToPolyline(seg2End, Polyline{Points: []Point{seg1Start, seg1End}})
-	if dist4 <= threshold {
+	// Sample segment 2 against segment 1 (to catch cases where seg2 is much longer)
+	if g.sampleSegmentAgainstSegment(seg2Start, seg2End, seg1Start, seg1End, seg2Length, maxSampleDistance, threshold) {
 		return true
 	}
 	
 	return false
+}
+
+// sampleSegmentAgainstSegment samples points along segment1 and checks distance to segment2
+func (g *geoUtils) sampleSegmentAgainstSegment(seg1Start, seg1End, seg2Start, seg2End Point, seg1Length, maxSampleDistance, threshold float64) bool {
+	// Determine number of samples (minimum 3: start, middle, end)
+	numSamples := int(math.Max(3, math.Ceil(seg1Length/maxSampleDistance)))
+	
+	for i := 0; i < numSamples; i++ {
+		// Calculate interpolated point along segment 1
+		t := float64(i) / float64(numSamples-1) // 0.0 to 1.0
+		samplePoint := g.interpolatePoint(seg1Start, seg1End, t)
+		
+		// Check distance from sample point to segment 2
+		distance := g.pointToSegmentDistance(samplePoint, seg2Start, seg2End)
+		
+		if distance <= threshold {
+			return true
+		}
+	}
+	
+	return false
+}
+
+// interpolatePoint calculates a point along the great circle between two points
+// t=0 returns start, t=1 returns end, t=0.5 returns midpoint
+func (g *geoUtils) interpolatePoint(start, end Point, t float64) Point {
+	// For short distances, linear interpolation is sufficient
+	// For longer distances, we should use spherical interpolation, but for road segments
+	// (typically < 10km), linear interpolation provides adequate accuracy
+	
+	lat := start.Latitude + t*(end.Latitude-start.Latitude)
+	lon := start.Longitude + t*(end.Longitude-start.Longitude)
+	
+	return Point{Latitude: lat, Longitude: lon}
 }
 
 // findCloserPoint finds the point closer to the given segment
@@ -216,7 +247,7 @@ func (g *geoUtils) findCloserPoint(point, segStart, segEnd Point) Point {
 	return segEnd
 }
 
-// PolylineOverlapPercentage calculates percentage of polyline1 that overlaps with polyline2
+// PolylineOverlapPercentage calculates percentage of polyline1 that overlaps with polyline2 using detailed sampling
 func (g *geoUtils) PolylineOverlapPercentage(polyline1, polyline2 Polyline, thresholdMeters float64) (float64, error) {
 	if len(polyline1.Points) < 2 || len(polyline2.Points) < 2 {
 		return 0, errors.New("both polylines must have at least 2 points")
@@ -233,28 +264,33 @@ func (g *geoUtils) PolylineOverlapPercentage(polyline1, polyline2 Polyline, thre
 		return 0, nil
 	}
 
-	// Calculate overlapping length
+	// Calculate overlapping length using fine-grained sampling
 	overlappingLength := 0.0
+	sampleDistance := 25.0 // Sample every 25 meters for accuracy
+	
 	for i := 0; i < len(polyline1.Points)-1; i++ {
 		seg1Start := polyline1.Points[i]
 		seg1End := polyline1.Points[i+1]
 		segmentLength, _ := g.PointToPoint(seg1Start, seg1End)
 		
-		// Check if this segment overlaps with any part of polyline2
-		segmentOverlaps := false
-		for j := 0; j < len(polyline2.Points)-1; j++ {
-			seg2Start := polyline2.Points[j]
-			seg2End := polyline2.Points[j+1]
+		// Sample this segment to determine what portion overlaps
+		numSamples := int(math.Max(2, math.Ceil(segmentLength/sampleDistance)))
+		overlappingSamples := 0
+		
+		for s := 0; s < numSamples; s++ {
+			t := float64(s) / float64(numSamples-1)
+			samplePoint := g.interpolatePoint(seg1Start, seg1End, t)
 			
-			if g.segmentsOverlap(seg1Start, seg1End, seg2Start, seg2End, thresholdMeters) {
-				segmentOverlaps = true
-				break
+			// Check if this sample point is close to polyline2
+			distance, _ := g.PointToPolyline(samplePoint, polyline2)
+			if distance <= thresholdMeters {
+				overlappingSamples++
 			}
 		}
 		
-		if segmentOverlaps {
-			overlappingLength += segmentLength
-		}
+		// Calculate the proportion of this segment that overlaps
+		overlapProportion := float64(overlappingSamples) / float64(numSamples)
+		overlappingLength += segmentLength * overlapProportion
 	}
 	
 	percentage := (overlappingLength / totalLength) * 100

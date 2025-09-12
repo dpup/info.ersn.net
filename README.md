@@ -8,7 +8,9 @@ A real-time API server providing road conditions and weather information for the
 
 - **Real-time Road Conditions**: Live traffic data, travel times, and congestion levels
 - **Weather Information**: Current conditions and alerts for multiple locations
-- **Road Alerts**: Chain control requirements, lane closures, and CHP incidents
+- **Smart Alert Filtering**: Route-aware classification (ON_ROUTE/NEARBY/DISTANT) with distance-based relevance
+- **AI-Enhanced Descriptions**: Optional OpenAI integration to convert technical alerts into human-readable summaries
+- **Road Alerts**: Chain control requirements, lane closures, and CHP incidents with polyline geometry
 - **REST API**: HTTP endpoints with JSON responses
 - **gRPC Support**: Native gRPC services with HTTP gateway
 - **Caching**: In-memory caching with configurable refresh intervals
@@ -207,6 +209,40 @@ weather:
       lat: 38.139117
       lon: -120.456111
 ```
+
+#### AI-Enhanced Alerts (Optional)
+
+The server supports AI-powered alert enhancement using OpenAI's GPT models to transform technical Caltrans descriptions into human-readable summaries:
+
+```yaml
+roads:
+  openai:
+    enabled: false             # Set to true to enable AI enhancement
+    api_key: ""                # Set via PF__ROADS__OPENAI__API_KEY
+    model: "gpt-3.5-turbo"     # OpenAI model for enhancement
+    timeout: "30s"             # API timeout
+    max_retries: 3             # Retry attempts
+```
+
+**To enable AI enhancement:**
+
+1. Get an OpenAI API key from https://platform.openai.com/api-keys
+2. Set the environment variable:
+   ```bash
+   export PF__ROADS__OPENAI__API_KEY="sk-your-openai-api-key"
+   ```
+3. Enable in configuration:
+   ```bash
+   # Update prefab.yaml or set via environment
+   export PF__ROADS__OPENAI__ENABLED=true
+   ```
+4. Restart the server
+
+**Benefits of AI enhancement:**
+- Converts technical jargon like "Rte 4 EB of MM 31 - VEHICLE IN DITCH, EMS ENRT" 
+- Into clear descriptions like "Vehicle accident in ditch on Highway 4 eastbound near mile marker 31, emergency services en route"
+- Provides structured data with impact assessment and duration estimates
+- Generates condensed summaries for mobile displays
 
 ## Development
 

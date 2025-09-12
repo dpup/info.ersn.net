@@ -9,3 +9,9 @@ message Coordinates {
   double latitude = 1;   // Latitude in decimal degrees (-90 to 90)
   double longitude = 2;  // Longitude in decimal degrees (-180 to 180)
 }
+
+// Geographic polyline for route and closure representations
+message Polyline {
+  string encoded_polyline = 1;      // Google polyline encoded string
+  repeated Coordinates points = 2;   // Decoded coordinate points
+}
