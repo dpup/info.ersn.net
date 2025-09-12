@@ -46,8 +46,8 @@ type IncidentContentHash struct {
 	FirstSeenAt       time.Time `json:"first_seen_at"`
 }
 
-// ProcessedIncidentCache represents cached background-processed incident data
-type ProcessedIncidentCache struct {
+// ProcessedIncident represents background-processed incident data
+type ProcessedIncident struct {
 	ContentHash        IncidentContentHash `json:"content_hash"`
 	Stage             ProcessingStage     `json:"stage"`
 	OriginalIncident  interface{}         `json:"original_incident"`
@@ -72,15 +72,15 @@ type IncidentContentHasher interface {
 	ValidateContentHash(hash IncidentContentHash) error
 }
 
-// ProcessedIncidentStore provides content-based storage with background processing
-type ProcessedIncidentStore interface {
+// IncidentStore provides content-based storage with background processing
+type IncidentStore interface {
 	// GetProcessed retrieves cached processed data by content hash and stage
 	// Returns nil if not found or expired
-	GetProcessed(ctx context.Context, contentHash IncidentContentHash, stage ProcessingStage) (*ProcessedIncidentCache, error)
+	GetProcessed(ctx context.Context, contentHash IncidentContentHash, stage ProcessingStage) (*ProcessedIncident, error)
 	
 	// StoreProcessed caches the result of background processing
 	// Updates LastSeenInFeed if incident already exists
-	StoreProcessed(ctx context.Context, entry ProcessedIncidentCache) error
+	StoreProcessed(ctx context.Context, entry ProcessedIncident) error
 	
 	// MarkSeenInCurrentFeed updates LastSeenInFeed to prevent premature expiration
 	// Called during feed refresh to keep active incidents cached
@@ -94,8 +94,8 @@ type ProcessedIncidentStore interface {
 	GetCacheMetrics(ctx context.Context) (ContentCacheMetrics, error)
 }
 
-// BackgroundIncidentProcessor handles out-of-band processing to achieve <200ms responses
-type BackgroundIncidentProcessor interface {
+// IncidentBatchProcessor handles out-of-band processing to achieve <200ms responses
+type IncidentBatchProcessor interface {
 	// StartBackgroundProcessing begins async processing of incidents
 	// Processes incidents through OpenAI and caches results
 	StartBackgroundProcessing(ctx context.Context) error
@@ -109,14 +109,14 @@ type BackgroundIncidentProcessor interface {
 	PrefetchCommonIncidents(ctx context.Context) error
 	
 	// GetProcessingStats returns background processing performance metrics
-	GetProcessingStats(ctx context.Context) (BackgroundProcessingStats, error)
+	GetProcessingStats(ctx context.Context) (BatchProcessingStats, error)
 	
 	// Stop gracefully shuts down background processing
 	Stop(ctx context.Context) error
 }
 
-// AsyncAlertEnhancer wraps OpenAI processing with background execution and caching
-type AsyncAlertEnhancer interface {
+// IncidentProcessor wraps OpenAI processing with background execution and caching
+type IncidentProcessor interface {
 	// GetEnhancedAlert returns enhanced alert immediately from cache if available
 	// If not cached, returns raw alert and triggers background enhancement
 	// Achieves <200ms response time by serving cached or raw data
@@ -154,8 +154,8 @@ type ContentCacheMetrics struct {
 	LastMetricsUpdate    time.Time                   `json:"last_metrics_update"`
 }
 
-// BackgroundProcessingStats tracks out-of-band processing performance
-type BackgroundProcessingStats struct {
+// BatchProcessingStats tracks out-of-band processing performance
+type BatchProcessingStats struct {
 	// QueuedIncidents waiting for background processing
 	QueuedIncidents      int64         `json:"queued_incidents"`
 	// ProcessedIncidents completed in current session

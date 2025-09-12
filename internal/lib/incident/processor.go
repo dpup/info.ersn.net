@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-// backgroundIncidentProcessor implements BackgroundIncidentProcessor interface
-type backgroundIncidentProcessor struct {
-	store     ProcessedIncidentStore
+// incidentBatchProcessor implements IncidentBatchProcessor interface
+type incidentBatchProcessor struct {
+	store     IncidentStore
 	hasher    IncidentContentHasher
-	enhancer  AsyncAlertEnhancer
+	enhancer  IncidentProcessor
 	
 	// Background processing state
 	queue        chan interface{}
@@ -20,7 +20,7 @@ type backgroundIncidentProcessor struct {
 	processingMu sync.RWMutex
 	
 	// Metrics
-	stats BackgroundProcessingStats
+	stats BatchProcessingStats
 	statsMu sync.RWMutex
 	
 	// Configuration
@@ -29,8 +29,8 @@ type backgroundIncidentProcessor struct {
 }
 
 // NewBackgroundIncidentProcessor creates a new background processor
-func NewBackgroundIncidentProcessor(store ProcessedIncidentStore, hasher IncidentContentHasher, enhancer AsyncAlertEnhancer) BackgroundIncidentProcessor {
-	return &backgroundIncidentProcessor{
+func NewBackgroundIncidentProcessor(store IncidentStore, hasher IncidentContentHasher, enhancer IncidentProcessor) IncidentBatchProcessor {
+	return &incidentBatchProcessor{
 		store:         store,
 		hasher:        hasher,
 		enhancer:      enhancer,
@@ -41,7 +41,7 @@ func NewBackgroundIncidentProcessor(store ProcessedIncidentStore, hasher Inciden
 }
 
 // StartBackgroundProcessing begins async processing of incidents
-func (p *backgroundIncidentProcessor) StartBackgroundProcessing(ctx context.Context) error {
+func (p *incidentBatchProcessor) StartBackgroundProcessing(ctx context.Context) error {
 	p.processingMu.Lock()
 	defer p.processingMu.Unlock()
 	
@@ -61,7 +61,7 @@ func (p *backgroundIncidentProcessor) StartBackgroundProcessing(ctx context.Cont
 }
 
 // ProcessIncidentBatch handles a batch of incidents from feed refresh
-func (p *backgroundIncidentProcessor) ProcessIncidentBatch(ctx context.Context, incidents []interface{}) error {
+func (p *incidentBatchProcessor) ProcessIncidentBatch(ctx context.Context, incidents []interface{}) error {
 	p.statsMu.Lock()
 	defer p.statsMu.Unlock()
 	
@@ -105,7 +105,7 @@ func (p *backgroundIncidentProcessor) ProcessIncidentBatch(ctx context.Context, 
 }
 
 // PrefetchCommonIncidents proactively processes likely incidents
-func (p *backgroundIncidentProcessor) PrefetchCommonIncidents(ctx context.Context) error {
+func (p *incidentBatchProcessor) PrefetchCommonIncidents(ctx context.Context) error {
 	// This would typically load historical incident patterns
 	// For now, we implement a placeholder
 	log.Printf("Prefetch common incidents: placeholder implementation")
@@ -113,7 +113,7 @@ func (p *backgroundIncidentProcessor) PrefetchCommonIncidents(ctx context.Contex
 }
 
 // GetProcessingStats returns background processing performance metrics
-func (p *backgroundIncidentProcessor) GetProcessingStats(ctx context.Context) (BackgroundProcessingStats, error) {
+func (p *incidentBatchProcessor) GetProcessingStats(ctx context.Context) (BatchProcessingStats, error) {
 	p.statsMu.RLock()
 	defer p.statsMu.RUnlock()
 	
@@ -122,7 +122,7 @@ func (p *backgroundIncidentProcessor) GetProcessingStats(ctx context.Context) (B
 }
 
 // Stop gracefully shuts down background processing
-func (p *backgroundIncidentProcessor) Stop(ctx context.Context) error {
+func (p *incidentBatchProcessor) Stop(ctx context.Context) error {
 	p.processingMu.Lock()
 	defer p.processingMu.Unlock()
 	
@@ -138,7 +138,7 @@ func (p *backgroundIncidentProcessor) Stop(ctx context.Context) error {
 }
 
 // worker processes incidents from the queue
-func (p *backgroundIncidentProcessor) worker(ctx context.Context, workerID int) {
+func (p *incidentBatchProcessor) worker(ctx context.Context, workerID int) {
 	log.Printf("Background processor worker %d started", workerID)
 	
 	for {
@@ -159,7 +159,7 @@ func (p *backgroundIncidentProcessor) worker(ctx context.Context, workerID int) 
 }
 
 // processIncident handles a single incident processing
-func (p *backgroundIncidentProcessor) processIncident(ctx context.Context, incident interface{}, workerID int) {
+func (p *incidentBatchProcessor) processIncident(ctx context.Context, incident interface{}, workerID int) {
 	startTime := time.Now()
 	
 	// Generate content hash
@@ -175,7 +175,7 @@ func (p *backgroundIncidentProcessor) processIncident(ctx context.Context, incid
 	defer cancel()
 	
 	// Store raw incident first
-	rawEntry := ProcessedIncidentCache{
+	rawEntry := ProcessedIncident{
 		ContentHash:        hash,
 		Stage:             RAW_KML,
 		OriginalIncident:  incident,
@@ -205,14 +205,14 @@ func (p *backgroundIncidentProcessor) processIncident(ctx context.Context, incid
 }
 
 // incrementFailedProcessing safely increments failed processing count
-func (p *backgroundIncidentProcessor) incrementFailedProcessing() {
+func (p *incidentBatchProcessor) incrementFailedProcessing() {
 	p.statsMu.Lock()
 	defer p.statsMu.Unlock()
 	p.stats.FailedProcessing++
 }
 
 // updateProcessingStats safely updates processing statistics
-func (p *backgroundIncidentProcessor) updateProcessingStats(duration time.Duration) {
+func (p *incidentBatchProcessor) updateProcessingStats(duration time.Duration) {
 	p.statsMu.Lock()
 	defer p.statsMu.Unlock()
 	

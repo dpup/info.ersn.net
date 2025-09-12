@@ -228,8 +228,8 @@ type CacheStats struct {
 	NewestEntry   time.Time
 }
 
-// ProcessedIncidentEntry represents cached background-processed incident data
-type ProcessedIncidentEntry struct {
+// ProcessedIncidentCacheEntry represents cached background-processed incident data
+type ProcessedIncidentCacheEntry struct {
 	ContentHash       string        `json:"content_hash"`
 	Stage            string        `json:"stage"` // raw_kml, route_filtered, openai_enhanced
 	OriginalIncident interface{}   `json:"original_incident"`
@@ -241,7 +241,7 @@ type ProcessedIncidentEntry struct {
 }
 
 // SetProcessedIncident stores a processed incident with content-based key
-func (c *Cache) SetProcessedIncident(contentHash, stage string, entry ProcessedIncidentEntry) error {
+func (c *Cache) SetProcessedIncident(contentHash, stage string, entry ProcessedIncidentCacheEntry) error {
 	key := fmt.Sprintf("processed_incident:%s:%s", contentHash, stage)
 	
 	// Set cache expiration based on entry's CacheExpiresAt
@@ -255,10 +255,10 @@ func (c *Cache) SetProcessedIncident(contentHash, stage string, entry ProcessedI
 }
 
 // GetProcessedIncident retrieves a processed incident by content hash and stage
-func (c *Cache) GetProcessedIncident(contentHash, stage string) (*ProcessedIncidentEntry, bool, error) {
+func (c *Cache) GetProcessedIncident(contentHash, stage string) (*ProcessedIncidentCacheEntry, bool, error) {
 	key := fmt.Sprintf("processed_incident:%s:%s", contentHash, stage)
 	
-	var entry ProcessedIncidentEntry
+	var entry ProcessedIncidentCacheEntry
 	found, err := c.Get(key, &entry)
 	if err != nil {
 		return nil, false, err
@@ -291,7 +291,7 @@ func (c *Cache) MarkIncidentSeenInFeed(contentHash string, seenAt time.Time) err
 	for _, stage := range stages {
 		key := fmt.Sprintf("processed_incident:%s:%s", contentHash, stage)
 		if entry, exists := c.entries[key]; exists {
-			var processedEntry ProcessedIncidentEntry
+			var processedEntry ProcessedIncidentCacheEntry
 			if err := json.Unmarshal(entry.Data, &processedEntry); err == nil {
 				processedEntry.LastSeenInFeed = seenAt
 				processedEntry.CacheExpiresAt = seenAt.Add(1 * time.Hour) // 1 hour after last seen
@@ -323,7 +323,7 @@ func (c *Cache) ExpireOldProcessedIncidents() int {
 			continue
 		}
 		
-		var processedEntry ProcessedIncidentEntry
+		var processedEntry ProcessedIncidentCacheEntry
 		if err := json.Unmarshal(entry.Data, &processedEntry); err != nil {
 			continue
 		}

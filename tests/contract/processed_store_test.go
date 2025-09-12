@@ -17,15 +17,15 @@ import (
 // Implementation is now available - run the tests!
 
 // Use the actual types from the incident package
-type ProcessedIncidentStore = incident.ProcessedIncidentStore
-type ProcessedIncidentCache = incident.ProcessedIncidentCache
+type IncidentStore = incident.IncidentStore
+type ProcessedIncidentCache = incident.ProcessedIncident
 type ContentCacheMetrics = incident.ContentCacheMetrics
 
 // TestProcessedIncidentStore_StoreAndGet tests basic store/retrieve functionality
 func TestProcessedIncidentStore_StoreAndGet(t *testing.T) {
 	// Implementation is now available - run the test!
 	cacheInstance := cache.NewCache()
-	store := cache.NewProcessedIncidentStore(cacheInstance)
+	store := cache.NewIncidentStore(cacheInstance)
 	ctx := context.Background()
 	
 	contentHash := incident.IncidentContentHash{
@@ -36,7 +36,7 @@ func TestProcessedIncidentStore_StoreAndGet(t *testing.T) {
 		FirstSeenAt:      time.Now(),
 	}
 	
-	entry := incident.ProcessedIncidentCache{
+	entry := incident.ProcessedIncident{
 		ContentHash:       contentHash,
 		Stage:            incident.OPENAI_ENHANCED,
 		OriginalIncident: MockIncident{Description: "Raw incident data"},
@@ -66,7 +66,7 @@ func TestProcessedIncidentStore_StoreAndGet(t *testing.T) {
 func TestProcessedIncidentStore_NotFound(t *testing.T) {
 	// Implementation is now available - run the test!
 	cacheInstance := cache.NewCache()
-	store := cache.NewProcessedIncidentStore(cacheInstance)
+	store := cache.NewIncidentStore(cacheInstance)
 	ctx := context.Background()
 	
 	nonExistentHash := incident.IncidentContentHash{
@@ -83,7 +83,7 @@ func TestProcessedIncidentStore_NotFound(t *testing.T) {
 func TestProcessedIncidentStore_MarkSeenInCurrentFeed(t *testing.T) {
 	// Implementation is now available - run the test!
 	cacheInstance := cache.NewCache()
-	store := cache.NewProcessedIncidentStore(cacheInstance)
+	store := cache.NewIncidentStore(cacheInstance)
 	ctx := context.Background()
 	
 	contentHash := incident.IncidentContentHash{
@@ -95,7 +95,7 @@ func TestProcessedIncidentStore_MarkSeenInCurrentFeed(t *testing.T) {
 	}
 	
 	// Store an incident
-	entry := incident.ProcessedIncidentCache{
+	entry := incident.ProcessedIncident{
 		ContentHash:    contentHash,
 		Stage:         incident.OPENAI_ENHANCED,
 		OriginalIncident: map[string]interface{}{"description": "test"},
@@ -119,7 +119,7 @@ func TestProcessedIncidentStore_MarkSeenInCurrentFeed(t *testing.T) {
 func TestProcessedIncidentStore_ExpireOldIncidents(t *testing.T) {
 	// Implementation is now available - run the test!
 	cacheInstance := cache.NewCache()
-	store := cache.NewProcessedIncidentStore(cacheInstance)
+	store := cache.NewIncidentStore(cacheInstance)
 	ctx := context.Background()
 	
 	// Test that ExpireOldIncidents method executes without error
@@ -133,7 +133,7 @@ func TestProcessedIncidentStore_ExpireOldIncidents(t *testing.T) {
 func TestProcessedIncidentStore_GetCacheMetrics(t *testing.T) {
 	// Implementation is now available - run the test!
 	cacheInstance := cache.NewCache()
-	store := cache.NewProcessedIncidentStore(cacheInstance)
+	store := cache.NewIncidentStore(cacheInstance)
 	ctx := context.Background()
 	
 	// Store some test data
@@ -146,7 +146,7 @@ func TestProcessedIncidentStore_GetCacheMetrics(t *testing.T) {
 			FirstSeenAt:      time.Now(),
 		}
 		
-		entry := incident.ProcessedIncidentCache{
+		entry := incident.ProcessedIncident{
 			ContentHash:    contentHash,
 			Stage:         incident.OPENAI_ENHANCED,
 			OriginalIncident: map[string]interface{}{"description": fmt.Sprintf("test %d", i)},

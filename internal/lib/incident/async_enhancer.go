@@ -10,9 +10,9 @@ import (
 	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
 )
 
-// asyncAlertEnhancer implements AsyncAlertEnhancer interface
-type asyncAlertEnhancer struct {
-	store    ProcessedIncidentStore
+// incidentProcessor implements IncidentProcessor interface
+type incidentProcessor struct {
+	store    IncidentStore
 	hasher   IncidentContentHasher
 	enhancer alerts.AlertEnhancer
 	
@@ -31,8 +31,8 @@ type asyncAlertEnhancer struct {
 }
 
 // NewAsyncAlertEnhancer creates a new async alert enhancer
-func NewAsyncAlertEnhancer(store ProcessedIncidentStore, hasher IncidentContentHasher, alertEnhancer alerts.AlertEnhancer) AsyncAlertEnhancer {
-	enhancer := &asyncAlertEnhancer{
+func NewAsyncAlertEnhancer(store IncidentStore, hasher IncidentContentHasher, alertEnhancer alerts.AlertEnhancer) IncidentProcessor {
+	enhancer := &incidentProcessor{
 		store:            store,
 		hasher:           hasher,
 		enhancer:         alertEnhancer,
@@ -54,7 +54,7 @@ func NewAsyncAlertEnhancer(store ProcessedIncidentStore, hasher IncidentContentH
 }
 
 // GetEnhancedAlert returns enhanced alert immediately from cache if available
-func (e *asyncAlertEnhancer) GetEnhancedAlert(ctx context.Context, incident interface{}) (interface{}, bool, error) {
+func (e *incidentProcessor) GetEnhancedAlert(ctx context.Context, incident interface{}) (interface{}, bool, error) {
 	startTime := time.Now()
 	
 	// Generate content hash for incident
@@ -97,7 +97,7 @@ func (e *asyncAlertEnhancer) GetEnhancedAlert(ctx context.Context, incident inte
 }
 
 // QueueForEnhancement adds incident to background processing queue
-func (e *asyncAlertEnhancer) QueueForEnhancement(ctx context.Context, incident interface{}) error {
+func (e *incidentProcessor) QueueForEnhancement(ctx context.Context, incident interface{}) error {
 	select {
 	case e.enhancementQueue <- incident:
 		e.incrementQueueSize()
@@ -109,7 +109,7 @@ func (e *asyncAlertEnhancer) QueueForEnhancement(ctx context.Context, incident i
 }
 
 // GetEnhancementStatus returns cache hit rate and queue statistics
-func (e *asyncAlertEnhancer) GetEnhancementStatus(ctx context.Context) (EnhancementStatus, error) {
+func (e *incidentProcessor) GetEnhancementStatus(ctx context.Context) (EnhancementStatus, error) {
 	e.statsMu.RLock()
 	defer e.statsMu.RUnlock()
 	
@@ -129,7 +129,7 @@ func (e *asyncAlertEnhancer) GetEnhancementStatus(ctx context.Context) (Enhancem
 }
 
 // StartEnhancementWorkers starts the background enhancement processing
-func (e *asyncAlertEnhancer) StartEnhancementWorkers(ctx context.Context) error {
+func (e *incidentProcessor) StartEnhancementWorkers(ctx context.Context) error {
 	e.processingMu.Lock()
 	defer e.processingMu.Unlock()
 	
@@ -149,7 +149,7 @@ func (e *asyncAlertEnhancer) StartEnhancementWorkers(ctx context.Context) error 
 }
 
 // StopEnhancementWorkers gracefully stops background processing
-func (e *asyncAlertEnhancer) StopEnhancementWorkers(ctx context.Context) error {
+func (e *incidentProcessor) StopEnhancementWorkers(ctx context.Context) error {
 	e.processingMu.Lock()
 	defer e.processingMu.Unlock()
 	
@@ -165,7 +165,7 @@ func (e *asyncAlertEnhancer) StopEnhancementWorkers(ctx context.Context) error {
 }
 
 // enhancementWorker processes incidents from the enhancement queue
-func (e *asyncAlertEnhancer) enhancementWorker(ctx context.Context, workerID int) {
+func (e *incidentProcessor) enhancementWorker(ctx context.Context, workerID int) {
 	log.Printf("OpenAI enhancement worker %d started", workerID)
 	
 	for {
@@ -187,7 +187,7 @@ func (e *asyncAlertEnhancer) enhancementWorker(ctx context.Context, workerID int
 }
 
 // enhanceIncident performs OpenAI enhancement on a single incident
-func (e *asyncAlertEnhancer) enhanceIncident(ctx context.Context, incident interface{}, workerID int) {
+func (e *incidentProcessor) enhanceIncident(ctx context.Context, incident interface{}, workerID int) {
 	startTime := time.Now()
 	
 	// Generate content hash
@@ -210,7 +210,7 @@ func (e *asyncAlertEnhancer) enhanceIncident(ctx context.Context, incident inter
 	}
 	
 	// Store the enhanced result
-	enhancedEntry := ProcessedIncidentCache{
+	enhancedEntry := ProcessedIncident{
 		ContentHash:        hash,
 		Stage:             OPENAI_ENHANCED,
 		OriginalIncident:  incident,
@@ -234,7 +234,7 @@ func (e *asyncAlertEnhancer) enhanceIncident(ctx context.Context, incident inter
 }
 
 // callOpenAIEnhancer calls the real OpenAI enhancer to process an incident
-func (e *asyncAlertEnhancer) callOpenAIEnhancer(ctx context.Context, incident interface{}) (interface{}, error) {
+func (e *incidentProcessor) callOpenAIEnhancer(ctx context.Context, incident interface{}) (interface{}, error) {
 	// Convert incident to RawAlert format expected by the AlertEnhancer
 	rawAlert, err := e.convertIncidentToRawAlert(incident)
 	if err != nil {
@@ -251,7 +251,7 @@ func (e *asyncAlertEnhancer) callOpenAIEnhancer(ctx context.Context, incident in
 }
 
 // convertIncidentToRawAlert converts various incident formats to RawAlert
-func (e *asyncAlertEnhancer) convertIncidentToRawAlert(incident interface{}) (alerts.RawAlert, error) {
+func (e *incidentProcessor) convertIncidentToRawAlert(incident interface{}) (alerts.RawAlert, error) {
 	switch v := incident.(type) {
 	case map[string]interface{}:
 		// Extract fields from map
@@ -289,7 +289,7 @@ func (e *asyncAlertEnhancer) convertIncidentToRawAlert(incident interface{}) (al
 }
 
 // createFallbackEnhancement creates a basic enhanced version when OpenAI fails
-func (e *asyncAlertEnhancer) createFallbackEnhancement(incident interface{}) interface{} {
+func (e *incidentProcessor) createFallbackEnhancement(incident interface{}) interface{} {
 	// Create a basic enhanced version that indicates the enhancement was attempted but failed
 	switch v := incident.(type) {
 	case map[string]interface{}:
@@ -316,26 +316,26 @@ func (e *asyncAlertEnhancer) createFallbackEnhancement(incident interface{}) int
 
 // Statistics update methods
 
-func (e *asyncAlertEnhancer) incrementCacheHit() {
+func (e *incidentProcessor) incrementCacheHit() {
 	e.statsMu.Lock()
 	defer e.statsMu.Unlock()
 	// Update cache hit rate calculation
 	// This would typically maintain a sliding window of requests
 }
 
-func (e *asyncAlertEnhancer) incrementCacheMiss() {
+func (e *incidentProcessor) incrementCacheMiss() {
 	e.statsMu.Lock()
 	defer e.statsMu.Unlock()
 	// Update cache miss statistics
 }
 
-func (e *asyncAlertEnhancer) incrementQueueSize() {
+func (e *incidentProcessor) incrementQueueSize() {
 	e.statsMu.Lock()
 	defer e.statsMu.Unlock()
 	e.stats.BackgroundQueueSize++
 }
 
-func (e *asyncAlertEnhancer) decrementQueueSize() {
+func (e *incidentProcessor) decrementQueueSize() {
 	e.statsMu.Lock()
 	defer e.statsMu.Unlock()
 	if e.stats.BackgroundQueueSize > 0 {
@@ -343,13 +343,13 @@ func (e *asyncAlertEnhancer) decrementQueueSize() {
 	}
 }
 
-func (e *asyncAlertEnhancer) incrementEnhancedCount() {
+func (e *incidentProcessor) incrementEnhancedCount() {
 	e.statsMu.Lock()
 	defer e.statsMu.Unlock()
 	e.stats.CachedEnhancementsAvailable++
 }
 
-func (e *asyncAlertEnhancer) updateResponseTimeStats(duration time.Duration, cacheHit bool) {
+func (e *incidentProcessor) updateResponseTimeStats(duration time.Duration, cacheHit bool) {
 	e.statsMu.Lock()
 	defer e.statsMu.Unlock()
 	

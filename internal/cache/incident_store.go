@@ -8,20 +8,20 @@ import (
 	"github.com/dpup/info.ersn.net/server/internal/lib/incident"
 )
 
-// processedIncidentStore implements ProcessedIncidentStore interface
-type processedIncidentStore struct {
+// incidentStoreAdapter implements IncidentStore interface
+type incidentStoreAdapter struct {
 	cache *Cache
 }
 
-// NewProcessedIncidentStore creates a new processed incident store backed by the cache
-func NewProcessedIncidentStore(cache *Cache) incident.ProcessedIncidentStore {
-	return &processedIncidentStore{
+// NewIncidentStore creates a new incident store backed by the cache
+func NewIncidentStore(cache *Cache) incident.IncidentStore {
+	return &incidentStoreAdapter{
 		cache: cache,
 	}
 }
 
 // GetProcessed retrieves cached processed data by content hash and stage
-func (s *processedIncidentStore) GetProcessed(ctx context.Context, contentHash incident.IncidentContentHash, stage incident.ProcessingStage) (*incident.ProcessedIncidentCache, error) {
+func (s *incidentStoreAdapter) GetProcessed(ctx context.Context, contentHash incident.IncidentContentHash, stage incident.ProcessingStage) (*incident.ProcessedIncident, error) {
 	// Use the cache's existing ProcessedIncident methods
 	entry, found, err := s.cache.GetProcessedIncident(contentHash.ContentHash, stage.String())
 	if err != nil {
@@ -32,8 +32,8 @@ func (s *processedIncidentStore) GetProcessed(ctx context.Context, contentHash i
 		return nil, nil
 	}
 	
-	// Convert cache entry to incident ProcessedIncidentCache
-	result := &incident.ProcessedIncidentCache{
+	// Convert cache entry to incident ProcessedIncident
+	result := &incident.ProcessedIncident{
 		ContentHash:        contentHash,
 		Stage:             stage,
 		OriginalIncident:  entry.OriginalIncident,
@@ -48,9 +48,9 @@ func (s *processedIncidentStore) GetProcessed(ctx context.Context, contentHash i
 }
 
 // StoreProcessed caches the result of background processing
-func (s *processedIncidentStore) StoreProcessed(ctx context.Context, entry incident.ProcessedIncidentCache) error {
-	// Convert incident ProcessedIncidentCache to cache ProcessedIncidentEntry
-	cacheEntry := ProcessedIncidentEntry{
+func (s *incidentStoreAdapter) StoreProcessed(ctx context.Context, entry incident.ProcessedIncident) error {
+	// Convert incident ProcessedIncident to cache ProcessedIncidentCacheEntry
+	cacheEntry := ProcessedIncidentCacheEntry{
 		ContentHash:        entry.ContentHash.ContentHash,
 		Stage:             entry.Stage.String(),
 		OriginalIncident:  entry.OriginalIncident,
@@ -65,17 +65,17 @@ func (s *processedIncidentStore) StoreProcessed(ctx context.Context, entry incid
 }
 
 // MarkSeenInCurrentFeed updates LastSeenInFeed to prevent premature expiration
-func (s *processedIncidentStore) MarkSeenInCurrentFeed(ctx context.Context, contentHash incident.IncidentContentHash) error {
+func (s *incidentStoreAdapter) MarkSeenInCurrentFeed(ctx context.Context, contentHash incident.IncidentContentHash) error {
 	return s.cache.MarkIncidentSeenInFeed(contentHash.ContentHash, time.Now())
 }
 
 // ExpireOldIncidents removes incidents not seen in feeds for configured duration
-func (s *processedIncidentStore) ExpireOldIncidents(ctx context.Context) (int, error) {
+func (s *incidentStoreAdapter) ExpireOldIncidents(ctx context.Context) (int, error) {
 	return s.cache.ExpireOldProcessedIncidents(), nil
 }
 
 // GetCacheMetrics returns performance statistics for monitoring
-func (s *processedIncidentStore) GetCacheMetrics(ctx context.Context) (incident.ContentCacheMetrics, error) {
+func (s *incidentStoreAdapter) GetCacheMetrics(ctx context.Context) (incident.ContentCacheMetrics, error) {
 	// Get basic cache stats
 	stats := s.cache.Stats()
 	
