@@ -26,33 +26,33 @@ func main() {
 	// Initialize cache
 	cacheInstance := cache.NewCache()
 
-	// Initialize external API clients
-	googleClient := google.NewClient(appConfig.Roads.GoogleRoutes.APIKey)
+	// Initialize external API clients using top-level client configurations
+	googleClient := google.NewClient(appConfig.GoogleRoutes.APIKey)
 	caltransClient := caltrans.NewFeedParser()
-	weatherClient := weather.NewClient(appConfig.Weather.OpenWeatherAPIKey)
+	weatherClient := weather.NewClient(appConfig.OpenWeather.APIKey)
 
 	// Initialize OpenAI enhancer with caching (required for service)
-	if appConfig.Roads.OpenAI.APIKey == "" {
+	if appConfig.OpenAI.APIKey == "" {
 		log.Fatal("OpenAI API key is required in configuration for incident enhancement")
 	}
 
-	model := appConfig.Roads.OpenAI.Model
+	model := appConfig.OpenAI.Model
 
 	// Create OpenAI enhancer (caching is now integrated directly in RoadsService)
-	alertEnhancer := alerts.NewAlertEnhancer(appConfig.Roads.OpenAI.APIKey, model)
+	alertEnhancer := alerts.NewAlertEnhancer(appConfig.OpenAI.APIKey, model)
 	
 	log.Printf("OpenAI enhancement enabled with integrated content-based caching (model: %s)", model)
 
 	// Initialize gRPC services  
-	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, &appConfig.Roads, alertEnhancer)
-	weatherService := services.NewWeatherService(weatherClient, cacheInstance, &appConfig.Weather)
+	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, appConfig, alertEnhancer)
+	weatherService := services.NewWeatherService(weatherClient, cacheInstance, appConfig)
 
 	log.Printf("Live Data API Server starting")
 	log.Printf("Roads monitored: %d", len(appConfig.Roads.MonitoredRoads))
 	log.Printf("Weather locations: %d", len(appConfig.Weather.Locations))
 
 	// Start periodic refresh to maintain cache warmth (replaces complex cache warmer)
-	periodicRefresh := services.NewPeriodicRefreshService(roadsService, &appConfig.Roads)
+	periodicRefresh := services.NewPeriodicRefreshService(roadsService, appConfig)
 	if err := periodicRefresh.StartPeriodicRefresh(context.Background()); err != nil {
 		log.Printf("Failed to start periodic refresh: %v", err)
 	}
@@ -88,7 +88,20 @@ func main() {
 func loadConfig() *config.Config {
 	appConfig := &config.Config{}
 
-	// Unmarshal specific sections from Prefab's config using exact key paths
+	// Unmarshal client configurations
+	if err := prefab.Config.Unmarshal("google_routes", &appConfig.GoogleRoutes); err != nil {
+		log.Fatalf("Failed to unmarshal google_routes section: %v", err)
+	}
+
+	if err := prefab.Config.Unmarshal("openai", &appConfig.OpenAI); err != nil {
+		log.Fatalf("Failed to unmarshal openai section: %v", err)
+	}
+
+	if err := prefab.Config.Unmarshal("openweather", &appConfig.OpenWeather); err != nil {
+		log.Fatalf("Failed to unmarshal openweather section: %v", err)
+	}
+
+	// Unmarshal service configurations
 	if err := prefab.Config.Unmarshal("roads", &appConfig.Roads); err != nil {
 		log.Fatalf("Failed to unmarshal roads section: %v", err)
 	}

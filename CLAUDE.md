@@ -40,6 +40,9 @@ Auto-generated from feature spec 001-build-an-api. Last updated: 2025-09-09
 
 ## Commands
 
+Whenever possible you MUST use a command provided by the makefile. If you need additional functionality
+discuss with the operator improvements to the makefile commands.
+
 ### Build & Development
 ```bash
 # Generate protobuf code

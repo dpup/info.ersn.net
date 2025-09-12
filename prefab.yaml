@@ -20,29 +20,34 @@ security:
   hstsIncludeSubdomains: true
   hstsPreload: true
 
-# App Config
+# Client Configurations - Top Level  
+google_routes:
+  # apiKey set via PF__GOOGLE_ROUTES__API_KEY env var
+
+openai:
+  # apiKey set via PF__OPENAI__API_KEY env var
+  model: "gpt-4o-mini"       # OpenAI model for alert enhancement with JSON schema support
+  timeout: "30s"             # Timeout for API calls
+  maxRetries: 3              # Maximum retry attempts
+
+openweather:
+  # apiKey set via PF__OPENWEATHER__API_KEY env var
+
+# Service Configurations
 roads:
-  googleRoutes:
-    refreshInterval: "5m"
-    staleThreshold: "10m"
-    apiKey: ""  # Set via PF__ROADS__GOOGLE_ROUTES__API_KEY env var
-  caltrans_feeds:
-    # TODO: Re-enable chain_controls in winter when actual chain requirement data is available
-    chain_controls:
-      refresh_interval: "30m"  # Less frequent, changes slowly (UNUSED - no winter data available)
-      url: "https://quickmap.dot.ca.gov/data/cc.kml"
-    lane_closures:
-      refresh_interval: "10m"
+  # Common refresh settings for roads service
+  refreshInterval: "5m"
+  staleThreshold: "10m"
+  
+  caltransFeeds:
+    laneClosures:
+      refreshInterval: "10m"
       url: "https://quickmap.dot.ca.gov/data/lcs2way.kml"
-    chp_incidents:
-      refresh_interval: "5m"   # More frequent, incidents change quickly
+    chpIncidents:
+      refreshInterval: "5m"   # More frequent, incidents change quickly
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
-  openai:
-    apiKey: ""                # Set via PF__ROADS__OPENAI__API_KEY env var
-    model: "gpt-4o-mini"      # OpenAI model for alert enhancement with JSON schema support
-    timeout: "30s"            # Timeout for API calls
-    maxRetries: 3             # Maximum retry attempts
-  monitored_roads:
+    
+  monitoredRoads:
     - name: "Hwy 4"
       section: "Angels Camp to Murphys"
       id: "hwy4-angels-murphys"
@@ -83,21 +88,24 @@ roads:
 weather:
   refreshInterval: "5m"
   staleThreshold: "10m"
-  openweatherApiKey: ""  # Set via PF__WEATHER__OPENWEATHER_API_KEY env var
   locations:
     - id: "murphys"
       name: "Murphys, CA"
-      lat: 38.139117
-      lon: -120.456111
+      coordinates:
+        latitude: 38.139117
+        longitude: -120.456111
     - id: "arnold"  
       name: "Arnold, CA"
-      lat: 38.265006
-      lon: -120.333654
+      coordinates:
+        latitude: 38.265006
+        longitude: -120.333654
     - id: "dorrington"
       name: "Dorrington, CA"
-      lat: 38.301275
-      lon: -120.276705
+      coordinates:
+        latitude: 38.301275
+        longitude: -120.276705
     - id: "bearvalley"
       name: "Bear Valley, CA"
-      lat: 38.461045
-      lon: -120.042368
+      coordinates:
+        latitude: 38.461045
+        longitude: -120.042368

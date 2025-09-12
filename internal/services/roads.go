@@ -26,7 +26,7 @@ type RoadsService struct {
 	googleClient   *google.Client
 	caltransClient *caltrans.FeedParser
 	cache          *cache.Cache
-	config         *config.RoadsConfig
+	config         *config.Config
 	alertEnhancer  alerts.AlertEnhancer
 	routeMatcher   routing.RouteMatcher
 	geoUtils       geo.GeoUtils
@@ -34,7 +34,7 @@ type RoadsService struct {
 }
 
 // NewRoadsService creates a new RoadsService
-func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedParser, cache *cache.Cache, config *config.RoadsConfig, alertEnhancer alerts.AlertEnhancer) *RoadsService {
+func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedParser, cache *cache.Cache, config *config.Config, alertEnhancer alerts.AlertEnhancer) *RoadsService {
 	return &RoadsService{
 		googleClient:   googleClient,
 		caltransClient: caltransClient,
@@ -98,7 +98,7 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 	}
 
 	// Cache the refreshed data
-	if err := s.cache.Set(cacheKey, roads, s.config.GoogleRoutes.RefreshInterval, "roads"); err != nil {
+	if err := s.cache.Set(cacheKey, roads, s.config.Roads.RefreshInterval, "roads"); err != nil {
 		log.Printf("Failed to cache roads: %v", err)
 	}
 
@@ -151,7 +151,7 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 	var roads []*api.Road
 
 	// Process each monitored road
-	for _, monitoredRoad := range s.config.MonitoredRoads {
+	for _, monitoredRoad := range s.config.Roads.MonitoredRoads {
 		road, err := s.processMonitoredRoad(ctx, monitoredRoad)
 		if err != nil {
 			log.Printf("Failed to process road %s: %v", monitoredRoad.ID, err)

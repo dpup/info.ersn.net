@@ -19,11 +19,11 @@ type WeatherService struct {
 	api.UnimplementedWeatherServiceServer
 	weatherClient *weather.Client
 	cache         *cache.Cache
-	config        *config.WeatherConfig
+	config        *config.Config
 }
 
 // NewWeatherService creates a new WeatherService
-func NewWeatherService(weatherClient *weather.Client, cache *cache.Cache, config *config.WeatherConfig) *WeatherService {
+func NewWeatherService(weatherClient *weather.Client, cache *cache.Cache, config *config.Config) *WeatherService {
 	return &WeatherService{
 		weatherClient: weatherClient,
 		cache:         cache,
@@ -82,7 +82,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 	}
 
 	// Cache the refreshed data
-	if err := s.cache.Set(cacheKey, weatherData, s.config.RefreshInterval, "weather"); err != nil {
+	if err := s.cache.Set(cacheKey, weatherData, s.config.Weather.RefreshInterval, "weather"); err != nil {
 		log.Printf("Failed to cache weather data: %v", err)
 	}
 
@@ -165,7 +165,7 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 	}
 
 	// Cache the refreshed alerts
-	if err := s.cache.Set(cacheKey, alerts, s.config.RefreshInterval, "weather_alerts"); err != nil {
+	if err := s.cache.Set(cacheKey, alerts, s.config.Weather.RefreshInterval, "weather_alerts"); err != nil {
 		log.Printf("Failed to cache weather alerts: %v", err)
 	}
 
@@ -180,7 +180,7 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 	var weatherDataList []*api.WeatherData
 
 	// Process each configured location
-	for _, location := range s.config.Locations {
+	for _, location := range s.config.Weather.Locations {
 		weatherData, err := s.processWeatherLocation(ctx, location)
 		if err != nil {
 			log.Printf("Failed to process weather for location %s: %v", location.ID, err)
@@ -201,7 +201,7 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 func (s *WeatherService) processWeatherLocation(ctx context.Context, location config.WeatherLocation) (*api.WeatherData, error) {
 	log.Printf("Processing weather for location: %s", location.ID)
 
-	if s.config.OpenWeatherAPIKey == "" {
+	if s.config.OpenWeather.APIKey == "" {
 		return nil, fmt.Errorf("OpenWeatherMap API key not configured")
 	}
 
@@ -233,7 +233,7 @@ func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.Weath
 	var allAlerts []*api.WeatherAlert
 
 	// Process each configured location
-	for _, location := range s.config.Locations {
+	for _, location := range s.config.Weather.Locations {
 		alerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
 		if err != nil {
 			log.Printf("Failed to get weather alerts for location %s: %v", location.ID, err)

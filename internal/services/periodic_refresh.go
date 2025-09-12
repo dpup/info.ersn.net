@@ -13,7 +13,7 @@ import (
 // Replaces complex CacheWarmer with simple periodic calls to existing refresh logic
 type PeriodicRefreshService struct {
 	roadsService *RoadsService
-	config       *config.RoadsConfig
+	config       *config.Config
 	
 	// Background refresh control
 	stopChan chan struct{}
@@ -21,7 +21,7 @@ type PeriodicRefreshService struct {
 }
 
 // NewPeriodicRefreshService creates a new periodic refresh service
-func NewPeriodicRefreshService(roadsService *RoadsService, config *config.RoadsConfig) *PeriodicRefreshService {
+func NewPeriodicRefreshService(roadsService *RoadsService, config *config.Config) *PeriodicRefreshService {
 	return &PeriodicRefreshService{
 		roadsService: roadsService,
 		config:       config,
@@ -38,8 +38,8 @@ func (p *PeriodicRefreshService) StartPeriodicRefresh(ctx context.Context) error
 	
 	p.running = true
 	
-	// Use Google Routes refresh interval from config (default 5 minutes)
-	interval := p.config.GoogleRoutes.RefreshInterval
+	// Use roads refresh interval from config (default 5 minutes)
+	interval := p.config.Roads.RefreshInterval
 	
 	log.Printf("Starting periodic refresh every %v to maintain cache warmth", interval)
 	
