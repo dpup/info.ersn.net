@@ -30,6 +30,7 @@ type RoadsService struct {
 	alertEnhancer  alerts.AlertEnhancer
 	routeMatcher   routing.RouteMatcher
 	geoUtils       geo.GeoUtils
+	contentHasher  *alerts.ContentHasher
 }
 
 // NewRoadsService creates a new RoadsService
@@ -42,6 +43,7 @@ func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedP
 		alertEnhancer:  alertEnhancer,
 		routeMatcher:   routing.NewRouteMatcher(),
 		geoUtils:       geo.NewGeoUtils(),
+		contentHasher:  alerts.NewContentHasher(),
 	}
 }
 
@@ -458,7 +460,7 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 
 	// Enhance with AI if available
 	if s.alertEnhancer != nil {
-		enhanced, err := s.enhanceAlertWithAI(ctx, classifiedAlert)
+		enhanced, err := s.EnhanceAlertWithAI(ctx, classifiedAlert)
 		if err != nil {
 			log.Printf("Alert enhancement failed, using original: %v", err)
 		} else {
@@ -494,8 +496,9 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 	return alert, nil
 }
 
-// enhanceAlertWithAI uses the alert enhancer to improve alert descriptions
-func (s *RoadsService) enhanceAlertWithAI(ctx context.Context, classifiedAlert routing.ClassifiedAlert) (*alerts.EnhancedAlert, error) {
+// EnhanceAlertWithAI uses the alert enhancer to improve alert descriptions with integrated caching
+// Made public for testing
+func (s *RoadsService) EnhanceAlertWithAI(ctx context.Context, classifiedAlert routing.ClassifiedAlert) (*alerts.EnhancedAlert, error) {
 	rawAlert := alerts.RawAlert{
 		ID:          classifiedAlert.ID,
 		Description: classifiedAlert.Description,
@@ -504,10 +507,35 @@ func (s *RoadsService) enhanceAlertWithAI(ctx context.Context, classifiedAlert r
 		Timestamp:   time.Now(),
 	}
 
+	// Generate content hash for cache key
+	contentHash := s.contentHasher.HashRawAlert(rawAlert)
+	
+	// Check cache first
+	var cachedAlert alerts.EnhancedAlert
+	key := fmt.Sprintf("enhanced_alert:%s", contentHash)
+	if found, err := s.cache.Get(key, &cachedAlert); err == nil && found {
+		log.Printf("Cache hit for alert content hash %s", contentHash[:8])
+		return &cachedAlert, nil
+	}
+	
+	log.Printf("Cache miss for alert content hash %s - calling OpenAI", contentHash[:8])
+	
+	// Cache miss - call OpenAI enhancement
 	enhanced, err := s.alertEnhancer.EnhanceAlert(ctx, rawAlert)
 	if err != nil {
+		log.Printf("OpenAI enhancement failed for %s: %v", contentHash[:8], err)
 		return nil, err
 	}
+	
+	// Cache the result with 24 hour TTL to prevent duplicate OpenAI calls
+	ttl := 24 * time.Hour
+	if err := s.cache.SetEnhancedAlert(contentHash, enhanced, ttl); err != nil {
+		log.Printf("Failed to cache enhanced alert: %v", err)
+		// Don't fail the request if caching fails
+	} else {
+		log.Printf("Cached enhanced alert with hash %s for 24h", contentHash[:8])
+	}
+	
 	return &enhanced, nil
 }
 

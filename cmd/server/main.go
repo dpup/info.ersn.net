@@ -38,17 +38,13 @@ func main() {
 
 	model := appConfig.Roads.OpenAI.Model
 
-	// Create basic OpenAI enhancer
-	baseEnhancer := alerts.NewAlertEnhancer(appConfig.Roads.OpenAI.APIKey, model)
+	// Create OpenAI enhancer (caching is now integrated directly in RoadsService)
+	alertEnhancer := alerts.NewAlertEnhancer(appConfig.Roads.OpenAI.APIKey, model)
 	
-	// Wrap with content-based caching to eliminate duplicate OpenAI calls
-	alertCacheAdapter := cache.NewAlertCacheAdapter(cacheInstance)
-	cachedEnhancer := alerts.NewCachedAlertEnhancer(baseEnhancer, alertCacheAdapter)
-	
-	log.Printf("OpenAI enhancement enabled with content-based caching (model: %s)", model)
+	log.Printf("OpenAI enhancement enabled with integrated content-based caching (model: %s)", model)
 
 	// Initialize gRPC services  
-	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, &appConfig.Roads, cachedEnhancer)
+	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, &appConfig.Roads, alertEnhancer)
 	weatherService := services.NewWeatherService(weatherClient, cacheInstance, &appConfig.Weather)
 
 	log.Printf("Live Data API Server starting")
