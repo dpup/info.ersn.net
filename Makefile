@@ -84,6 +84,22 @@ clean:
 test:
 	$(GOTEST) -v ./...
 
+# Test incident content processing functionality
+test-incident: $(TEST_CALTRANS_BINARY)
+	./$(TEST_CALTRANS_BINARY) --test-content-hash $(if $(VERBOSE),--verbose)
+
+# Run contract tests for incident processing interfaces
+test-contract:
+	$(GOTEST) -v ./tests/contract/
+
+# Run integration tests for background processing
+test-integration:
+	$(GOTEST) -v ./tests/integration/
+
+# Run performance tests for <200ms requirement
+test-performance:
+	$(GOTEST) -v ./tests/performance/
+
 # Test individual API clients (optional parameters)
 test-google: $(TEST_GOOGLE_BINARY)
 	./$(TEST_GOOGLE_BINARY) --config=prefab.yaml $(if $(ROUTE_ID),--route-id=$(ROUTE_ID)) $(if $(VERBOSE),--verbose)

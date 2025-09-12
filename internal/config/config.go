@@ -24,6 +24,7 @@ type RoadsConfig struct {
 	GoogleRoutes   GoogleConfig      `koanf:"googleRoutes"`
 	CaltransFeeds  CaltransConfig    `koanf:"caltrans_feeds"`
 	OpenAI         OpenAIConfig      `koanf:"openai"`
+	Store          StoreConfig       `koanf:"store"`
 	MonitoredRoads []MonitoredRoad   `koanf:"monitored_roads"`
 }
 
@@ -100,6 +101,26 @@ func (w WeatherLocation) ToProto() *api.Coordinates {
 	return &api.Coordinates{
 		Latitude:  w.Lat,
 		Longitude: w.Lon,
+	}
+}
+
+// StoreConfig configures out-of-band processing behavior
+type StoreConfig struct {
+	ProcessingIntervalMinutes int  `koanf:"processing_interval_minutes"`
+	MaxConcurrentOpenAI       int  `koanf:"max_concurrent_openai"`
+	CacheTTLHours            int  `koanf:"cache_ttl_hours"`
+	PrefetchEnabled          bool `koanf:"prefetch_enabled"`
+	OpenAITimeoutSeconds     int  `koanf:"openai_timeout_seconds"`
+}
+
+// GetDefaultStoreConfig returns recommended configuration values
+func GetDefaultStoreConfig() StoreConfig {
+	return StoreConfig{
+		ProcessingIntervalMinutes: 5,    // Check for new incidents every 5 minutes
+		MaxConcurrentOpenAI:       3,    // Conservative to avoid rate limits
+		CacheTTLHours:            1,    // 1 hour after incident disappears
+		PrefetchEnabled:          true, // Proactive processing recommended
+		OpenAITimeoutSeconds:     30,   // Reasonable timeout for OpenAI calls
 	}
 }
 
