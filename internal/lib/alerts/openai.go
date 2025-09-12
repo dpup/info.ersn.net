@@ -25,25 +25,25 @@ StyleUrl Definitions (KML styles from Caltrans data):
 - Other values: General traffic alert
 
 Return valid JSON object with these exact fields:
-- time_reported (string | null) – ISO timestamp of when first reported
 - details (string) – Plain-language description of what happened
+- condensed_summary (string) – 1-line summary (max 120 chars, no location, no times)
 - location (object) – structured location with:
   - description (string) – human-friendly location description
   - latitude (number) – decimal degrees latitude from input coordinates  
   - longitude (number) – decimal degrees longitude from input coordinates
+- time_reported (string | null) – ISO timestamp of when first reported
 - last_update (string | null) – most recent update in ISO format
 - impact (enum) – "none" | "light" | "moderate" | "severe"
 - duration (enum) – "unknown" | "< 1 hour" | "several hours" | "ongoing"
 - additional_info (object) – key-value pairs for structured facts (keys: alphanumeric/._/- only, all values must be strings)
 
 Guidelines for additional_info metadata:
-• Use consistent field names across similar incidents (e.g., always "incident_type", not "incident_category")
-• Common useful fields: incident_type, emergency_services, vehicles_involved, lanes_blocked, injuries, roadway_status
-• For collisions: vehicle descriptions, lane numbers, injury status, emergency response
-• For construction: work_type, assistance_needed, roadway_status  
-• Values should be concise but descriptive (e.g., "green Toyota Prius", "lanes 1 and 2", "fire department and EMS")
-• Use lowercase for consistency except proper nouns (e.g., "traffic collision", "Toyota Camry")
-- condensed_summary (string) – 1-line summary (max 120 chars, no location, no times)
+- Use consistent field names across similar incidents (e.g., always "incident_type", not "incident_category")
+- Common useful fields: incident_type, emergency_services, vehicles_involved, lanes_blocked, injuries, roadway_status
+- For collisions: vehicle descriptions, lane numbers, injury status, emergency response
+- For construction: work_type, assistance_needed, roadway_status  
+- Values should be concise but descriptive (e.g., "green Toyota Prius", "lanes 1 and 2", "fire department and EMS")
+- Use lowercase for consistency except proper nouns (e.g., "traffic collision", "Toyota Camry")
 
 How to write condensed summaries:
 - CRITICAL: Do NOT include ANY location details (no highway names, mile markers, cities)
