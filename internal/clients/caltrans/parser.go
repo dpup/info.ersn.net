@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html"
 	"io"
-	"math"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
+	"github.com/dpup/info.ersn.net/server/internal/lib/geo"
 )
 
 // CaltransFeedType represents the type of Caltrans feed
@@ -34,6 +34,7 @@ type HTTPDoer interface {
 // Implementation per research.md lines 49-67
 type FeedParser struct {
 	HTTPClient HTTPDoer
+	geoUtils   geo.GeoUtils
 }
 
 // CaltransIncident represents parsed incident data from KML feeds
@@ -125,6 +126,7 @@ func NewFeedParser() *FeedParser {
 		HTTPClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
+		geoUtils: geo.NewGeoUtils(),
 	}
 }
 
@@ -148,7 +150,7 @@ func (p *FeedParser) ParseCHPIncidents(ctx context.Context) ([]CaltransIncident,
 
 // ParseWithGeographicFilter parses incidents and filters by proximity to route coordinates
 // Implementation per research.md line 79
-func (p *FeedParser) ParseWithGeographicFilter(ctx context.Context, routeCoordinates []struct{ Lat, Lon float64 }, radiusMeters float64) ([]CaltransIncident, error) {
+func (p *FeedParser) ParseWithGeographicFilter(ctx context.Context, routeCoordinates []geo.Point, radiusMeters float64) ([]CaltransIncident, error) {
 	// Parse feeds (chain control parsing disabled until winter data available)
 	// TODO: Re-enable chain control parsing in winter when actual chain requirement data is available
 	
@@ -165,18 +167,38 @@ func (p *FeedParser) ParseWithGeographicFilter(ctx context.Context, routeCoordin
 	// Combine incidents (excluding chain controls for now)
 	allIncidents := append(laneClosures, chpIncidents...)
 
-	// Filter by geographic proximity
+	// Filter by geographic proximity using centralized filtering
 	filteredIncidents := make([]CaltransIncident, 0)
+	
 	for _, incident := range allIncidents {
+		// Skip incidents without valid coordinates
+		if incident.Coordinates == nil {
+			continue
+		}
+		
+		incidentPoint := geo.Point{
+			Latitude:  incident.Coordinates.Latitude,
+			Longitude: incident.Coordinates.Longitude,
+		}
+		
+		// Check if incident is within radius of any route coordinate
+		isNearRoute := false
 		for _, coord := range routeCoordinates {
-			distance := haversineDistance(
-				coord.Lat, coord.Lon,
-				incident.Coordinates.Latitude, incident.Coordinates.Longitude,
+			distance, err := p.geoUtils.DistanceFromCoords(
+				coord.Latitude, coord.Longitude,
+				incidentPoint.Latitude, incidentPoint.Longitude,
 			)
+			if err != nil {
+				continue // Skip invalid coordinates
+			}
 			if distance <= radiusMeters {
-				filteredIncidents = append(filteredIncidents, incident)
+				isNearRoute = true
 				break // Found within range, no need to check other coordinates
 			}
+		}
+		
+		if isNearRoute {
+			filteredIncidents = append(filteredIncidents, incident)
 		}
 	}
 
@@ -486,21 +508,3 @@ func extractDates(text string) []string {
 	return uniqueDates
 }
 
-// haversineDistance calculates the distance between two points on Earth in meters
-func haversineDistance(lat1, lon1, lat2, lon2 float64) float64 {
-	const R = 6371000 // Earth's radius in meters
-	
-	// Convert degrees to radians
-	lat1Rad := lat1 * math.Pi / 180
-	lat2Rad := lat2 * math.Pi / 180
-	deltaLat := (lat2 - lat1) * math.Pi / 180
-	deltaLon := (lon2 - lon1) * math.Pi / 180
-	
-	// Haversine formula
-	a := math.Sin(deltaLat/2)*math.Sin(deltaLat/2) +
-		math.Cos(lat1Rad)*math.Cos(lat2Rad)*
-		math.Sin(deltaLon/2)*math.Sin(deltaLon/2)
-	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
-	
-	return R * c
-}

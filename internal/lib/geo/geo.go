@@ -377,6 +377,57 @@ func (g *geoUtils) closestPointOnSegment(point, segmentStart, segmentEnd Point) 
 	return segmentEnd
 }
 
+// Coordinate Conversion Utilities
+
+// NewPoint creates a Point from latitude and longitude values with validation
+func NewPoint(latitude, longitude float64) (Point, error) {
+	point := Point{Latitude: latitude, Longitude: longitude}
+	if !isValidCoordinate(point) {
+		return Point{}, errors.New("invalid coordinates: latitude must be [-90, 90], longitude must be [-180, 180]")
+	}
+	return point, nil
+}
+
+// NewPointUnsafe creates a Point without validation (for performance-critical paths)
+func NewPointUnsafe(latitude, longitude float64) Point {
+	return Point{Latitude: latitude, Longitude: longitude}
+}
+
+// FilterPointsByDistance filters points to those within specified distance of center point
+func (g *geoUtils) FilterPointsByDistance(points []Point, center Point, maxDistanceMeters float64) ([]Point, error) {
+	if !isValidCoordinate(center) {
+		return nil, errors.New("invalid center point coordinates")
+	}
+	
+	var filteredPoints []Point
+	
+	for _, point := range points {
+		if !isValidCoordinate(point) {
+			continue // Skip invalid points
+		}
+		
+		distance, err := g.PointToPoint(center, point)
+		if err != nil {
+			continue // Skip points that cause calculation errors
+		}
+		
+		if distance <= maxDistanceMeters {
+			filteredPoints = append(filteredPoints, point)
+		}
+	}
+	
+	return filteredPoints, nil
+}
+
+// DistanceFromCoords calculates distance between two coordinate pairs
+// Convenience method for raw latitude/longitude values
+func (g *geoUtils) DistanceFromCoords(lat1, lon1, lat2, lon2 float64) (float64, error) {
+	point1 := Point{Latitude: lat1, Longitude: lon1}
+	point2 := Point{Latitude: lat2, Longitude: lon2}
+	
+	return g.PointToPoint(point1, point2)
+}
+
 // isValidCoordinate validates latitude and longitude values
 func isValidCoordinate(point Point) bool {
 	return point.Latitude >= -90 && point.Latitude <= 90 &&

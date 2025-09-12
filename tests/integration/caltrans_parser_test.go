@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
+	"github.com/dpup/info.ersn.net/server/internal/lib/geo"
 )
 
 // T009: Integration test Caltrans KML parser - MUST FAIL initially
@@ -94,15 +95,13 @@ func TestCaltransParser_GeographicFiltering_Integration(t *testing.T) {
 		t.Skip("Skipping integration test in short mode")
 	}
 	
-	parser := &caltrans.FeedParser{} // No implementation yet - will cause compilation error
+	parser := caltrans.NewFeedParser()
 	
 	// Test geographic filtering per research.md line 79
 	// Using I-5 corridor coordinates (Seattle to Portland route)
-	routeCoordinates := []struct {
-		Lat, Lon float64
-	}{
-		{47.6062, -122.3321}, // Seattle
-		{45.5152, -122.6784}, // Portland
+	routeCoordinates := []geo.Point{
+		{Latitude: 47.6062, Longitude: -122.3321}, // Seattle
+		{Latitude: 45.5152, Longitude: -122.6784}, // Portland
 	}
 	
 	incidents, err := parser.ParseWithGeographicFilter(context.Background(), routeCoordinates, 50000) // 50km radius
@@ -114,7 +113,7 @@ func TestCaltransParser_GeographicFiltering_Integration(t *testing.T) {
 	for _, incident := range incidents {
 		found := false
 		for _, coord := range routeCoordinates {
-			distance := calculateDistance(coord.Lat, coord.Lon, incident.Coordinates.Latitude, incident.Coordinates.Longitude)
+			distance := calculateDistance(coord.Latitude, coord.Longitude, incident.Coordinates.Latitude, incident.Coordinates.Longitude)
 			if distance <= 50000 { // 50km in meters
 				found = true
 				break

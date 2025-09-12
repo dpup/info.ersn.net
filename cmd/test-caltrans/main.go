@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
+	"github.com/dpup/info.ersn.net/server/internal/lib/geo"
 )
 
 func main() {
@@ -203,8 +204,8 @@ func testCHPIncidents(parser *caltrans.FeedParser, ctx context.Context) {
 func testGeographicFiltering(parser *caltrans.FeedParser, ctx context.Context, lat, lon, radius float64) {
 	fmt.Printf("Testing Geographic Filtering...\n")
 	
-	routeCoords := []struct{ Lat, Lon float64 }{
-		{lat, lon},
+	routeCoords := []geo.Point{
+		{Latitude: lat, Longitude: lon},
 	}
 	
 	incidents, err := parser.ParseWithGeographicFilter(ctx, routeCoords, radius)

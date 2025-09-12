@@ -38,6 +38,12 @@ type GeoUtils interface {
 
 	// Find closest point on polyline to given point
 	ClosestPointOnPolyline(point Point, polyline Polyline) (Point, error)
+	
+	// Filter points to those within specified distance of center point
+	FilterPointsByDistance(points []Point, center Point, maxDistanceMeters float64) ([]Point, error)
+	
+	// Calculate distance between coordinate pairs (convenience method)
+	DistanceFromCoords(lat1, lon1, lat2, lon2 float64) (float64, error)
 }
 
 // NewGeoUtils is implemented in geo.go

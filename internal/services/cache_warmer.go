@@ -8,6 +8,7 @@ import (
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
 	"github.com/dpup/info.ersn.net/server/internal/config"
 	"github.com/dpup/info.ersn.net/server/internal/lib/incident"
+	"github.com/dpup/info.ersn.net/server/internal/lib/geo"
 )
 
 // CacheWarmer fetches current feed data and processes it for cache warming
@@ -35,15 +36,15 @@ func (w *CacheWarmer) WarmCache(ctx context.Context) error {
 	defer cancel()
 	
 	// Extract route coordinates from configuration
-	var routeCoordinates []struct{ Lat, Lon float64 }
+	var routeCoordinates []geo.Point
 	for _, route := range w.roadsConfig.MonitoredRoads {
-		routeCoordinates = append(routeCoordinates, struct{ Lat, Lon float64 }{
-			Lat: route.Origin.Latitude,
-			Lon: route.Origin.Longitude,
+		routeCoordinates = append(routeCoordinates, geo.Point{
+			Latitude:  route.Origin.Latitude,
+			Longitude: route.Origin.Longitude,
 		})
-		routeCoordinates = append(routeCoordinates, struct{ Lat, Lon float64 }{
-			Lat: route.Destination.Latitude, 
-			Lon: route.Destination.Longitude,
+		routeCoordinates = append(routeCoordinates, geo.Point{
+			Latitude:  route.Destination.Latitude, 
+			Longitude: route.Destination.Longitude,
 		})
 	}
 	

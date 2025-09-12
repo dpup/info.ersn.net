@@ -11,6 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/dpup/info.ersn.net/server/internal/lib/geo"
 )
 
 
@@ -59,6 +60,7 @@ func setupTestParser(t *testing.T) *FeedParser {
 
 	parser := &FeedParser{
 		HTTPClient: &mockHTTPClient{testDataDir: testDataDir},
+		geoUtils:   geo.NewGeoUtils(),
 	}
 	
 	return parser
@@ -122,8 +124,8 @@ func TestParseWithGeographicFilter(t *testing.T) {
 	parser := setupTestParser(t)
 	
 	// Test with San Francisco coordinates (should have incidents nearby)
-	routeCoordinates := []struct{ Lat, Lon float64 }{
-		{37.7749, -122.4194}, // Downtown San Francisco
+	routeCoordinates := []geo.Point{
+		{Latitude: 37.7749, Longitude: -122.4194}, // Downtown San Francisco
 	}
 	
 	t.Run("10km radius", func(t *testing.T) {
@@ -134,11 +136,13 @@ func TestParseWithGeographicFilter(t *testing.T) {
 		assert.Greater(t, len(incidents), 0, "Should find incidents within 10km of San Francisco")
 		
 		// Verify all incidents are within the specified radius
+		geoUtils := geo.NewGeoUtils()
 		for _, incident := range incidents {
-			distance := haversineDistance(
+			distance, err := geoUtils.DistanceFromCoords(
 				37.7749, -122.4194,
 				incident.Coordinates.Latitude, incident.Coordinates.Longitude,
 			)
+			require.NoError(t, err)
 			assert.LessOrEqual(t, distance, 10000.0, "All incidents should be within 10km radius")
 		}
 	})
@@ -149,11 +153,13 @@ func TestParseWithGeographicFilter(t *testing.T) {
 		
 		// Should find fewer incidents within 1km
 		// Verify all incidents are within the specified radius
+		geoUtils := geo.NewGeoUtils()
 		for _, incident := range incidents {
-			distance := haversineDistance(
+			distance, err := geoUtils.DistanceFromCoords(
 				37.7749, -122.4194,
 				incident.Coordinates.Latitude, incident.Coordinates.Longitude,
 			)
+			require.NoError(t, err)
 			assert.LessOrEqual(t, distance, 1000.0, "All incidents should be within 1km radius")
 		}
 	})
@@ -200,7 +206,9 @@ func TestHaversineDistance(t *testing.T) {
 	
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := haversineDistance(tt.lat1, tt.lon1, tt.lat2, tt.lon2)
+			geoUtils := geo.NewGeoUtils()
+			result, err := geoUtils.DistanceFromCoords(tt.lat1, tt.lon1, tt.lat2, tt.lon2)
+			require.NoError(t, err)
 			assert.InDelta(t, tt.expected, result, tt.delta, 
 				"Distance should be approximately %v meters", tt.expected)
 		})
