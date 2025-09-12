@@ -7,6 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	
+	"github.com/dpup/info.ersn.net/server/internal/lib/incident"
 )
 
 // IncidentContentHasher interface contract test
@@ -22,34 +24,17 @@ type MockIncident struct {
 	URL         string
 }
 
-// IncidentContentHasher defines the interface we're testing
-// NOTE: This will not compile until the actual interface is implemented
-type IncidentContentHasher interface {
-	HashIncident(ctx context.Context, incident interface{}) (IncidentContentHash, error)
-	NormalizeIncidentText(text string) string
-	ValidateContentHash(hash IncidentContentHash) error
-}
-
-// IncidentContentHash represents the hash structure
-type IncidentContentHash struct {
-	ContentHash       string
-	NormalizedText    string
-	LocationKey       string
-	IncidentCategory  string
-	FirstSeenAt       time.Time
-}
+// Use the actual types from the incident package
+type IncidentContentHasher = incident.IncidentContentHasher
+type IncidentContentHash = incident.IncidentContentHash
 
 // TestIncidentContentHasher_HashIncident tests deterministic hash generation
 func TestIncidentContentHasher_HashIncident(t *testing.T) {
-	// This test MUST fail until IncidentContentHasher is implemented
-	t.Skip("FAILING CONTRACT TEST - IncidentContentHasher not implemented yet")
-	
-	// Uncomment when ready to implement:
-	/*
-	hasher := NewIncidentContentHasher()
+	// Implementation is now available - run the test!
+	hasher := incident.NewIncidentContentHasher()
 	ctx := context.Background()
 	
-	incident := MockIncident{
+	testIncident := MockIncident{
 		Description: "I-80 WESTBOUND CHAIN CONTROLS REQUIRED FROM DRUM TO NYACK",
 		Latitude:    39.1234,
 		Longitude:   -120.5678,
@@ -58,10 +43,10 @@ func TestIncidentContentHasher_HashIncident(t *testing.T) {
 	}
 	
 	// Test deterministic hashing
-	hash1, err := hasher.HashIncident(ctx, incident)
+	hash1, err := hasher.HashIncident(ctx, testIncident)
 	require.NoError(t, err, "First hash generation should not error")
 	
-	hash2, err := hasher.HashIncident(ctx, incident)
+	hash2, err := hasher.HashIncident(ctx, testIncident)
 	require.NoError(t, err, "Second hash generation should not error")
 	
 	// Same incident should produce identical hashes
@@ -75,18 +60,13 @@ func TestIncidentContentHasher_HashIncident(t *testing.T) {
 	
 	// Normalized text should be cleaned
 	assert.NotEmpty(t, hash1.NormalizedText, "Normalized text should not be empty")
-	assert.NotEqual(t, incident.Description, hash1.NormalizedText, "Normalized text should differ from original")
-	*/
+	assert.NotEqual(t, testIncident.Description, hash1.NormalizedText, "Normalized text should differ from original")
 }
 
 // TestIncidentContentHasher_NormalizeIncidentText tests text normalization
 func TestIncidentContentHasher_NormalizeIncidentText(t *testing.T) {
-	// This test MUST fail until IncidentContentHasher is implemented
-	t.Skip("FAILING CONTRACT TEST - IncidentContentHasher not implemented yet")
-	
-	// Uncomment when ready to implement:
-	/*
-	hasher := NewIncidentContentHasher()
+	// Implementation is now available - run the test!
+	hasher := incident.NewIncidentContentHasher()
 	
 	testCases := []struct {
 		name     string
@@ -116,22 +96,17 @@ func TestIncidentContentHasher_NormalizeIncidentText(t *testing.T) {
 			assert.Equal(t, tc.expected, result)
 		})
 	}
-	*/
 }
 
 // TestIncidentContentHasher_ValidateContentHash tests hash validation
 func TestIncidentContentHasher_ValidateContentHash(t *testing.T) {
-	// This test MUST fail until IncidentContentHasher is implemented
-	t.Skip("FAILING CONTRACT TEST - IncidentContentHasher not implemented yet")
-	
-	// Uncomment when ready to implement:
-	/*
-	hasher := NewIncidentContentHasher()
+	// Implementation is now available - run the test!
+	hasher := incident.NewIncidentContentHasher()
 	
 	validHash := IncidentContentHash{
-		ContentHash:      "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890",
+		ContentHash:      "a1b2c3d4e5f67890123456789012345678901234567890123456789012345678",
 		NormalizedText:   "i-80 chain controls required",
-		LocationKey:      "39.123_-120.567_3",
+		LocationKey:      "39.123_-120.567",
 		IncidentCategory: "chain_control",
 		FirstSeenAt:      time.Now(),
 	}
@@ -151,17 +126,12 @@ func TestIncidentContentHasher_ValidateContentHash(t *testing.T) {
 	invalidHash.IncidentCategory = ""
 	err = hasher.ValidateContentHash(invalidHash)
 	assert.Error(t, err, "Empty category should fail validation")
-	*/
 }
 
 // TestIncidentContentHasher_DifferentIncidents tests different incidents produce different hashes
 func TestIncidentContentHasher_DifferentIncidents(t *testing.T) {
-	// This test MUST fail until IncidentContentHasher is implemented
-	t.Skip("FAILING CONTRACT TEST - IncidentContentHasher not implemented yet")
-	
-	// Uncomment when ready to implement:
-	/*
-	hasher := NewIncidentContentHasher()
+	// Implementation is now available - run the test!
+	hasher := incident.NewIncidentContentHasher()
 	ctx := context.Background()
 	
 	incident1 := MockIncident{
@@ -187,5 +157,4 @@ func TestIncidentContentHasher_DifferentIncidents(t *testing.T) {
 	// Different incidents should produce different hashes
 	assert.NotEqual(t, hash1.ContentHash, hash2.ContentHash, "Different incidents should have different content hashes")
 	assert.NotEqual(t, hash1.IncidentCategory, hash2.IncidentCategory, "Different categories should be preserved")
-	*/
 }
