@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	
 	"github.com/dpup/info.ersn.net/server/internal/cache"
+	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
 	"github.com/dpup/info.ersn.net/server/internal/lib/incident"
 )
 
@@ -19,13 +20,42 @@ import (
 type BackgroundIncidentProcessor = incident.BackgroundIncidentProcessor
 type BackgroundProcessingStats = incident.BackgroundProcessingStats
 
+// mockAlertEnhancerBG provides a test double for AlertEnhancer in background processor tests
+type mockAlertEnhancerBG struct{}
+
+func (m *mockAlertEnhancerBG) EnhanceAlert(ctx context.Context, raw alerts.RawAlert) (alerts.EnhancedAlert, error) {
+	// Return a mock enhanced alert
+	return alerts.EnhancedAlert{
+		ID:                  raw.ID,
+		OriginalDescription: raw.Description,
+		StructuredDescription: alerts.StructuredDescription{
+			Details: "Enhanced: " + raw.Description,
+			Location: alerts.StructuredLocation{
+				Description: raw.Location,
+				Latitude:    39.1234,
+				Longitude:   -120.5678,
+			},
+			Impact:           "moderate",
+			Duration:         "< 1 hour",
+			CondensedSummary: "Mock enhanced incident",
+		},
+		CondensedSummary: "Mock enhanced incident",
+		ProcessedAt:      time.Now(),
+	}, nil
+}
+
+func (m *mockAlertEnhancerBG) HealthCheck(ctx context.Context) error {
+	return nil
+}
+
 // TestBackgroundIncidentProcessor_StartAndStop tests processor lifecycle
 func TestBackgroundIncidentProcessor_StartAndStop(t *testing.T) {
 	// Implementation is now available - run the test!
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancerBG{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	processor := incident.NewBackgroundIncidentProcessor(store, hasher, enhancer)
 	ctx := context.Background()
 	
@@ -47,7 +77,8 @@ func TestBackgroundIncidentProcessor_ProcessIncidentBatch(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancerBG{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	processor := incident.NewBackgroundIncidentProcessor(store, hasher, enhancer)
 	ctx := context.Background()
 	
@@ -91,7 +122,8 @@ func TestBackgroundIncidentProcessor_PrefetchCommonIncidents(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancerBG{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	processor := incident.NewBackgroundIncidentProcessor(store, hasher, enhancer)
 	ctx := context.Background()
 	
@@ -122,7 +154,8 @@ func TestBackgroundIncidentProcessor_GetProcessingStats(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancerBG{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	processor := incident.NewBackgroundIncidentProcessor(store, hasher, enhancer)
 	ctx := context.Background()
 	
@@ -145,7 +178,8 @@ func TestBackgroundIncidentProcessor_ConcurrentSafety(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancerBG{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	processor := incident.NewBackgroundIncidentProcessor(store, hasher, enhancer)
 	ctx := context.Background()
 	

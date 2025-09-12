@@ -6,12 +6,15 @@ import (
 	"log"
 	"sync"
 	"time"
+	
+	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
 )
 
 // asyncAlertEnhancer implements AsyncAlertEnhancer interface
 type asyncAlertEnhancer struct {
-	store   ProcessedIncidentStore
-	hasher  IncidentContentHasher
+	store    ProcessedIncidentStore
+	hasher   IncidentContentHasher
+	enhancer alerts.AlertEnhancer
 	
 	// Enhancement queue for background processing
 	enhancementQueue chan interface{}
@@ -28,10 +31,11 @@ type asyncAlertEnhancer struct {
 }
 
 // NewAsyncAlertEnhancer creates a new async alert enhancer
-func NewAsyncAlertEnhancer(store ProcessedIncidentStore, hasher IncidentContentHasher) AsyncAlertEnhancer {
+func NewAsyncAlertEnhancer(store ProcessedIncidentStore, hasher IncidentContentHasher, alertEnhancer alerts.AlertEnhancer) AsyncAlertEnhancer {
 	enhancer := &asyncAlertEnhancer{
 		store:            store,
 		hasher:           hasher,
+		enhancer:         alertEnhancer,
 		enhancementQueue: make(chan interface{}, 500), // Buffer for 500 enhancements
 		maxConcurrent:    3,                           // Limit OpenAI concurrent requests
 		timeout:          45 * time.Second,            // OpenAI timeout
@@ -197,9 +201,13 @@ func (e *asyncAlertEnhancer) enhanceIncident(ctx context.Context, incident inter
 	processCtx, cancel := context.WithTimeout(ctx, e.timeout)
 	defer cancel()
 	
-	// TODO: This is where we would call the actual OpenAI API
-	// For now, we'll simulate the enhancement process
-	enhancedData := e.simulateOpenAIEnhancement(incident)
+	// Use the real OpenAI enhancer to process the incident
+	enhancedData, err := e.callOpenAIEnhancer(processCtx, incident)
+	if err != nil {
+		log.Printf("Enhancement worker %d: Failed to enhance incident: %v", workerID, err)
+		// Store a fallback enhanced version on error
+		enhancedData = e.createFallbackEnhancement(incident)
+	}
 	
 	// Store the enhanced result
 	enhancedEntry := ProcessedIncidentCache{
@@ -225,30 +233,83 @@ func (e *asyncAlertEnhancer) enhanceIncident(ctx context.Context, incident inter
 	e.incrementEnhancedCount()
 }
 
-// simulateOpenAIEnhancement simulates OpenAI processing
-// TODO: Replace with actual OpenAI API integration
-func (e *asyncAlertEnhancer) simulateOpenAIEnhancement(incident interface{}) interface{} {
-	// Simulate processing delay
-	time.Sleep(100 * time.Millisecond)
+// callOpenAIEnhancer calls the real OpenAI enhancer to process an incident
+func (e *asyncAlertEnhancer) callOpenAIEnhancer(ctx context.Context, incident interface{}) (interface{}, error) {
+	// Convert incident to RawAlert format expected by the AlertEnhancer
+	rawAlert, err := e.convertIncidentToRawAlert(incident)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert incident to RawAlert: %w", err)
+	}
 	
-	// Return enhanced version (for now, just add a field indicating enhancement)
+	// Call the real OpenAI enhancer
+	enhanced, err := e.enhancer.EnhanceAlert(ctx, rawAlert)
+	if err != nil {
+		return nil, fmt.Errorf("OpenAI enhancement failed: %w", err)
+	}
+	
+	return enhanced, nil
+}
+
+// convertIncidentToRawAlert converts various incident formats to RawAlert
+func (e *asyncAlertEnhancer) convertIncidentToRawAlert(incident interface{}) (alerts.RawAlert, error) {
+	switch v := incident.(type) {
+	case map[string]interface{}:
+		// Extract fields from map
+		rawAlert := alerts.RawAlert{
+			ID:          fmt.Sprintf("%v", v["id"]),
+			Description: fmt.Sprintf("%v", v["description"]),
+			Location:    fmt.Sprintf("%v", v["location"]),
+			Timestamp:   time.Now(), // Default to now if not provided
+		}
+		
+		// Extract style_url if present
+		if styleUrl, exists := v["style_url"]; exists {
+			rawAlert.StyleUrl = fmt.Sprintf("%v", styleUrl)
+		}
+		
+		// Try to parse timestamp if provided
+		if ts, exists := v["timestamp"]; exists {
+			if timestamp, ok := ts.(time.Time); ok {
+				rawAlert.Timestamp = timestamp
+			}
+		}
+		
+		return rawAlert, nil
+		
+	default:
+		// For struct types, use reflection to extract fields (similar to hasher)
+		// For now, create a basic conversion
+		return alerts.RawAlert{
+			ID:          fmt.Sprintf("%p", incident), // Use memory address as ID
+			Description: fmt.Sprintf("%+v", incident), // String representation as description
+			Location:    "Unknown location",
+			Timestamp:   time.Now(),
+		}, nil
+	}
+}
+
+// createFallbackEnhancement creates a basic enhanced version when OpenAI fails
+func (e *asyncAlertEnhancer) createFallbackEnhancement(incident interface{}) interface{} {
+	// Create a basic enhanced version that indicates the enhancement was attempted but failed
 	switch v := incident.(type) {
 	case map[string]interface{}:
 		enhanced := make(map[string]interface{})
 		for k, val := range v {
 			enhanced[k] = val
 		}
-		enhanced["openai_enhanced"] = true
+		enhanced["enhancement_attempted"] = true
+		enhanced["enhancement_status"] = "fallback"
 		enhanced["enhancement_timestamp"] = time.Now().Format(time.RFC3339)
-		enhanced["enhanced_description"] = fmt.Sprintf("Enhanced: %v", v["description"])
+		enhanced["enhanced_description"] = fmt.Sprintf("Processing attempted: %v", v["description"])
 		return enhanced
 	default:
 		// For struct types or other types, return wrapped version
 		return map[string]interface{}{
 			"original_incident":     incident,
-			"openai_enhanced":      true,
+			"enhancement_attempted": true,
+			"enhancement_status":    "fallback",
 			"enhancement_timestamp": time.Now().Format(time.RFC3339),
-			"enhanced_description":  "Enhanced incident data (processed by OpenAI)",
+			"enhanced_description":  "Enhancement processing attempted but failed",
 		}
 	}
 }

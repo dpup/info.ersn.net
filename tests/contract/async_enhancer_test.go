@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	
 	"github.com/dpup/info.ersn.net/server/internal/cache"
+	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
 	"github.com/dpup/info.ersn.net/server/internal/lib/incident"
 )
 
@@ -19,13 +20,42 @@ import (
 type AsyncAlertEnhancer = incident.AsyncAlertEnhancer
 type EnhancementStatus = incident.EnhancementStatus
 
+// mockAlertEnhancer provides a test double for AlertEnhancer
+type mockAlertEnhancer struct{}
+
+func (m *mockAlertEnhancer) EnhanceAlert(ctx context.Context, raw alerts.RawAlert) (alerts.EnhancedAlert, error) {
+	// Return a mock enhanced alert
+	return alerts.EnhancedAlert{
+		ID:                  raw.ID,
+		OriginalDescription: raw.Description,
+		StructuredDescription: alerts.StructuredDescription{
+			Details: "Enhanced: " + raw.Description,
+			Location: alerts.StructuredLocation{
+				Description: raw.Location,
+				Latitude:    39.1234,
+				Longitude:   -120.5678,
+			},
+			Impact:           "moderate",
+			Duration:         "< 1 hour",
+			CondensedSummary: "Mock enhanced incident",
+		},
+		CondensedSummary: "Mock enhanced incident",
+		ProcessedAt:      time.Now(),
+	}, nil
+}
+
+func (m *mockAlertEnhancer) HealthCheck(ctx context.Context) error {
+	return nil
+}
+
 // TestAsyncAlertEnhancer_GetEnhancedAlert_CacheHit tests cached alert retrieval
 func TestAsyncAlertEnhancer_GetEnhancedAlert_CacheHit(t *testing.T) {
 	// Implementation is now available - run the test!
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancer{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	ctx := context.Background()
 	
 	incident := MockIncident{
@@ -64,7 +94,8 @@ func TestAsyncAlertEnhancer_GetEnhancedAlert_CacheMiss(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancer{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	ctx := context.Background()
 	
 	// Request enhancement for new incident (not in cache)
@@ -94,7 +125,8 @@ func TestAsyncAlertEnhancer_QueueForEnhancement(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancer{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	ctx := context.Background()
 	
 	incident := MockIncident{
@@ -120,7 +152,8 @@ func TestAsyncAlertEnhancer_GetEnhancementStatus(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancer{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	ctx := context.Background()
 	
 	// Get initial status
@@ -149,7 +182,8 @@ func TestAsyncAlertEnhancer_ResponseTimeRequirement(t *testing.T) {
 	cacheInstance := cache.NewCache()
 	store := cache.NewProcessedIncidentStore(cacheInstance)
 	hasher := incident.NewIncidentContentHasher()
-	enhancer := incident.NewAsyncAlertEnhancer(store, hasher)
+	mockEnhancer := &mockAlertEnhancer{}
+	enhancer := incident.NewAsyncAlertEnhancer(store, hasher, mockEnhancer)
 	ctx := context.Background()
 	
 	incident := MockIncident{
