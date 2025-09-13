@@ -1,0 +1,52 @@
+# Build artifacts
+bin/
+*.log
+*.pid
+server
+
+# Test data and development files
+tests/testdata/
+memory/
+.private-journal/
+
+# Git and editor files
+.git/
+.gitignore
+*.swp
+*.swo
+*~
+
+# Documentation and specs (not needed in container)
+specs/
+README.md
+ARCHITECTURE.md
+
+# Environment and configuration
+.envrc
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Scripts (not needed in runtime)
+scripts/
+
+# Temporary files
+tmp/
+temp/
+
+# Claude specific
+.claude/
+CLAUDE.md

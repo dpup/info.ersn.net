@@ -1,5 +1,5 @@
 # Live Data API Server - Build, Test, and Deployment Tasks
-.PHONY: build test proto clean server tools run dev lint fmt docker deploy install help
+.PHONY: build test proto clean server tools run dev lint fmt docker docker-build docker-run docker-run-dev docker-push docker-clean deploy install help
 
 # Go parameters
 GOCMD=go
@@ -23,6 +23,11 @@ TEST_WEATHER_BINARY=$(BUILD_DIR)/test-weather
 TEST_GEO_UTILS_BINARY=$(BUILD_DIR)/test-geo-utils
 TEST_ALERT_ENHANCER_BINARY=$(BUILD_DIR)/test-alert-enhancer
 TEST_ROUTE_MATCHER_BINARY=$(BUILD_DIR)/test-route-matcher
+
+# Docker parameters
+DOCKER_IMAGE_NAME=ersn-info-server
+DOCKER_TAG?=latest
+DOCKER_REGISTRY?=
 
 # Default target
 all: build
@@ -239,11 +244,63 @@ lint:
 		$(GOCMD) vet ./...; \
 	fi
 
-## Deployment Targets
+## Docker Targets
 
 # Build Docker container image
-docker:
-	@echo "Docker build not yet implemented"
+docker: docker-build
+
+# Build Docker container image
+docker-build:
+	@echo "Building Docker image: $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+	docker build \
+		--build-arg GOOGLE_API_KEY=$(PF__GOOGLE_ROUTES__API_KEY) \
+		--build-arg OPENWEATHER_API_KEY=$(PF__OPENWEATHER__API_KEY) \
+		--build-arg OPENAI_API_KEY=$(PF__OPENAI__API_KEY) \
+		-t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
+	@echo "✅ Docker image built: $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+
+# Run Docker container with environment variables
+docker-run: docker-build
+	@echo "Running Docker container: $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+	docker run -it --rm -p 8080:8080 \
+		-e PF__GOOGLE_ROUTES__API_KEY=$(PF__GOOGLE_ROUTES__API_KEY) \
+		-e PF__OPENWEATHER__API_KEY=$(PF__OPENWEATHER__API_KEY) \
+		-e PF__OPENAI__API_KEY=$(PF__OPENAI__API_KEY) \
+		--name ersn-server \
+		$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+
+# Run Docker container in development mode with config mounted
+docker-run-dev: docker-build
+	@echo "Running Docker container in development mode..."
+	docker run -it --rm -p 8080:8080 \
+		-e PF__GOOGLE_ROUTES__API_KEY=$(PF__GOOGLE_ROUTES__API_KEY) \
+		-e PF__OPENWEATHER__API_KEY=$(PF__OPENWEATHER__API_KEY) \
+		-e PF__OPENAI__API_KEY=$(PF__OPENAI__API_KEY) \
+		-v $(PWD)/prefab.yaml:/app/prefab.yaml:ro \
+		--name ersn-server-dev \
+		$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+
+# Push Docker image to registry
+docker-push: docker-build
+	@if [ -z "$(DOCKER_REGISTRY)" ]; then \
+		echo "⚠️  DOCKER_REGISTRY not set. Set with: make docker-push DOCKER_REGISTRY=your-registry.com"; \
+		exit 1; \
+	fi
+	@echo "Pushing Docker image to $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+	docker tag $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+	docker push $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+	@echo "✅ Docker image pushed: $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+
+# Clean up Docker artifacts
+docker-clean:
+	@echo "Cleaning up Docker artifacts..."
+	-docker stop ersn-server ersn-server-dev 2>/dev/null || true
+	-docker rm ersn-server ersn-server-dev 2>/dev/null || true
+	-docker rmi $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) 2>/dev/null || true
+	-docker system prune -f
+	@echo "✅ Docker artifacts cleaned"
+
+## Deployment Targets
 
 # Deploy to configured environment
 deploy:
@@ -297,8 +354,15 @@ help:
 	@echo "  lint        - Run Go linting tools"
 	@echo "  fmt         - Format Go code"
 	@echo ""
+	@echo "Docker targets:"
+	@echo "  docker-build     - Build Docker container image"
+	@echo "  docker-run       - Run Docker container with API keys from environment"
+	@echo "  docker-run-dev   - Run Docker container with mounted config for development"
+	@echo "  docker-push      - Push Docker image to registry (set DOCKER_REGISTRY)"
+	@echo "  docker-clean     - Clean up Docker artifacts and containers"
+	@echo ""
 	@echo "Deployment targets:"
-	@echo "  docker      - Build Docker container image"
+	@echo "  docker      - Alias for docker-build"
 	@echo "  deploy      - Deploy to configured environment"
 	@echo "  install     - Install CLI tools to system PATH"
 	@echo ""
