@@ -40,10 +40,10 @@ func main() {
 
 	// Create OpenAI enhancer (caching is now integrated directly in RoadsService)
 	alertEnhancer := alerts.NewAlertEnhancer(appConfig.OpenAI.APIKey, model)
-	
+
 	log.Printf("OpenAI enhancement enabled with integrated content-based caching (model: %s)", model)
 
-	// Initialize gRPC services  
+	// Initialize gRPC services
 	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, appConfig, alertEnhancer)
 	weatherService := services.NewWeatherService(weatherClient, cacheInstance, appConfig)
 
@@ -83,7 +83,6 @@ func main() {
 	}
 }
 
-
 // homepageHandler serves a simple HTML homepage at the server root
 func homepageHandler(w http.ResponseWriter, r *http.Request) {
 	// Only handle the root path
@@ -116,6 +115,11 @@ func homepageHandler(w http.ResponseWriter, r *http.Request) {
 </head>
 <body>
 <pre>
+<span class="header"> ___ ___  ___ _  _ 
+| __| _ \/ __| \| |
+| _||   /\__ \ .' |
+|___|_|_\|___/_|\_|</span>
+
 <span class="header">info.ersn.net</span>
 
 Real-time API server providing road conditions and weather information 
@@ -123,6 +127,9 @@ for the Ebbett's Pass region.
 
 <span class="header">Repository:</span>
 <a href="https://github.com/dpup/info.ersn.net">https://github.com/dpup/info.ersn.net</a>
+
+<span class="header">Website:</span>
+<a href="https://ersn.net">https://ersn.net</a>
 
 <span class="header">API Endpoints:</span>
 
@@ -135,9 +142,9 @@ Weather API:
   <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>        - Active weather alerts
 
 <span class="header">Data Sources:</span>
-  • Google Routes API    - Traffic conditions and travel times
-  • OpenWeatherMap API   - Weather data and alerts  
-  • Caltrans KML Feeds   - Lane closures and CHP incidents
+  • Google Routes API               - Traffic conditions and travel times
+  • OpenWeatherMap API              - Weather data and alerts
+  • Caltrans KML Feeds              - Lane closures and CHP incidents
 
 <span class="header">Example Usage:</span>
   curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>
