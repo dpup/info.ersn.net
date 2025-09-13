@@ -21,7 +21,7 @@ import (
 
 func main() {
 	// Load configuration using Prefab's config system
-	appConfig := loadConfig()
+	appConfig := config.LoadConfig()
 
 	// Initialize cache
 	cacheInstance := cache.NewCache()
@@ -83,35 +83,6 @@ func main() {
 	}
 }
 
-// loadConfig loads configuration using Prefab's config system
-// Configuration is loaded from prefab.yaml and environment variables with PF__ prefix
-func loadConfig() *config.Config {
-	appConfig := &config.Config{}
-
-	// Unmarshal client configurations
-	if err := prefab.Config.Unmarshal("google_routes", &appConfig.GoogleRoutes); err != nil {
-		log.Fatalf("Failed to unmarshal google_routes section: %v", err)
-	}
-
-	if err := prefab.Config.Unmarshal("openai", &appConfig.OpenAI); err != nil {
-		log.Fatalf("Failed to unmarshal openai section: %v", err)
-	}
-
-	if err := prefab.Config.Unmarshal("openweather", &appConfig.OpenWeather); err != nil {
-		log.Fatalf("Failed to unmarshal openweather section: %v", err)
-	}
-
-	// Unmarshal service configurations
-	if err := prefab.Config.Unmarshal("roads", &appConfig.Roads); err != nil {
-		log.Fatalf("Failed to unmarshal roads section: %v", err)
-	}
-
-	if err := prefab.Config.Unmarshal("weather", &appConfig.Weather); err != nil {
-		log.Fatalf("Failed to unmarshal weather section: %v", err)
-	}
-
-	return appConfig
-}
 
 // homepageHandler serves a simple HTML homepage at the server root
 func homepageHandler(w http.ResponseWriter, r *http.Request) {

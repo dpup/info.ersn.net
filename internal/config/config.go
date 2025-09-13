@@ -1,7 +1,10 @@
 package config
 
 import (
+	"log"
 	"time"
+
+	"github.com/dpup/prefab"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
@@ -97,4 +100,28 @@ func (c Coordinates) ToProto() *api.Coordinates {
 // ToProto converts WeatherLocation to protobuf Coordinates
 func (w WeatherLocation) ToProto() *api.Coordinates {
 	return w.Coordinates.ToProto()
+}
+
+// LoadConfig loads configuration using Prefab's config system
+// Configuration is loaded from prefab.yaml and environment variables with PF__ prefix
+func LoadConfig() *Config {
+	appConfig := &Config{}
+	// Unmarshal client configurations
+	if err := prefab.Config.Unmarshal("googleRoutes", &appConfig.GoogleRoutes); err != nil {
+		log.Fatalf("Failed to unmarshal googleRoutes section: %v", err)
+	}
+	if err := prefab.Config.Unmarshal("openai", &appConfig.OpenAI); err != nil {
+		log.Fatalf("Failed to unmarshal openai section: %v", err)
+	}
+	if err := prefab.Config.Unmarshal("openweather", &appConfig.OpenWeather); err != nil {
+		log.Fatalf("Failed to unmarshal openweather section: %v", err)
+	}
+	// Unmarshal service configurations
+	if err := prefab.Config.Unmarshal("roads", &appConfig.Roads); err != nil {
+		log.Fatalf("Failed to unmarshal roads section: %v", err)
+	}
+	if err := prefab.Config.Unmarshal("weather", &appConfig.Weather); err != nil {
+		log.Fatalf("Failed to unmarshal weather section: %v", err)
+	}
+	return appConfig
 }

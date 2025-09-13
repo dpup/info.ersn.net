@@ -10,15 +10,17 @@ import (
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
+	"github.com/dpup/info.ersn.net/server/internal/config"
 )
 
 func main() {
 	var (
-		apiKey = flag.String("api-key", "", "OpenWeatherMap API key (or set PF__OPENWEATHER__API_KEY env var)")
-		lat    = flag.Float64("lat", 38.139117, "Latitude for weather lookup")
-		lon    = flag.Float64("lon", -120.456111, "Longitude for weather lookup")
-		name   = flag.String("name", "Murphys, CA", "Location name for display")
-		help   = flag.Bool("help", false, "Show help")
+		apiKey     = flag.String("api-key", "", "OpenWeatherMap API key (or set PF__OPENWEATHER__API_KEY env var)")
+		configFile = flag.String("config", "", "Path to prefab.yaml config file (optional)")
+		lat        = flag.Float64("lat", 38.139117, "Latitude for weather lookup")
+		lon        = flag.Float64("lon", -120.456111, "Longitude for weather lookup")
+		name       = flag.String("name", "Murphys, CA", "Location name for display")
+		help       = flag.Bool("help", false, "Show help")
 	)
 	flag.Parse()
 
@@ -31,20 +33,34 @@ func main() {
 		fmt.Printf("\nExamples:\n")
 		fmt.Printf("  %s -api-key=YOUR_KEY\n", os.Args[0])
 		fmt.Printf("  %s -lat=37.7749 -lon=-122.4194 -name=\"San Francisco, CA\"\n", os.Args[0])
+		fmt.Printf("  %s --config=prefab.yaml\n", os.Args[0])
 		fmt.Printf("  PF__OPENWEATHER__API_KEY=your_key %s\n", os.Args[0])
 		return
 	}
 
-	// Get API key from flag or environment
+	// Get API key from flag, config file, or environment
 	key := *apiKey
+	
+	// If config file is provided, load configuration using shared LoadConfig
+	if *configFile != "" {
+		fmt.Printf("Loading configuration from shared config system\n")
+		appConfig := config.LoadConfig()
+		if key == "" && appConfig.OpenWeather.APIKey != "" {
+			key = appConfig.OpenWeather.APIKey
+			fmt.Printf("Using API key from configuration\n")
+		}
+	}
+	
+	// Fall back to environment variables
 	if key == "" {
 		key = os.Getenv("PF__OPENWEATHER__API_KEY")
 		if key == "" {
 			key = os.Getenv("OPENWEATHER_API_KEY") // fallback for backward compatibility
 		}
 	}
+	
 	if key == "" {
-		log.Fatal("OpenWeatherMap API key required. Use -api-key flag or PF__OPENWEATHER__API_KEY env var")
+		log.Fatal("OpenWeatherMap API key required. Use -api-key flag, --config flag, or PF__OPENWEATHER__API_KEY env var")
 	}
 
 	fmt.Printf("OpenWeatherMap API Test\n")

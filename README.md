@@ -335,8 +335,11 @@ make lint && make test
 
 2. Test with the Google Routes API tool:
    ```bash
-   # Test tools now use the same environment variables as the server
+   # Test tools now use the same configuration system as the server
    source .envrc  # Load your environment variables
+   ./bin/test-google --config=prefab.yaml
+   
+   # Or use environment variables directly
    ./bin/test-google
    
    # Or set the environment variable directly

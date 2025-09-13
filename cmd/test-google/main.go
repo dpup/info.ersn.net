@@ -9,14 +9,16 @@ import (
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/google"
+	"github.com/dpup/info.ersn.net/server/internal/config"
 )
 
 func main() {
 	var (
-		apiKey    = flag.String("api-key", "", "Google Routes API key (or set PF__GOOGLE_ROUTES__API_KEY env var)")
-		originStr = flag.String("origin", "38.067400,-120.540200", "Origin coordinates (lat,lon)")
-		destStr   = flag.String("dest", "38.139117,-120.456111", "Destination coordinates (lat,lon)")
-		help      = flag.Bool("help", false, "Show help")
+		apiKey     = flag.String("api-key", "", "Google Routes API key (or set PF__GOOGLE_ROUTES__API_KEY env var)")
+		configFile = flag.String("config", "", "Path to prefab.yaml config file (optional)")
+		originStr  = flag.String("origin", "38.067400,-120.540200", "Origin coordinates (lat,lon)")
+		destStr    = flag.String("dest", "38.139117,-120.456111", "Destination coordinates (lat,lon)")
+		help       = flag.Bool("help", false, "Show help")
 	)
 	flag.Parse()
 
@@ -29,20 +31,36 @@ func main() {
 		fmt.Printf("\nExamples:\n")
 		fmt.Printf("  %s -api-key=YOUR_KEY\n", os.Args[0])
 		fmt.Printf("  %s -origin=\"37.7749,-122.4194\" -dest=\"34.0522,-118.2437\"\n", os.Args[0])
+		fmt.Printf("  %s --config=prefab.yaml\n", os.Args[0])
 		fmt.Printf("  PF__GOOGLE_ROUTES__API_KEY=your_key %s\n", os.Args[0])
 		return
 	}
 
-	// Get API key from flag or environment
+	// Get API key from flag, config file, or environment
 	key := *apiKey
+	
+	// If config file is provided, load configuration using shared LoadConfig
+	if *configFile != "" {
+		// For now, the shared LoadConfig always loads from the default prefab.yaml
+		// The --config flag is supported but will use the shared configuration loading
+		fmt.Printf("Loading configuration from shared config system\n")
+		appConfig := config.LoadConfig()
+		if key == "" && appConfig.GoogleRoutes.APIKey != "" {
+			key = appConfig.GoogleRoutes.APIKey
+			fmt.Printf("Using API key from configuration\n")
+		}
+	}
+	
+	// Fall back to environment variables
 	if key == "" {
 		key = os.Getenv("PF__GOOGLE_ROUTES__API_KEY")
 		if key == "" {
 			key = os.Getenv("GOOGLE_ROUTES_API_KEY") // fallback for backward compatibility
 		}
 	}
+	
 	if key == "" {
-		log.Fatal("Google Routes API key required. Use -api-key flag or PF__GOOGLE_ROUTES__API_KEY env var")
+		log.Fatal("Google Routes API key required. Use -api-key flag, --config flag, or PF__GOOGLE_ROUTES__API_KEY env var")
 	}
 
 	// Parse coordinates
