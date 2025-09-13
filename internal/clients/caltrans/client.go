@@ -264,6 +264,78 @@ func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType Calt
 	return incidents, nil
 }
 
+// ParseKMLContent parses KML content directly for testing purposes
+// This allows unit tests to work with test fixtures without making HTTP calls
+func (p *FeedParser) ParseKMLContent(kmlData []byte, feedType CaltransFeedType) ([]CaltransIncident, error) {
+	var kml KML
+	err := xml.Unmarshal(kmlData, &kml)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse KML: %w", err)
+	}
+
+	// Process KML placemarks
+	var incidents []CaltransIncident
+	now := time.Now()
+
+	// Process placemarks directly in document
+	for _, placemark := range kml.Document.Placemarks {
+		if incident := p.processPlacemark(&placemark, feedType, now); incident != nil {
+			incidents = append(incidents, *incident)
+		}
+	}
+
+	// Process placemarks in folders
+	for _, folder := range kml.Document.Folders {
+		for _, placemark := range folder.Placemarks {
+			if incident := p.processPlacemark(&placemark, feedType, now); incident != nil {
+				incidents = append(incidents, *incident)
+			}
+		}
+	}
+
+	return incidents, nil
+}
+
+// FilterByGeography filters incidents by proximity to route coordinates
+// This method is extracted for testing purposes
+func (p *FeedParser) FilterByGeography(incidents []CaltransIncident, routeCoordinates []geo.Point, radiusMeters float64) []CaltransIncident {
+	filteredIncidents := make([]CaltransIncident, 0)
+	
+	for _, incident := range incidents {
+		// Skip incidents without valid coordinates
+		if incident.Coordinates == nil {
+			continue
+		}
+		
+		incidentPoint := geo.Point{
+			Latitude:  incident.Coordinates.Latitude,
+			Longitude: incident.Coordinates.Longitude,
+		}
+		
+		// Check if incident is within radius of any route coordinate
+		isNearRoute := false
+		for _, coord := range routeCoordinates {
+			distance, err := p.geoUtils.DistanceFromCoords(
+				coord.Latitude, coord.Longitude,
+				incidentPoint.Latitude, incidentPoint.Longitude,
+			)
+			if err != nil {
+				continue // Skip invalid coordinates
+			}
+			if distance <= radiusMeters {
+				isNearRoute = true
+				break // Found within range, no need to check other coordinates
+			}
+		}
+		
+		if isNearRoute {
+			filteredIncidents = append(filteredIncidents, incident)
+		}
+	}
+
+	return filteredIncidents
+}
+
 // processPlacemark converts KML Placemark to CaltransIncident
 // Structure mapping per data-model.md lines 80-90
 func (p *FeedParser) processPlacemark(placemark *Placemark, feedType CaltransFeedType, fetchTime time.Time) *CaltransIncident {

@@ -12,11 +12,16 @@ import (
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
+// HTTPDoer interface for HTTP clients (for testability)
+type HTTPDoer interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 // Client provides access to OpenWeatherMap API
 // Implementation per research.md lines 68-82
 type Client struct {
 	apiKey     string
-	httpClient *http.Client
+	httpClient HTTPDoer
 	baseURL    string
 }
 
@@ -28,6 +33,15 @@ func NewClient(apiKey string) *Client {
 		httpClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
+	}
+}
+
+// NewClientWithHTTPDoer creates a new client with a custom HTTP client (for testing)
+func NewClientWithHTTPDoer(apiKey, baseURL string, httpClient HTTPDoer) *Client {
+	return &Client{
+		apiKey:     apiKey,
+		baseURL:    baseURL,
+		httpClient: httpClient,
 	}
 }
 

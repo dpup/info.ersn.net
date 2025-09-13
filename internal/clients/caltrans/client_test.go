@@ -440,3 +440,4 @@ func TestParseCoordinateList(t *testing.T) {
 		assert.Empty(t, coords)
 	})
 }
+

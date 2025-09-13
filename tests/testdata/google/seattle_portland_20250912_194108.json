@@ -1,0 +1,101 @@
+{
+  "routes": [
+    {
+      "distanceMeters": 280226,
+      "duration": "9857s",
+      "staticDuration": "9859s",
+      "polyline": {
+        "encodedPolyline": "ybqaHp_tiVHTh@lBkC`CgBmFa@yAm@kB?CPyAP_@`FmD|EkEDUxJ}HzCgDlOwSpBuBzAkAdBeAfBu@|C{@`AOZEdGSnCBhD^N@jJfAzB?\\?xBOnCe@vGwAnDa@f@ELQnPk@`@EjEa@`HcAlGcAnCOfB@bDTlJxAxG\\~P`@`KZjF^`QpBzKzAvJvAvCTfDBfCK|Ca@nCu@lBu@bCsAdJmG|DwBhMiGbAq@hB}Ar@{@jAgBjBoDzGcN~EeKnBeDbCiDpB}Bp[c[nFaGlFyGpPiTtAwAlB}AhBcAno@yV~FkBbLuC|I{BrDoAtUeJjDcBfDsBhd@i[pYoSxBeBvFeFxFyFrWoXbFaGfCqCbG{H`P}SfBcBbBgAzAk@tAWxAIfBFxAVtAf@tAv@\\XbBdBnIhLnG~IxDdF`BlB~AtAjAv@rCfAdB^zANnBG~AWzAg@lBy@bEoB|OoHdE{AbEaAfN_CbGaAfGiA`HeBtHcCzIoDvGkC|DiA~Cq@nFq@nEU~E?hFXtFv@jEbAr`@jLhH`BxEx@~UbDt\\lErNpBjBb@pCbA`DfBlC|BzAxAbBzB|AdCbItOdHlLh^nk@jCnDrC~CbB|ArDfCdCzAjD`BdC`AnD~@f\\hGlQtC`J~@vF\\vGJzDAvFM~Hg@`Gi@lWoBxi@mEnI[~ICfIPtE\\pH|@`UpD~HjAzp@zK|q@hLbGx@|CNlE?jFWxDa@vDq@jEiAvKgEhJuDhEoAfEy@dD_@dEWrECbX~@vwArFnE\\xH~@vE|@tCp@fSbG~QjF~`@tLlHtBbjAlX`FnArMxCpM`Dlj@rM`GjB|D`BpNnHjVrMjEjCrDdC~EzDfHrGfCfChTbVx^pa@zDtDjDrCxDlCbE~BbD`B|EpBdF|AnFjAd]~FpJdBvBp@|BhArA`AtApA|ArBfAfBt@~AhAzCt@lC^jBb@tCT`CPtCHdHh@tr@JbHp@d~@Zvj@ApYGhJ]zOgC`z@_@pOIzIJnHRxETbDr@bHL`AXlB|A`JbA~Fz@hG`@lETvEv@t]XlH|Bpa@b@hF`@rCl@dDt@dDjBzF~Nhc@bAfD`AxEj@tD^tDrAhVb@~Ef@lEx@~EtDrQpB`K`@vCx@lIZjFHxDBpGOjHO~Dk@lJuAnTExCFdDT|Ch@fDb@lBjAbDfAtB~@rAvAvAjAz@pAp@fBj@nBVbIB|U@vHIvDQ`_BoKvCC~CNz\\vC~GXxNJ|OJlEXfEh@pdAfRtBl@`C`AvBrAnB|AnEfEv_Aj`Aj[t[pA|AlAnBl~@xkBhDlHpj@hpA~@bCvAfGvAjIb@pBh@dB~AbE|W|n@jDrH|Sjb@dQl[|D|HrK`VrFdLxEhJnJjRtEnItBvDvApCjO`]x\\tq@zAxDdAfDn@nCfJhf@|@pDzArEfBxDrD~HtA|DlA~DhAdF`B~ItAxHhBdJ`@xCZzDHzBb@dRZ|Ef@xE^|BRlAvGt]bBpIdA`EhAdDrChHvFzMbGzMBDtBpExBjF`AhCtAvEr@jCv@jDlAtGpAvJpAxIxGhb@zDrW~BdP~AbKp@fFnAdMbAnHdEfWhQriAj@vEbDzb@pBlYrCt_@d@xDzSxlAnBrK~@dEbA`DdAlCdBlDlLzSvBxEnBnG|XfbAp@tC\\fBb@`EP`DF`DInu@DlFxA|n@Z`Hx@vKdJhjArL|{Bd@vFnXlvCvJhdA^jCp@`D~@zCbA`CvAhCzk@v_AnAxBtAbDx@lCh@fC\\|BR`CXdGhCpq@~B`m@RjD^|Cb@dCr@tChHzVlLza@r@dDb@jDTbDH`D?dDo@rx@FrDNbCZbD`@`Cp@pCx@fC|@tBfB|C~G|KdAzBz@|Bl@zBf@jCd@~DTlDfBdl@PpC^|Ch@`Dv@vCdAzCfA|BhAlBpA`BlBjBlDfCjLfIzAtAzJ|JbAjAtE|EnAdB`AfBfAlCv@dCf@xBzA~Il@jCp@pBv@bBjAlB|@bAvAjAnBfAlBd@zAPpA@pE[rKaAdDInCFn]vAz@JlB^vBv@vrAro@jCzArCnBptAvfAdMxJvDdCnDlBfE`BjDfAnL`Cvy@dPz`@~Hnh@jKfQdDpn@`MbXhF|sA|W|DbApCz@tFvBxHvDbUjLtBjAprAtq@|EvB`Cz@xBl@lJtBhJhBzCr@jJtBdGxAbMpCp@Nta@fJhJtBl{Bdg@pCx@nEdBbm@rZbMvGjs@d^pxAtt@jJzExPnI|~@de@pT|KbcAvg@jBr@jCl@vBPdAFnCIjC]~Bo@xB}@dbDwbBhNeHvM}GlyAgv@fJoFr\\uTpEsCtDgBdDiAvCs@jDg@pBOdGItCJxD`@xCb@bLxCxEv@lD\\bEXlFJtFC~Kk@pr@eE~OcAvDc@vE_Abo@kOni@kMbCa@hDWxCCjDL`bAdIvCb@dBd@pCfAtBnApBxAnj@vg@~AhAnAp@dBn@jBb@bCNbCEhBUjCq@nHcCzDy@he@}G~Cu@xB_AxA{@jBwA`BcBzIeLtDiFzAgCpAuCdc@}iAxKoYjDoHhCyElCcEzKqN|Yi_@bAyAbhBc}B~EkHhr@qiAbB{BxByBrBaBjJwFjq@u`@lDeCxDeD|iBseBzC{BlC{AfCgArM}EjDmAdReHHItWsJbCo@tCe@rCUlDGvgLJ|DN`DXlDh@nFnA`cBpc@rEv@bE`@|gChRzPhAteDnV|DLlEAtCOtNwAbc@uEzBIlCBtCXzBd@~Bt@pB~@|BxAfCxBrAxArFlH|TnZ`BjB|BpBvBvApCrAxBr@pDt@~}Cxh@bPpCdD\\xCRfFFdDIvDWpGaAz_@kGxDc@xESxD?fFRvfAhGt|@dFbD\\nCf@bBf@jDrAhEbCzWnPjDjBjBx@lDpA~DdAdCf@|Cb@|BR|ENvCApDMnD]hdAcP`F{@`H_BjF{AtFoB~o@sWbH{Cz|BggApFyCpcAso@hDuB~BcA|C{@`C_@bCMrCB|CVjhFxn@nGf@vIXvB@xJX~JPjHFl_@p@zG\\tBV~E`A|uA`]hDjAvB~@fDjBdg@~ZxBfA~Bv@~Bh@bCXdCJbCCfE]xaA}J~`@kFtCg@rGwAvHaCrEgBrOkHrC_A~Bg@xC]xCI`CFvfAvGvA?vBMbBYhBi@pAk@rBmA~AuApAwAzAyBlA_CdAkCzFgQ~@wBv@}AtAsBtA{AtAkA~AaArx@gd@zJsGrGgE`GiDrd@_U`^{OvFcCbf@cR~FmBrf@kNfDs@nDi@hG]jEE~CHhE\\ta@zFjDXbELnDC~CM~\\eDlEk@tBe@tBo@rD{AdQ}IfDqAjEmAhh@mLd\\yHba@kJ`l@cM~FaBnXeJfGcCnFeCvWgMnCcAvCs@|NkBjBa@vq@uUzEmAhOeChDq@pBg@lDiAnCgAbBw@|DyBxCoBpDqCtJcJbaEuyDbDkCnCkBrIcFnA{@zAsAtA_BlAmBrAsC~@qCp@qClEuUx@iDpA{DlAuCfBgDdaAggBzGcL~o@meAtE}GfF{G~FeH|BiCdKyLpDqDdDoCzJ_H`YiRvEsC~MiHng@mWnLcGhGqDnG{DdFqCfD{AhOiGvRwJbdAoh@fFmClBwAbBcBbAsAtAeCjm@alAhBeDnB_DvC_EjBwBzC_D`S}QbDcCtD}BxE}BxDuAbCq@hCk@|Es@je@yEjEu@vCu@lIuC~~FcvBlvAog@nR}GbGcB~FsAta@mHtEe@rTgAbEc@jF{@~DaApVwHvg@iPnGiBbKgCfhBu_@xVqFdcA_T~r@cOdMmCjD]jBIpBAbBFfM~@jFDlCKvAOnCg@bSwG`AU`Hy@lCOzCCpCFnDXtCd@tEhAlGdCdA^zI|DlHvC`ZbMtx@f]lDpAxDdA~Dt@|Dd@fFVdJ?p|@QnBHvBTfCh@vCdAlNnGnAd@rCt@pC\\rBJdCAnBKtCe@~LmD|w@aVbDcAtA]jCa@lAKthAl@jCNtCj@tC|@zRzJ|c@fUhCdBfCvBlBpBzAnBvGxJfAtAfA`AjCxAvNnH|`@dSnGtCfEfBzT|KdE~A|DhA`OxCbW~EhDf@bCNxBBfCMxCa@dD_ArdAk^vFs@tDObh@HfXDzSIbQBdSM|Q@b\\LjIDxS?zCEvAOfBe@vAq@zAgAxA_BnXy]vByBbDmCn`@}ZnBiAfCkA~Bs@hB_@vCWxDIfN@hRTJPzCh@fBHlFFpDVpE~@`Dp@|@BdAOTFjBOt@@f@Lh@^`@p@Tt@Hh@@XGdB@\\wCjPSfAcAnEQF]Xc@Jc@ESQKWE_@Fm@T[VGT@t@VbFzBh@P~I~DhAd@~IbEVLsAhHaCdNcCgA"
+      },
+      "travelAdvisory": {
+        "speedReadingIntervals": [
+          {
+            "startPolylinePointIndex": 0,
+            "endPolylinePointIndex": 1,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 1,
+            "endPolylinePointIndex": 2,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 2,
+            "endPolylinePointIndex": 5,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 5,
+            "endPolylinePointIndex": 6,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 6,
+            "endPolylinePointIndex": 21,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 21,
+            "endPolylinePointIndex": 22,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 22,
+            "endPolylinePointIndex": 25,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 25,
+            "endPolylinePointIndex": 26,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 26,
+            "endPolylinePointIndex": 28,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 28,
+            "endPolylinePointIndex": 37,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 37,
+            "endPolylinePointIndex": 262,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 262,
+            "endPolylinePointIndex": 264,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 264,
+            "endPolylinePointIndex": 367,
+            "speed": "NORMAL"
+          },
+          {
+            "startPolylinePointIndex": 367,
+            "endPolylinePointIndex": 369,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 369,
+            "endPolylinePointIndex": 376,
+            "speed": "TRAFFIC_JAM"
+          },
+          {
+            "startPolylinePointIndex": 376,
+            "endPolylinePointIndex": 384,
+            "speed": "SLOW"
+          },
+          {
+            "startPolylinePointIndex": 384,
+            "endPolylinePointIndex": 1086,
+            "speed": "NORMAL"
+          }
+        ]
+      }
+    }
+  ]
+}
