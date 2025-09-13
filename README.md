@@ -14,14 +14,15 @@ The architecture is modular and location-agnostic, allowing easy adaptation to o
 
 ## Features
 
-- **Real-time Road Conditions**: Live traffic data, travel times, and congestion levels
-- **Weather Information**: Current conditions and alerts for multiple locations  
-- **Smart Alert Filtering**: Route-aware classification (ON_ROUTE/NEARBY/DISTANT) with distance-based relevance
-- **AI-Enhanced Descriptions**: Automatic OpenAI integration to convert technical alerts into human-readable summaries
-- **Road Alerts**: Chain control requirements, lane closures, and CHP incidents with polyline geometry
-- **REST API**: HTTP endpoints with JSON responses
-- **gRPC Support**: Native gRPC services with HTTP gateway
-- **Caching**: In-memory caching with configurable refresh intervals
+- **Real-time Road Conditions**: Live traffic data, travel times, and congestion levels from Google Routes API
+- **Intelligent Road Alerts**: AI-enhanced alerts from Caltrans feeds including lane closures, CHP incidents, and construction
+- **Smart Alert Classification**: Route-aware filtering (ON_ROUTE/NEARBY/DISTANT) based on spatial analysis
+- **AI-Enhanced Descriptions**: Automatic OpenAI conversion of technical alerts into clear, human-readable summaries
+- **Weather Information**: Current conditions and alerts for multiple locations from OpenWeatherMap
+- **Stale-while-revalidate Caching**: Sub-100ms responses by serving cached data while refreshing in background
+- **REST API**: Clean HTTP endpoints with comprehensive JSON responses
+- **gRPC Support**: Native gRPC services with automatic HTTP gateway
+- **Configurable & Scalable**: Location-agnostic architecture with simple YAML configuration
 
 ## API Endpoints
 
@@ -45,7 +46,17 @@ GET /api/v1/roads
       "distanceKm": 13,
       "congestionLevel": "CLEAR",
       "delayMinutes": 0,
-      "alerts": []
+      "alerts": [
+        {
+          "type": "CONSTRUCTION",
+          "severity": "INFO",
+          "classification": "NEARBY",
+          "title": "Lane Closure Advisory",
+          "description": "Routine maintenance work on shoulder, no traffic impact expected.",
+          "condensedSummary": "Shoulder work, no delays",
+          "impact": "none",
+        }
+      ]
     }
   ],
   "lastUpdated": "2025-09-11T01:52:05.646618Z"
@@ -69,7 +80,29 @@ GET /api/v1/roads/{road_id}
     "distanceKm": 20,
     "congestionLevel": "CLEAR",
     "delayMinutes": 0,
-    "alerts": []
+    "alerts": [
+      {
+        "type": "INCIDENT",
+        "severity": "WARNING",
+        "classification": "ON_ROUTE",
+        "title": "CHP Incident 250911GG0206",
+        "description": "Multi-vehicle accident blocking right lane near mile marker 45. Expect 15-20 minute delays while emergency crews clear the scene.",
+        "condensedSummary": "Accident blocking right lane, 15-20 min delays",
+        "startTime": "2025-09-11T01:30:00Z",
+        "location": {
+          "latitude": 38.2345,
+          "longitude": -120.1234
+        },
+        "locationDescription": "Highway 4 near mile marker 45",
+        "impact": "moderate",
+        "timeReported": "2025-09-11T01:30:00Z",
+        "lastUpdated": "2025-09-11T01:45:00Z",
+        "metadata": {
+          "lanes_affected": "1 of 2",
+          "emergency_services": "CHP on scene"
+        }
+      }
+    ]
   },
   "lastUpdated": "2025-09-11T01:52:05.646618Z"
 }
@@ -87,6 +120,38 @@ GET /api/v1/roads/{road_id}
 - `MODERATE` - Moderate traffic
 - `HEAVY` - Heavy traffic
 - `SEVERE` - Severe congestion
+
+### Road Alerts
+
+The Roads API provides intelligent alerts that combine data from multiple sources and uses AI enhancement for better readability.
+
+**Alert Types:**
+- `CLOSURE` - Road closures and lane restrictions
+- `CONSTRUCTION` - Planned construction activities
+- `INCIDENT` - Traffic accidents and emergency situations
+- `WEATHER` - Weather-related road conditions
+
+**Alert Severity:**
+- `INFO` - Informational notices
+- `WARNING` - Moderate impact on travel
+- `CRITICAL` - Severe impact or safety concerns
+
+**Alert Classification:**
+- `ON_ROUTE` - Directly affects route path (< 100m from route)
+- `NEARBY` - In surrounding area but not blocking route
+- `DISTANT` - Too far from route to be relevant
+
+**AI Enhancement Features:**
+- **Smart Descriptions**: Technical Caltrans alerts are automatically converted to human-readable summaries using OpenAI
+- **Impact Assessment**: AI evaluates impact levels: `none`, `light`, `moderate`, `severe`
+- **Duration Estimates**: AI provides duration estimates: `unknown`, `< 1 hour`, `several hours`, `ongoing`
+- **Condensed Summaries**: Short format optimized for mobile displays
+- **Structured Metadata**: Additional contextual information like lanes affected, emergency services on scene
+
+**Data Sources:**
+- **Caltrans KML Feeds**: Lane closures, CHP incidents, and chain control status
+- **Google Routes API**: Real-time traffic conditions and route geometry for spatial matching
+- **OpenAI Enhancement**: Automatic conversion of technical alerts into clear, actionable information
 
 *Note: Chain control status is currently disabled until winter when actual chain requirement data becomes available in Caltrans feeds. All roads will show no chain requirements.*
 
@@ -184,7 +249,7 @@ GET /api/v1/weather/alerts
    curl https://info.ersn.net/api/v1/weather
    ```
 
-### Configuration ✅ **SIMPLIFIED**
+### Configuration
 
 The server uses `prefab.yaml` for configuration with a **simplified structure** and supports environment variable overrides using the `PF__` prefix. Configuration has been streamlined with top-level client configs and consistent camelCase naming:
 
