@@ -347,7 +347,6 @@ func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, mon
 	return s.processCaltransDataWithRoute(ctx, route, monitoredRoad)
 }
 
-
 // processCaltransDataWithRoute handles the actual Caltrans data processing with route information
 func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route routing.Route, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, error) {
 
@@ -469,7 +468,6 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 			alert.CondensedSummary = enhanced.CondensedSummary
 			alert.LocationDescription = enhanced.StructuredDescription.Location.Description
 			alert.Impact = enhanced.StructuredDescription.Impact
-			alert.Duration = enhanced.StructuredDescription.Duration
 
 			// Parse time_reported if provided
 			if enhanced.StructuredDescription.TimeReported != "" {
@@ -509,7 +507,7 @@ func (s *RoadsService) EnhanceAlertWithAI(ctx context.Context, classifiedAlert r
 
 	// Generate content hash for cache key
 	contentHash := s.contentHasher.HashRawAlert(rawAlert)
-	
+
 	// Check cache first
 	var cachedAlert alerts.EnhancedAlert
 	key := fmt.Sprintf("enhanced_alert:%s", contentHash)
@@ -517,16 +515,16 @@ func (s *RoadsService) EnhanceAlertWithAI(ctx context.Context, classifiedAlert r
 		log.Printf("Cache hit for alert content hash %s", contentHash[:8])
 		return &cachedAlert, nil
 	}
-	
+
 	log.Printf("Cache miss for alert content hash %s - calling OpenAI", contentHash[:8])
-	
+
 	// Cache miss - call OpenAI enhancement
 	enhanced, err := s.alertEnhancer.EnhanceAlert(ctx, rawAlert)
 	if err != nil {
 		log.Printf("OpenAI enhancement failed for %s: %v", contentHash[:8], err)
 		return nil, err
 	}
-	
+
 	// Cache the result with 24 hour TTL to prevent duplicate OpenAI calls
 	ttl := 24 * time.Hour
 	if err := s.cache.SetEnhancedAlert(contentHash, enhanced, ttl); err != nil {
@@ -535,7 +533,7 @@ func (s *RoadsService) EnhanceAlertWithAI(ctx context.Context, classifiedAlert r
 	} else {
 		log.Printf("Cached enhanced alert with hash %s for 24h", contentHash[:8])
 	}
-	
+
 	return &enhanced, nil
 }
 

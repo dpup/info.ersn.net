@@ -35,7 +35,6 @@ func (a *alertEnhancer) EnhanceAlert(ctx context.Context, raw RawAlert) (Enhance
 		return EnhancedAlert{}, errors.New("OpenAI client not initialized - invalid API key")
 	}
 
-
 	// Create user prompt with raw alert data as JSON
 	rawAlertJSON, _ := json.Marshal(raw)
 	userPrompt := fmt.Sprintf(`Parse this traffic incident report and return structured JSON:
@@ -113,10 +112,6 @@ For the condensed summary, follow the examples provided - do NOT include locatio
 	if !isValidImpact(structured.Impact) {
 		structured.Impact = "unknown"
 	}
-	if !isValidDuration(structured.Duration) {
-		structured.Duration = "unknown"
-	}
-
 	// Use AI-generated condensed summary (trust the AI to follow instructions)
 	// Only fallback to a simple format if completely missing
 	if structured.CondensedSummary == "" {
@@ -170,17 +165,6 @@ func isValidImpact(impact string) bool {
 	validImpacts := []string{"none", "light", "moderate", "severe"}
 	for _, valid := range validImpacts {
 		if impact == valid {
-			return true
-		}
-	}
-	return false
-}
-
-// isValidDuration validates duration enum values
-func isValidDuration(duration string) bool {
-	validDurations := []string{"unknown", "< 1 hour", "several hours", "ongoing"}
-	for _, valid := range validDurations {
-		if duration == valid {
 			return true
 		}
 	}

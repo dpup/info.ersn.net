@@ -14,7 +14,7 @@ Instructions:
 - Remove jargon and abbreviations (e.g., "1183-Trfc Collision-Unkn Inj" → "Traffic collision, injuries unknown").
 - When times are present, convert to ISO 8601 format (UTC if possible). If missing, return null.
 - Provide concise, human-readable text for travelers.
-- Infer impact and duration from the details (use judgment).
+- Infer impact from the details (use judgment).
 - Populate all fields exactly as specified in the schema.
 
 StyleUrl Definitions (KML styles from Caltrans data):
@@ -34,7 +34,6 @@ Return valid JSON object with these exact fields:
 - time_reported (string | null) – ISO timestamp of when first reported
 - last_update (string | null) – most recent update in ISO format
 - impact (enum) – "none" | "light" | "moderate" | "severe"
-- duration (enum) – "unknown" | "< 1 hour" | "several hours" | "ongoing"
 - additional_info (object) – key-value pairs for structured facts (keys: alphanumeric/._/- only, all values must be strings)
 
 Guidelines for additional_info metadata:
@@ -110,11 +109,6 @@ var AlertEnhancementSchema = openai.ChatCompletionResponseFormatJSONSchema{
 				"enum": ["none", "light", "moderate", "severe"],
 				"description": "Traffic impact severity level"
 			},
-			"duration": {
-				"type": "string",
-				"enum": ["unknown", "< 1 hour", "several hours", "ongoing"],
-				"description": "Expected duration of incident"
-			},
 			"additional_info": {
 				"type": "object",
 				"description": "Key-value pairs for structured facts",
@@ -122,7 +116,7 @@ var AlertEnhancementSchema = openai.ChatCompletionResponseFormatJSONSchema{
 				"additionalProperties": false
 			}
 		},
-		"required": ["time_reported", "details", "location", "last_update", "impact", "duration", "condensed_summary"],
+		"required": ["time_reported", "details", "location", "last_update", "impact", "condensed_summary"],
 		"additionalProperties": false
 	}`),
 }
