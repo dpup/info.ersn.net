@@ -12,16 +12,11 @@ import (
 	"strings"
 
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
-	"github.com/dpup/info.ersn.net/server/internal/lib/geo"
 )
 
 func main() {
 	var (
 		feedType = flag.String("feed", "all", "Feed type: all, chain, lanes, chp")
-		lat      = flag.Float64("lat", 38.2, "Latitude for geographic filtering")
-		lon      = flag.Float64("lon", -120.3, "Longitude for geographic filtering")
-		radius   = flag.Float64("radius", 50000, "Radius in meters for geographic filtering")
-		filter   = flag.Bool("filter", false, "Enable geographic filtering")
 		offline  = flag.Bool("offline", false, "Use local test data instead of live feeds")
 		help     = flag.Bool("help", false, "Show help")
 	)
@@ -54,9 +49,6 @@ func main() {
 	} else {
 		fmt.Printf("Mode: Online (using live feeds)\n")
 	}
-	if *filter {
-		fmt.Printf("Geographic filter: %.6f, %.6f (%.0f m radius)\n", *lat, *lon, *radius)
-	}
 	fmt.Printf("\n")
 
 	// Create parser
@@ -80,9 +72,6 @@ func main() {
 		testLaneClosures(parser, ctx)
 		testCHPIncidents(parser, ctx)
 		
-		if *filter {
-			testGeographicFiltering(parser, ctx, *lat, *lon, *radius)
-		}
 	default:
 		log.Fatalf("Unknown feed type: %s", *feedType)
 	}
@@ -201,26 +190,6 @@ func testCHPIncidents(parser *caltrans.FeedParser, ctx context.Context) {
 	fmt.Printf("\n")
 }
 
-func testGeographicFiltering(parser *caltrans.FeedParser, ctx context.Context, lat, lon, radius float64) {
-	fmt.Printf("Testing Geographic Filtering...\n")
-	
-	routeCoords := []geo.Point{
-		{Latitude: lat, Longitude: lon},
-	}
-	
-	incidents, err := parser.ParseWithGeographicFilter(ctx, routeCoords, radius)
-	if err != nil {
-		log.Fatalf("ParseWithGeographicFilter failed: %v", err)
-	}
-
-	fmt.Printf("✅ Geographic Filtering successful!\n")
-	fmt.Printf("Filtered incidents found: %d\n", len(incidents))
-	
-	if len(incidents) > 0 {
-		printSampleIncident("Filtered Incident", incidents[0])
-	}
-	fmt.Printf("\n")
-}
 
 func printSampleIncident(label string, incident caltrans.CaltransIncident) {
 	fmt.Printf("Sample %s:\n", label)

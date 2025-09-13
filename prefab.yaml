@@ -22,20 +22,19 @@ security:
 
 # Client Configurations - Top Level  
 google_routes:
-  # apiKey set via PF__GOOGLE_ROUTES__API_KEY env var
+  apiKey: "" 
 
 openai:
-  # apiKey set via PF__OPENAI__API_KEY env var
+  apiKey: ""
   model: "gpt-4o-mini"       # OpenAI model for alert enhancement with JSON schema support
   timeout: "30s"             # Timeout for API calls
   maxRetries: 3              # Maximum retry attempts
 
 openweather:
-  # apiKey set via PF__OPENWEATHER__API_KEY env var
+  apiKey: ""
 
 # Service Configurations
 roads:
-  # Common refresh settings for roads service
   refreshInterval: "5m"
   staleThreshold: "10m"
   

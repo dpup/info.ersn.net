@@ -120,50 +120,6 @@ func TestParseChainControls(t *testing.T) {
 	}
 }
 
-func TestParseWithGeographicFilter(t *testing.T) {
-	parser := setupTestParser(t)
-	
-	// Test with San Francisco coordinates (should have incidents nearby)
-	routeCoordinates := []geo.Point{
-		{Latitude: 37.7749, Longitude: -122.4194}, // Downtown San Francisco
-	}
-	
-	t.Run("10km radius", func(t *testing.T) {
-		incidents, err := parser.ParseWithGeographicFilter(context.Background(), routeCoordinates, 10000)
-		require.NoError(t, err)
-		
-		// Should find some incidents within 10km of SF
-		assert.Greater(t, len(incidents), 0, "Should find incidents within 10km of San Francisco")
-		
-		// Verify all incidents are within the specified radius
-		geoUtils := geo.NewGeoUtils()
-		for _, incident := range incidents {
-			distance, err := geoUtils.DistanceFromCoords(
-				37.7749, -122.4194,
-				incident.Coordinates.Latitude, incident.Coordinates.Longitude,
-			)
-			require.NoError(t, err)
-			assert.LessOrEqual(t, distance, 10000.0, "All incidents should be within 10km radius")
-		}
-	})
-	
-	t.Run("1km radius", func(t *testing.T) {
-		incidents, err := parser.ParseWithGeographicFilter(context.Background(), routeCoordinates, 1000)
-		require.NoError(t, err)
-		
-		// Should find fewer incidents within 1km
-		// Verify all incidents are within the specified radius
-		geoUtils := geo.NewGeoUtils()
-		for _, incident := range incidents {
-			distance, err := geoUtils.DistanceFromCoords(
-				37.7749, -122.4194,
-				incident.Coordinates.Latitude, incident.Coordinates.Longitude,
-			)
-			require.NoError(t, err)
-			assert.LessOrEqual(t, distance, 1000.0, "All incidents should be within 1km radius")
-		}
-	})
-}
 
 func TestHaversineDistance(t *testing.T) {
 	tests := []struct {

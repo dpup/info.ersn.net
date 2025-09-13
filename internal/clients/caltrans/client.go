@@ -148,62 +148,6 @@ func (p *FeedParser) ParseCHPIncidents(ctx context.Context) ([]CaltransIncident,
 	return p.parseKMLFeed(ctx, "https://quickmap.dot.ca.gov/data/chp-only.kml", CHP_INCIDENT)
 }
 
-// ParseWithGeographicFilter parses incidents and filters by proximity to route coordinates
-// Implementation per research.md line 79
-func (p *FeedParser) ParseWithGeographicFilter(ctx context.Context, routeCoordinates []geo.Point, radiusMeters float64) ([]CaltransIncident, error) {
-	// Parse feeds (chain control parsing disabled until winter data available)
-	// TODO: Re-enable chain control parsing in winter when actual chain requirement data is available
-	
-	laneClosures, err := p.ParseLaneClosures(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse lane closures: %w", err)
-	}
-
-	chpIncidents, err := p.ParseCHPIncidents(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse CHP incidents: %w", err)
-	}
-
-	// Combine incidents (excluding chain controls for now)
-	allIncidents := append(laneClosures, chpIncidents...)
-
-	// Filter by geographic proximity using centralized filtering
-	filteredIncidents := make([]CaltransIncident, 0)
-	
-	for _, incident := range allIncidents {
-		// Skip incidents without valid coordinates
-		if incident.Coordinates == nil {
-			continue
-		}
-		
-		incidentPoint := geo.Point{
-			Latitude:  incident.Coordinates.Latitude,
-			Longitude: incident.Coordinates.Longitude,
-		}
-		
-		// Check if incident is within radius of any route coordinate
-		isNearRoute := false
-		for _, coord := range routeCoordinates {
-			distance, err := p.geoUtils.DistanceFromCoords(
-				coord.Latitude, coord.Longitude,
-				incidentPoint.Latitude, incidentPoint.Longitude,
-			)
-			if err != nil {
-				continue // Skip invalid coordinates
-			}
-			if distance <= radiusMeters {
-				isNearRoute = true
-				break // Found within range, no need to check other coordinates
-			}
-		}
-		
-		if isNearRoute {
-			filteredIncidents = append(filteredIncidents, incident)
-		}
-	}
-
-	return filteredIncidents, nil
-}
 
 // parseKMLFeed downloads and parses a KML feed
 func (p *FeedParser) parseKMLFeed(ctx context.Context, url string, feedType CaltransFeedType) ([]CaltransIncident, error) {
