@@ -4,7 +4,6 @@ package api.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
-import "common.proto";
 
 option go_package = "github.com/dpup/info.ersn.net/server/api/v1";
 
