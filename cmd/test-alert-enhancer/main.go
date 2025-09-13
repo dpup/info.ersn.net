@@ -41,7 +41,7 @@ func handleEnhanceAlert() {
 	description := fs.String("description", "", "Raw Caltrans alert description")
 	location := fs.String("location", "", "Alert location context")
 	styleUrl := fs.String("style-url", "", "KML styleUrl for closure type (e.g., #lcs, #oneWayTrafficPath)")
-	apiKey := fs.String("api-key", os.Getenv("PF__ROADS__OPENAI__API_KEY"), "OpenAI API key (or set PF__ROADS__OPENAI__API_KEY env var)")
+	apiKey := fs.String("api-key", os.Getenv("PF__OPENAI__API_KEY"), "OpenAI API key (or set PF__OPENAI__API_KEY env var)")
 	model := fs.String("model", "gpt-3.5-turbo", "OpenAI model to use")
 	timeout := fs.Int("timeout", 30, "Timeout in seconds")
 
@@ -55,7 +55,7 @@ func handleEnhanceAlert() {
 	}
 
 	if *apiKey == "" {
-		log.Fatal("OpenAI API key is required. Set PF__ROADS__OPENAI__API_KEY environment variable or use --api-key flag")
+		log.Fatal("OpenAI API key is required. Set PF__OPENAI__API_KEY environment variable or use --api-key flag")
 	}
 
 	enhancer := alerts.NewAlertEnhancer(*apiKey, *model)
@@ -120,14 +120,14 @@ func handleEnhanceAlert() {
 
 func handleTestConnection() {
 	fs := flag.NewFlagSet("test-connection", flag.ExitOnError)
-	apiKey := fs.String("api-key", os.Getenv("PF__ROADS__OPENAI__API_KEY"), "OpenAI API key to test")
+	apiKey := fs.String("api-key", os.Getenv("PF__OPENAI__API_KEY"), "OpenAI API key to test")
 	model := fs.String("model", "gpt-3.5-turbo", "OpenAI model to test")
 	timeout := fs.Int("timeout", 10, "Timeout in seconds")
 
 	fs.Parse(os.Args[2:])
 
 	if *apiKey == "" {
-		log.Fatal("OpenAI API key is required. Set PF__ROADS__OPENAI__API_KEY environment variable or use --api-key flag")
+		log.Fatal("OpenAI API key is required. Set PF__OPENAI__API_KEY environment variable or use --api-key flag")
 	}
 
 	enhancer := alerts.NewAlertEnhancer(*apiKey, *model)
@@ -168,7 +168,7 @@ func handleTestConnection() {
 func handleTestPrompt() {
 	fs := flag.NewFlagSet("test-prompt", flag.ExitOnError)
 	rawFile := fs.String("raw-file", "", "Path to file containing raw incident descriptions (one per line)")
-	apiKey := fs.String("api-key", os.Getenv("PF__ROADS__OPENAI__API_KEY"), "OpenAI API key")
+	apiKey := fs.String("api-key", os.Getenv("PF__OPENAI__API_KEY"), "OpenAI API key")
 	model := fs.String("model", "gpt-3.5-turbo", "OpenAI model to use")
 	count := fs.Int("count", 5, "Number of incidents to test")
 
@@ -186,7 +186,7 @@ func handleTestPrompt() {
 	}
 
 	if *apiKey == "" {
-		log.Fatal("OpenAI API key is required. Set PF__ROADS__OPENAI__API_KEY environment variable or use --api-key flag")
+		log.Fatal("OpenAI API key is required. Set PF__OPENAI__API_KEY environment variable or use --api-key flag")
 	}
 
 	// Read raw incidents from file
@@ -284,7 +284,7 @@ EXAMPLES:
     test-alert-enhancer test-prompt --raw-file incidents.txt --count 5
 
 ENVIRONMENT VARIABLES:
-    PF__ROADS__OPENAI__API_KEY   OpenAI API key (alternative to --api-key flag)
+    PF__OPENAI__API_KEY          OpenAI API key (alternative to --api-key flag)
 
 For more information, visit: https://github.com/dpup/info.ersn.net
 `)

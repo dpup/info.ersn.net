@@ -134,9 +134,7 @@ $RECYCLE.BIN/
 
 # Project-specific ignores
 /server
-/test-google
-/test-caltrans  
-/test-weather
+/test-*
 /cmd/*/main
 
 # API keys and secrets (even though they should be in env vars)

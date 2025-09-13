@@ -132,10 +132,11 @@
 - **Cache Strategy**: Check cache first, refresh if stale, return data
 - **Background Warmth**: Periodic refresh simulates requests to maintain cache
 
-### 2. External API Integration
-- **Google Routes**: Traffic conditions + encoded polylines for route geometry
+### 2. External API Integration ✅ **SIMPLIFIED CONFIG**
+- **Google Routes**: Traffic conditions + polylines (API key via `PF__GOOGLE_ROUTES__API_KEY`)
 - **Caltrans KML**: Real-time incidents parsed from XML feeds  
-- **OpenWeather**: Current conditions and weather alerts
+- **OpenWeather**: Current conditions and weather alerts (API key via `PF__OPENWEATHER__API_KEY`)
+- **OpenAI**: AI enhancement for alerts (API key via `PF__OPENAI__API_KEY`)
 
 ### 3. Data Processing Layers
 - **Route-Aware Classification**: Uses actual Google polylines to classify alerts as OnRoute/Nearby/Distant
@@ -146,6 +147,12 @@
 - **Single Cache Instance**: JSON-based with TTL support
 - **Multi-Layer TTL**: 5m for API data, 24h for enhanced alerts
 - **Content-Based Deduplication**: Prevents redundant AI processing
+
+### 5. Configuration System ✅ **NEWLY SIMPLIFIED**
+- **Unified Structure**: Single config.Config struct with top-level client configurations
+- **Environment Mapping**: Prefab transforms `PF__SECTION__FIELD_NAME` → `section.fieldName`
+- **Service Integration**: All services receive full config instead of sub-configs
+- **Consistent Naming**: CamelCase throughout for predictable env var mapping
 
 ## Current Complexity Areas (Simplification Opportunities)
 
@@ -169,12 +176,18 @@ Content Hash → Cache Check → OpenAI API → Parse Response → Store Enhance
 - JSON/XML parsing and error handling  
 - Response caching and staleness detection
 
-### 📊 Configuration Management
-**Multiple Config Layers:**
-- Prefab YAML configuration
-- Environment variable overrides
-- Per-service configuration structs
-- Runtime refresh interval management
+### 📊 Configuration Management ✅ **SIMPLIFIED**
+**Unified Configuration Structure:**
+- **Single Config Source**: Prefab YAML with environment variable mapping
+- **Top-Level Client Configs**: GoogleRoutes, OpenAI, OpenWeather moved to root level  
+- **CamelCase Consistency**: All fields use camelCase for Prefab env var transformation
+- **Explicit Fields**: Replaced embedded RefreshConfig with explicit fields (koanf compatibility)
+- **Environment Variables**: `PF__CLIENT__FIELD` → `client.field` mapping works correctly
+
+**Configuration Reduction:**
+- **Before**: 125 lines, nested structures, inconsistent naming
+- **After**: ~98 lines, flat structure, consistent camelCase naming
+- **Eliminated**: Obsolete StoreConfig, unused chain_controls section
 
 ---
 
@@ -182,4 +195,4 @@ Content Hash → Cache Check → OpenAI API → Parse Response → Store Enhance
 1. Consolidate geographic processing libraries
 2. Merge AI enhancement caching with main cache strategy  
 3. Create unified external API client pattern
-4. Simplify configuration structure
+4. ~~Simplify configuration structure~~ ✅ **COMPLETED**

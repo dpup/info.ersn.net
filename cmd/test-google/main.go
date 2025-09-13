@@ -13,7 +13,7 @@ import (
 
 func main() {
 	var (
-		apiKey    = flag.String("api-key", "", "Google Routes API key (or set GOOGLE_ROUTES_API_KEY env var)")
+		apiKey    = flag.String("api-key", "", "Google Routes API key (or set PF__GOOGLE_ROUTES__API_KEY env var)")
 		originStr = flag.String("origin", "38.067400,-120.540200", "Origin coordinates (lat,lon)")
 		destStr   = flag.String("dest", "38.139117,-120.456111", "Destination coordinates (lat,lon)")
 		help      = flag.Bool("help", false, "Show help")
@@ -29,20 +29,20 @@ func main() {
 		fmt.Printf("\nExamples:\n")
 		fmt.Printf("  %s -api-key=YOUR_KEY\n", os.Args[0])
 		fmt.Printf("  %s -origin=\"37.7749,-122.4194\" -dest=\"34.0522,-118.2437\"\n", os.Args[0])
-		fmt.Printf("  GOOGLE_ROUTES_API_KEY=your_key %s\n", os.Args[0])
+		fmt.Printf("  PF__GOOGLE_ROUTES__API_KEY=your_key %s\n", os.Args[0])
 		return
 	}
 
 	// Get API key from flag or environment
 	key := *apiKey
 	if key == "" {
-		key = os.Getenv("GOOGLE_API_KEY")
+		key = os.Getenv("PF__GOOGLE_ROUTES__API_KEY")
 		if key == "" {
-			key = os.Getenv("GOOGLE_ROUTES_API_KEY") // fallback
+			key = os.Getenv("GOOGLE_ROUTES_API_KEY") // fallback for backward compatibility
 		}
 	}
 	if key == "" {
-		log.Fatal("Google Routes API key required. Use -api-key flag or GOOGLE_API_KEY/GOOGLE_ROUTES_API_KEY env var")
+		log.Fatal("Google Routes API key required. Use -api-key flag or PF__GOOGLE_ROUTES__API_KEY env var")
 	}
 
 	// Parse coordinates

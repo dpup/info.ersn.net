@@ -2,14 +2,22 @@
 
 A real-time API server providing road conditions and weather information for the Ebbett's Pass region, combining data from Google Routes API, Caltrans feeds, and OpenWeatherMap.
 
+## Overview
+
+The server dynamically builds routes between geographic points using the Google Routes API, retrieving real-time traffic data and estimated travel times. Polyline geometry from Google is used to cross-reference Caltrans feeds, with alerts filtered and classified as on-route or nearby based on spatial relevance. To improve usability, OpenAI is integrated to automatically convert technical Caltrans alerts into clear, human-readable summaries.
+
+Weather data is independently sourced from OpenWeatherMap for each configured location, providing current conditions and active alerts.
+
+The architecture is modular and location-agnostic, allowing easy adaptation to other regions or road networks by updating configuration.
+
 **Live API available at: https://info.ersn.net**
 
 ## Features
 
 - **Real-time Road Conditions**: Live traffic data, travel times, and congestion levels
-- **Weather Information**: Current conditions and alerts for multiple locations
+- **Weather Information**: Current conditions and alerts for multiple locations  
 - **Smart Alert Filtering**: Route-aware classification (ON_ROUTE/NEARBY/DISTANT) with distance-based relevance
-- **AI-Enhanced Descriptions**: Optional OpenAI integration to convert technical alerts into human-readable summaries
+- **AI-Enhanced Descriptions**: Automatic OpenAI integration to convert technical alerts into human-readable summaries
 - **Road Alerts**: Chain control requirements, lane closures, and CHP incidents with polyline geometry
 - **REST API**: HTTP endpoints with JSON responses
 - **gRPC Support**: Native gRPC services with HTTP gateway
@@ -154,8 +162,9 @@ GET /api/v1/weather/alerts
 
 2. Set up environment variables:
    ```bash
-   export PF__ROADS__GOOGLE_ROUTES__API_KEY="your-google-api-key"
-   export PF__WEATHER__OPENWEATHER_API_KEY="your-openweather-api-key"
+   export PF__GOOGLE_ROUTES__API_KEY="your-google-api-key"
+   export PF__OPENWEATHER__API_KEY="your-openweather-api-key"
+   export PF__OPENAI__API_KEY="your-openai-api-key"  # Optional, for AI-enhanced alerts
    ```
 
 3. Build and run:
@@ -175,20 +184,29 @@ GET /api/v1/weather/alerts
    curl https://info.ersn.net/api/v1/weather
    ```
 
-### Configuration
+### Configuration ✅ **SIMPLIFIED**
 
-The server uses `prefab.yaml` for configuration and supports environment variable overrides using the `PF__` prefix:
+The server uses `prefab.yaml` for configuration with a **simplified structure** and supports environment variable overrides using the `PF__` prefix. Configuration has been streamlined with top-level client configs and consistent camelCase naming:
 
 ```yaml
-server:
-  port: 8080
+# Client Configurations - Top Level
+googleRoutes:
+  # apiKey set via PF__GOOGLE_ROUTES__API_KEY
 
+openai:
+  # apiKey set via PF__OPENAI__API_KEY  
+  model: "gpt-4o-mini"
+  timeout: "30s"
+  maxRetries: 3
+
+openweather:
+  # apiKey set via PF__OPENWEATHER__API_KEY
+
+# Service Configurations
 roads:
-  google_routes:
-    api_key: ""  # Set via PF__ROADS__GOOGLE_ROUTES__API_KEY
-    refresh_interval: "5m"
-    stale_threshold: "10m"
-  monitored_roads:
+  refreshInterval: "5m"
+  staleThreshold: "10m"
+  monitoredRoads:
     - name: "Hwy 4"
       section: "Angels Camp to Murphys"
       id: "hwy4-angels-murphys"
@@ -200,49 +218,15 @@ roads:
         longitude: -120.456111
 
 weather:
-  openweather_api_key: ""  # Set via PF__WEATHER__OPENWEATHER_API_KEY
-  refresh_interval: "5m"
-  stale_threshold: "10m"
+  refreshInterval: "5m"
+  staleThreshold: "10m"
   locations:
     - id: "murphys"
       name: "Murphys, CA"
-      lat: 38.139117
-      lon: -120.456111
+      coordinates:
+        latitude: 38.139117
+        longitude: -120.456111
 ```
-
-#### AI-Enhanced Alerts (Optional)
-
-The server supports AI-powered alert enhancement using OpenAI's GPT models to transform technical Caltrans descriptions into human-readable summaries:
-
-```yaml
-roads:
-  openai:
-    enabled: false             # Set to true to enable AI enhancement
-    api_key: ""                # Set via PF__ROADS__OPENAI__API_KEY
-    model: "gpt-3.5-turbo"     # OpenAI model for enhancement
-    timeout: "30s"             # API timeout
-    max_retries: 3             # Retry attempts
-```
-
-**To enable AI enhancement:**
-
-1. Get an OpenAI API key from https://platform.openai.com/api-keys
-2. Set the environment variable:
-   ```bash
-   export PF__ROADS__OPENAI__API_KEY="sk-your-openai-api-key"
-   ```
-3. Enable in configuration:
-   ```bash
-   # Update prefab.yaml or set via environment
-   export PF__ROADS__OPENAI__ENABLED=true
-   ```
-4. Restart the server
-
-**Benefits of AI enhancement:**
-- Converts technical jargon like "Rte 4 EB of MM 31 - VEHICLE IN DITCH, EMS ENRT" 
-- Into clear descriptions like "Vehicle accident in ditch on Highway 4 eastbound near mile marker 31, emergency services en route"
-- Provides structured data with impact assessment and duration estimates
-- Generates condensed summaries for mobile displays
 
 ## Development
 
@@ -334,23 +318,29 @@ make lint && make test
 
 ### Adding New Roads
 
-1. Update `prefab.yaml` with new road coordinates:
+1. Update `prefab.yaml` with new road coordinates (note the simplified structure):
    ```yaml
-   monitored_roads:
-     - name: "Highway Name"
-       section: "Start to End"
-       id: "unique-road-id"
-       origin:
-         latitude: 0.0
-         longitude: 0.0
-       destination:
-         latitude: 0.0
-         longitude: 0.0
+   roads:
+     monitoredRoads:  # Note: camelCase naming
+       - name: "Highway Name"
+         section: "Start to End"
+         id: "unique-road-id"
+         origin:
+           latitude: 0.0
+           longitude: 0.0
+         destination:
+           latitude: 0.0
+           longitude: 0.0
    ```
 
 2. Test with the Google Routes API tool:
    ```bash
+   # Test tools now use the same environment variables as the server
+   source .envrc  # Load your environment variables
    ./bin/test-google
+   
+   # Or set the environment variable directly
+   PF__GOOGLE_ROUTES__API_KEY="your-google-api-key" ./bin/test-google
    ```
 
 3. Restart the server to pick up configuration changes:

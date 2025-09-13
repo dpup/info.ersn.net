@@ -14,7 +14,7 @@ import (
 
 func main() {
 	var (
-		apiKey = flag.String("api-key", "", "OpenWeatherMap API key (or set OPENWEATHER_API_KEY env var)")
+		apiKey = flag.String("api-key", "", "OpenWeatherMap API key (or set PF__OPENWEATHER__API_KEY env var)")
 		lat    = flag.Float64("lat", 38.139117, "Latitude for weather lookup")
 		lon    = flag.Float64("lon", -120.456111, "Longitude for weather lookup")
 		name   = flag.String("name", "Murphys, CA", "Location name for display")
@@ -31,17 +31,20 @@ func main() {
 		fmt.Printf("\nExamples:\n")
 		fmt.Printf("  %s -api-key=YOUR_KEY\n", os.Args[0])
 		fmt.Printf("  %s -lat=37.7749 -lon=-122.4194 -name=\"San Francisco, CA\"\n", os.Args[0])
-		fmt.Printf("  OPENWEATHER_API_KEY=your_key %s\n", os.Args[0])
+		fmt.Printf("  PF__OPENWEATHER__API_KEY=your_key %s\n", os.Args[0])
 		return
 	}
 
 	// Get API key from flag or environment
 	key := *apiKey
 	if key == "" {
-		key = os.Getenv("OPENWEATHER_API_KEY")
+		key = os.Getenv("PF__OPENWEATHER__API_KEY")
+		if key == "" {
+			key = os.Getenv("OPENWEATHER_API_KEY") // fallback for backward compatibility
+		}
 	}
 	if key == "" {
-		log.Fatal("OpenWeatherMap API key required. Use -api-key flag or OPENWEATHER_API_KEY env var")
+		log.Fatal("OpenWeatherMap API key required. Use -api-key flag or PF__OPENWEATHER__API_KEY env var")
 	}
 
 	fmt.Printf("OpenWeatherMap API Test\n")
