@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -31,6 +32,10 @@ type RoadsService struct {
 	routeMatcher   routing.RouteMatcher
 	geoUtils       geo.GeoUtils
 	contentHasher  *alerts.ContentHasher
+	
+	// Background refresh coordination
+	refreshMutex sync.Mutex
+	refreshInProgress bool
 }
 
 // NewRoadsService creates a new RoadsService
@@ -51,20 +56,19 @@ func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedP
 func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest) (*api.ListRoadsResponse, error) {
 	log.Printf("ListRoads called")
 
-	// Try to get cached roads first
+	// Try to get cached roads first (even if stale)
 	var cachedRoads []*api.Road
 	cacheKey := "roads:all"
 
-	found, err := s.cache.Get(cacheKey, &cachedRoads)
+	entry, found, err := s.cache.GetWithMetadata(cacheKey, &cachedRoads)
 	if err != nil {
 		log.Printf("Cache error: %v", err)
 	}
 
+	// If we have fresh cached data, return it immediately
 	if found && !s.cache.IsStale(cacheKey) {
-		log.Printf("Returning cached roads (%d roads)", len(cachedRoads))
+		log.Printf("Returning fresh cached roads (%d roads)", len(cachedRoads))
 
-		// Get cache metadata for last_updated timestamp
-		entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
 		var lastUpdated *timestamppb.Timestamp
 		if entry != nil {
 			lastUpdated = timestamppb.New(entry.CreatedAt)
@@ -76,14 +80,68 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 		}, nil
 	}
 
-	// Cache miss or stale - refresh from external APIs
-	log.Printf("Refreshing road data from external APIs")
+	// If we have stale but not very stale data, serve it immediately and refresh in background
+	if found && !s.cache.IsVeryStale(cacheKey) {
+		log.Printf("Serving stale cached roads (%d roads) while refreshing in background", len(cachedRoads))
+
+		// Check if a background refresh is already in progress
+		s.refreshMutex.Lock()
+		refreshAlreadyInProgress := s.refreshInProgress
+		if !refreshAlreadyInProgress {
+			s.refreshInProgress = true
+		}
+		s.refreshMutex.Unlock()
+
+		// Only trigger background refresh if one isn't already running
+		if !refreshAlreadyInProgress {
+			go func() {
+				defer func() {
+					// Mark refresh as completed
+					s.refreshMutex.Lock()
+					s.refreshInProgress = false
+					s.refreshMutex.Unlock()
+				}()
+
+				refreshCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+				defer cancel()
+				
+				log.Printf("Background refresh: starting road data refresh")
+				roads, err := s.refreshRoadData(refreshCtx)
+				if err != nil {
+					log.Printf("Background refresh failed: %v", err)
+					return
+				}
+
+				// Cache the refreshed data
+				if err := s.cache.Set(cacheKey, roads, s.config.Roads.RefreshInterval, "roads"); err != nil {
+					log.Printf("Background refresh: failed to cache roads: %v", err)
+				} else {
+					log.Printf("Background refresh: successfully cached %d roads", len(roads))
+				}
+			}()
+		} else {
+			log.Printf("Background refresh already in progress, skipping duplicate refresh")
+		}
+
+		// Return stale data immediately
+		var lastUpdated *timestamppb.Timestamp
+		if entry != nil {
+			lastUpdated = timestamppb.New(entry.CreatedAt)
+		}
+
+		return &api.ListRoadsResponse{
+			Roads:       cachedRoads,
+			LastUpdated: lastUpdated,
+		}, nil
+	}
+
+	// No cache data or very stale - block and refresh synchronously
+	log.Printf("No cached data or very stale - refreshing road data synchronously")
 	roads, err := s.refreshRoadData(ctx)
 	if err != nil {
-		// If refresh fails but we have stale cached data, return it
-		if found && !s.cache.IsVeryStale(cacheKey) {
-			log.Printf("Refresh failed, returning stale cached roads: %v", err)
-			entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
+		// If synchronous refresh fails but we have very stale cached data, return it as last resort
+		if found {
+			log.Printf("Synchronous refresh failed, returning very stale cached roads as fallback: %v", err)
 			var lastUpdated *timestamppb.Timestamp
 			if entry != nil {
 				lastUpdated = timestamppb.New(entry.CreatedAt)

@@ -85,23 +85,22 @@ func (p *PeriodicRefreshService) refreshLoop(ctx context.Context, interval time.
 // simulateAPIRequest makes a simulated request to roads API to trigger cache refresh
 // This leverages the existing refresh logic in RoadsService.ListRoads()
 func (p *PeriodicRefreshService) simulateAPIRequest(ctx context.Context) {
-	log.Printf("Periodic refresh: simulating API request to maintain cache warmth")
+	log.Printf("Periodic refresh: checking cache warmth")
 	
 	// Create a simulated request context with timeout
 	refreshCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
 	
 	// Call the existing ListRoads method which includes all the refresh logic
-	// This will:
-	// 1. Check cache staleness
-	// 2. If stale, call refreshRoadData() which fetches from all sources
-	// 3. Update cache with fresh data
-	// 4. Handle OpenAI enhancement through existing flow
+	// With the new stale-data serving logic, this will:
+	// 1. Return stale data immediately if available
+	// 2. Trigger background refresh if data is stale
+	// 3. Only block if no data exists or data is very stale
 	_, err := p.roadsService.ListRoads(refreshCtx, &api.ListRoadsRequest{})
 	if err != nil {
 		log.Printf("Periodic refresh failed: %v", err)
 	} else {
-		log.Printf("Periodic refresh completed successfully")
+		log.Printf("Periodic refresh: cache check completed")
 	}
 }
 
