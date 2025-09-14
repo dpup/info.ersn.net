@@ -62,6 +62,9 @@ func main() {
 	server := prefab.New(
 		prefab.WithGRPCReflection(),
 		prefab.WithHTTPHandlerFunc("/", homepageHandler),
+		prefab.WithHTTPHandlerFunc("/api/docs/roads.swagger.json", openAPIHandler("api/v1/roads.swagger.json")),
+		prefab.WithHTTPHandlerFunc("/api/docs/weather.swagger.json", openAPIHandler("api/v1/weather.swagger.json")),
+		prefab.WithHTTPHandlerFunc("/api/docs/common.swagger.json", openAPIHandler("api/v1/common.swagger.json")),
 	)
 
 	// Register gRPC services using Prefab's service registrar
@@ -133,18 +136,22 @@ for the Ebbett's Pass region.
 
 <span class="header">API Endpoints:</span>
 
-Roads API:
-  <a href="/api/v1/roads">GET /api/v1/roads</a>                 - List all monitored roads
-  <a href="/api/v1/roads/hwy4-angels-murphys">GET /api/v1/roads/{road_id}</a>       - Get specific road details
+  Roads API:
+    <a href="/api/v1/roads">GET /api/v1/roads</a>               - List all monitored roads
+    <a href="/api/v1/roads/hwy4-angels-murphys">GET /api/v1/roads/{road_id}</a>     - Get specific road details
 
-Weather API:
-  <a href="/api/v1/weather">GET /api/v1/weather</a>               - Current weather for all locations
-  <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>        - Active weather alerts
+  Weather API:
+    <a href="/api/v1/weather">GET /api/v1/weather</a>             - Current weather for all locations
+    <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>      - Active weather alerts
+
+<span class="header">API Documentation:</span>
+  <a href="/api/docs/roads.swagger.json">Roads API OpenAPI Spec</a>            - Machine-readable API docs (Roads)
+  <a href="/api/docs/weather.swagger.json">Weather API OpenAPI Spec</a>          - Machine-readable API docs (Weather)
 
 <span class="header">Data Sources:</span>
   • Google Routes API               - Traffic conditions and travel times
-  • OpenWeatherMap API              - Weather data and alerts
   • Caltrans KML Feeds              - Lane closures and CHP incidents
+  • OpenWeatherMap API              - Weather data and alerts
 
 <span class="header">Example Usage:</span>
   curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>
@@ -155,5 +162,22 @@ Weather API:
 
 	if _, err := fmt.Fprint(w, html); err != nil {
 		slog.Error("Failed to write homepage HTML", "error", err)
+	}
+}
+
+// openAPIHandler serves OpenAPI specification files with proper headers
+func openAPIHandler(filename string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		http.ServeFile(w, r, filename)
 	}
 }

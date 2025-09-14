@@ -13,7 +13,8 @@ RUN apk add --no-cache git protobuf protobuf-dev make
 # Install protoc-gen-go and protoc-gen-go-grpc
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && \
-    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest && \
+    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
 
 # Cache Go modules by copying go.mod and go.sum first
 COPY go.mod go.sum ./
@@ -22,13 +23,15 @@ RUN go mod download
 # Copy proto files and generate protobuf code
 COPY api/ ./api/
 
-# Generate protobuf code directly (no need for Makefile at this stage)
+# Generate protobuf code and OpenAPI specs
 RUN mkdir -p bin api/v1 && \
     PATH="/go/bin:${PATH}" protoc --proto_path=api/v1 \
         --proto_path=$(go list -f '{{ .Dir }}' -m github.com/googleapis/googleapis) \
+        --proto_path=$(go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway/v2) \
         --go_out=api/v1 --go_opt=paths=source_relative \
         --go-grpc_out=api/v1 --go-grpc_opt=paths=source_relative \
         --grpc-gateway_out=api/v1 --grpc-gateway_opt=paths=source_relative \
+        --openapiv2_out=api/v1 --openapiv2_opt=logtostderr=true \
         api/v1/*.proto
 
 # Copy the rest of the application code
@@ -56,6 +59,9 @@ COPY --from=go-builder /ersn-server /app/ersn-server
 
 # Copy the configuration file
 COPY --from=go-builder /app/prefab.yaml /app/prefab.yaml
+
+# Copy the generated OpenAPI specifications
+COPY --from=go-builder /app/api/v1/*.swagger.json /app/api/v1/
 
 # Set ownership to the non-root user
 RUN chown -R ersn:ersn /app

@@ -1,0 +1,396 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ERSN Roads API",
+    "description": "Real-time road conditions and traffic information for the Ebbetts Pass region",
+    "version": "1.0",
+    "contact": {
+      "name": "ERSN Info Server",
+      "url": "https://info.ersn.net"
+    }
+  },
+  "tags": [
+    {
+      "name": "RoadsService"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/roads": {
+      "get": {
+        "summary": "ListRoads returns current conditions for all configured roads",
+        "operationId": "RoadsService_ListRoads",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListRoadsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RoadsService"
+        ]
+      }
+    },
+    "/api/v1/roads/metrics": {
+      "get": {
+        "summary": "GetProcessingMetrics returns alert processing metrics",
+        "operationId": "RoadsService_GetProcessingMetrics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ProcessingMetrics"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "RoadsService"
+        ]
+      }
+    },
+    "/api/v1/roads/{roadId}": {
+      "get": {
+        "summary": "GetRoad returns current conditions for a specific road",
+        "operationId": "RoadsService_GetRoad",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetRoadResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "roadId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RoadsService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AlertClassification": {
+      "type": "string",
+      "enum": [
+        "ALERT_CLASSIFICATION_UNSPECIFIED",
+        "ON_ROUTE",
+        "NEARBY",
+        "DISTANT"
+      ],
+      "default": "ALERT_CLASSIFICATION_UNSPECIFIED",
+      "title": "- ON_ROUTE: Directly affects route path (\u003c 100m from route)\n - NEARBY: In surrounding area but not blocking route (\u003c route threshold)\n - DISTANT: Too far from route to be relevant (\u003e route threshold)"
+    },
+    "v1AlertSeverity": {
+      "type": "string",
+      "enum": [
+        "ALERT_SEVERITY_UNSPECIFIED",
+        "INFO",
+        "WARNING",
+        "CRITICAL"
+      ],
+      "default": "ALERT_SEVERITY_UNSPECIFIED"
+    },
+    "v1AlertType": {
+      "type": "string",
+      "enum": [
+        "ALERT_TYPE_UNSPECIFIED",
+        "CLOSURE",
+        "CONSTRUCTION",
+        "INCIDENT",
+        "WEATHER"
+      ],
+      "default": "ALERT_TYPE_UNSPECIFIED"
+    },
+    "v1ChainControlStatus": {
+      "type": "string",
+      "enum": [
+        "CHAIN_CONTROL_UNSPECIFIED",
+        "NONE",
+        "ADVISED",
+        "REQUIRED",
+        "PROHIBITED"
+      ],
+      "default": "CHAIN_CONTROL_UNSPECIFIED"
+    },
+    "v1CongestionLevel": {
+      "type": "string",
+      "enum": [
+        "CONGESTION_LEVEL_UNSPECIFIED",
+        "CLEAR",
+        "LIGHT",
+        "MODERATE",
+        "HEAVY",
+        "SEVERE"
+      ],
+      "default": "CONGESTION_LEVEL_UNSPECIFIED"
+    },
+    "v1Coordinates": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Latitude in decimal degrees (-90 to 90)"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Longitude in decimal degrees (-180 to 180)"
+        }
+      },
+      "title": "Geographic coordinates in WGS84 decimal degrees"
+    },
+    "v1GetRoadResponse": {
+      "type": "object",
+      "properties": {
+        "road": {
+          "$ref": "#/definitions/v1Road"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1ListRoadsResponse": {
+      "type": "object",
+      "properties": {
+        "roads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Road"
+          }
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "title": "Response messages"
+    },
+    "v1ProcessingMetrics": {
+      "type": "object",
+      "properties": {
+        "totalRawAlerts": {
+          "type": "string",
+          "format": "int64"
+        },
+        "filteredAlerts": {
+          "type": "string",
+          "format": "int64"
+        },
+        "enhancedAlerts": {
+          "type": "string",
+          "format": "int64"
+        },
+        "enhancementFailures": {
+          "type": "string",
+          "format": "int64"
+        },
+        "avgProcessingTimeMs": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "v1Road": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "title": "Highway/road name (e.g., \"Hwy 4\")"
+        },
+        "section": {
+          "type": "string",
+          "title": "Section description (e.g., \"Arnold to Bear Valley\")"
+        },
+        "status": {
+          "$ref": "#/definitions/v1RoadStatus",
+          "title": "Current road status"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Current travel time in minutes"
+        },
+        "distanceKm": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Route distance in kilometers"
+        },
+        "congestionLevel": {
+          "$ref": "#/definitions/v1CongestionLevel",
+          "title": "Traffic congestion level"
+        },
+        "delayMinutes": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Additional time due to traffic (0 = no delays)"
+        },
+        "chainControl": {
+          "$ref": "#/definitions/v1ChainControlStatus",
+          "title": "Chain control requirements"
+        },
+        "alerts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1RoadAlert"
+          },
+          "title": "Combined from multiple sources"
+        }
+      },
+      "title": "Data models"
+    },
+    "v1RoadAlert": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/v1AlertType"
+        },
+        "severity": {
+          "$ref": "#/definitions/v1AlertSeverity"
+        },
+        "classification": {
+          "$ref": "#/definitions/v1AlertClassification",
+          "title": "On route vs nearby vs distant"
+        },
+        "title": {
+          "type": "string",
+          "title": "Actual Caltrans title (e.g., \"CHP Incident 250911GG0206\")"
+        },
+        "description": {
+          "type": "string",
+          "title": "AI-processed description"
+        },
+        "condensedSummary": {
+          "type": "string",
+          "title": "Short format for mobile"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "location": {
+          "$ref": "#/definitions/v1Coordinates",
+          "title": "Structured location with lat/lon"
+        },
+        "locationDescription": {
+          "type": "string",
+          "title": "Human-friendly location description"
+        },
+        "impact": {
+          "type": "string",
+          "title": "AI-assessed impact: \"none\", \"light\", \"moderate\", \"severe\""
+        },
+        "duration": {
+          "type": "string",
+          "title": "AI-assessed duration: \"unknown\", \"\u003c 1 hour\", \"several hours\", \"ongoing\""
+        },
+        "timeReported": {
+          "type": "string",
+          "format": "date-time",
+          "title": "When incident was first reported"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Additional AI-generated key-value pairs only"
+        }
+      }
+    },
+    "v1RoadStatus": {
+      "type": "string",
+      "enum": [
+        "ROAD_STATUS_UNSPECIFIED",
+        "OPEN",
+        "CLOSED",
+        "RESTRICTED",
+        "MAINTENANCE"
+      ],
+      "default": "ROAD_STATUS_UNSPECIFIED",
+      "title": "Enumerations"
+    }
+  },
+  "externalDocs": {
+    "description": "More about ERSN Info Server",
+    "url": "https://github.com/dpup/info.ersn.net"
+  }
+}

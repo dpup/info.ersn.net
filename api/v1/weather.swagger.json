@@ -1,0 +1,285 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ERSN Weather API",
+    "description": "Real-time weather conditions and alerts for the Ebbetts Pass region",
+    "version": "1.0",
+    "contact": {
+      "name": "ERSN Info Server",
+      "url": "https://info.ersn.net"
+    }
+  },
+  "tags": [
+    {
+      "name": "WeatherService"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/weather": {
+      "get": {
+        "summary": "ListWeather returns current weather for all configured locations",
+        "operationId": "WeatherService_ListWeather",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListWeatherResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "WeatherService"
+        ]
+      }
+    },
+    "/api/v1/weather/alerts": {
+      "get": {
+        "summary": "ListWeatherAlerts returns active weather alerts for all locations",
+        "operationId": "WeatherService_ListWeatherAlerts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListWeatherAlertsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "WeatherService"
+        ]
+      }
+    },
+    "/api/v1/weather/{locationId}": {
+      "get": {
+        "summary": "GetLocationWeather returns weather for a specific location",
+        "operationId": "WeatherService_GetLocationWeather",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetLocationWeatherResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "WeatherService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1GetLocationWeatherResponse": {
+      "type": "object",
+      "properties": {
+        "weatherData": {
+          "$ref": "#/definitions/v1WeatherData"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1ListWeatherAlertsResponse": {
+      "type": "object",
+      "properties": {
+        "alerts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1WeatherAlert"
+          }
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1ListWeatherResponse": {
+      "type": "object",
+      "properties": {
+        "weatherData": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1WeatherData"
+          }
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "title": "Response messages"
+    },
+    "v1WeatherAlert": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Generated unique identifier"
+        },
+        "senderName": {
+          "type": "string",
+          "title": "Alert issuing organization"
+        },
+        "event": {
+          "type": "string",
+          "title": "Alert event type (\"Heat Advisory\", \"Winter Storm Warning\")"
+        },
+        "startTimestamp": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when effective"
+        },
+        "endTimestamp": {
+          "type": "string",
+          "format": "int64",
+          "title": "Unix timestamp when expires"
+        },
+        "description": {
+          "type": "string",
+          "title": "Alert description text"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "OpenWeatherMap alert tags"
+        }
+      }
+    },
+    "v1WeatherData": {
+      "type": "object",
+      "properties": {
+        "locationId": {
+          "type": "string"
+        },
+        "locationName": {
+          "type": "string"
+        },
+        "weatherMain": {
+          "type": "string",
+          "description": "\"Clear\", \"Rain\", \"Snow\", etc."
+        },
+        "weatherDescription": {
+          "type": "string",
+          "description": "\"light rain\", \"clear sky\", etc."
+        },
+        "weatherIcon": {
+          "type": "string",
+          "title": "Icon code for display"
+        },
+        "temperatureCelsius": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Temperature in Celsius (rounded)"
+        },
+        "feelsLikeCelsius": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Feels like temperature in Celsius (rounded)"
+        },
+        "humidityPercent": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Humidity percentage (0-100)"
+        },
+        "windSpeedKmh": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Wind speed in km/h (more user-friendly)"
+        },
+        "windDirectionDegrees": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Wind direction in degrees (0-360)"
+        },
+        "visibilityKm": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Visibility distance in kilometers"
+        },
+        "alerts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1WeatherAlert"
+          },
+          "title": "Active weather alerts"
+        }
+      },
+      "title": "Data models"
+    }
+  },
+  "externalDocs": {
+    "description": "More about ERSN Info Server",
+    "url": "https://github.com/dpup/info.ersn.net"
+  }
+}
