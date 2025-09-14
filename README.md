@@ -373,12 +373,11 @@ make lint && make test
 │   ├── clients/               # External API clients
 │   ├── cache/                 # In-memory caching with TTL
 │   └── config/                # Configuration management
-├── tests/                     # Test files
-│   ├── contract/              # gRPC contract tests
-│   ├── integration/           # External API integration tests
-│   └── unit/                  # Unit tests
-├── prefab.yaml               # Server configuration
-└── Makefile                  # Build automation
+├── tests/                     # Test support
+│   └── testdata/              # Static fixture data
+├── prefab.yaml                # Server configuration
+├── Dockerfile                 # Sample docker file
+└── Makefile                   # Build automation
 ```
 
 ### Adding New Roads
