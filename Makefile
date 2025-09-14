@@ -25,7 +25,7 @@ TEST_ALERT_ENHANCER_BINARY=$(BUILD_DIR)/test-alert-enhancer
 TEST_ROUTE_MATCHER_BINARY=$(BUILD_DIR)/test-route-matcher
 
 # Docker parameters
-DOCKER_IMAGE_NAME=ersn-info-server
+DOCKER_IMAGE_NAME=info-ersn
 DOCKER_TAG?=latest
 DOCKER_REGISTRY?=
 
@@ -253,6 +253,7 @@ docker: docker-build
 docker-build:
 	@echo "Building Docker image: $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
 	docker build \
+		--platform linux/amd64 \
 		--build-arg GOOGLE_API_KEY=$(PF__GOOGLE_ROUTES__API_KEY) \
 		--build-arg OPENWEATHER_API_KEY=$(PF__OPENWEATHER__API_KEY) \
 		--build-arg OPENAI_API_KEY=$(PF__OPENAI__API_KEY) \
@@ -280,6 +281,19 @@ docker-run-dev: docker-build
 		--name ersn-server-dev \
 		$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
 
+# Login to ECR and push Docker image
+ecr-push: docker-build
+	@if [ -z "$(DOCKER_REGISTRY)" ]; then \
+		echo "⚠️  DOCKER_REGISTRY not set. Set with: make ecr-push DOCKER_REGISTRY=your-ecr-registry"; \
+		exit 1; \
+	fi
+	@echo "Logging into ECR..."
+	aws ecr get-login-password --region $$(echo $(DOCKER_REGISTRY) | cut -d'.' -f4) | docker login --username AWS --password-stdin $(DOCKER_REGISTRY)
+	@echo "Pushing Docker image to $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+	docker tag $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+	docker push $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
+	@echo "✅ Docker image pushed: $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+
 # Push Docker image to registry
 docker-push: docker-build
 	@if [ -z "$(DOCKER_REGISTRY)" ]; then \
@@ -290,6 +304,37 @@ docker-push: docker-build
 	docker tag $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
 	docker push $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)
 	@echo "✅ Docker image pushed: $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
+
+# Deploy to ECS (update existing service with latest image)
+ecs-deploy: ecr-push
+	@if [ -z "$(ECS_CLUSTER)" ]; then \
+		echo "⚠️  ECS_CLUSTER not set. Set with: make ecs-deploy ECS_CLUSTER=your-cluster"; \
+		exit 1; \
+	fi
+	@if [ -z "$(ECS_SERVICE)" ]; then \
+		echo "⚠️  ECS_SERVICE not set. Set with: make ecs-deploy ECS_SERVICE=your-service"; \
+		exit 1; \
+	fi
+	@if [ -z "$(ECS_TASK_DEFINITION)" ]; then \
+		echo "⚠️  ECS_TASK_DEFINITION not set. Set with: make ecs-deploy ECS_TASK_DEFINITION=your-task-def"; \
+		exit 1; \
+	fi
+	@echo "Deploying $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG) to ECS..."
+	@echo "Cluster: $(ECS_CLUSTER)"
+	@echo "Service: $(ECS_SERVICE)"
+	@echo "Task Definition: $(ECS_TASK_DEFINITION)"
+	@echo "Updating task definition with new image..."
+	aws ecs describe-task-definition --task-definition $(ECS_TASK_DEFINITION) --query 'taskDefinition' > /tmp/task-def.json
+	@# Update the image in the task definition
+	cat /tmp/task-def.json | jq --arg IMAGE "$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_TAG)" '.containerDefinitions[0].image = $$IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .placementConstraints, .compatibilities, .registeredAt, .registeredBy)' > /tmp/new-task-def.json
+	@echo "Registering new task definition..."
+	aws ecs register-task-definition --cli-input-json file:///tmp/new-task-def.json --query 'taskDefinition.taskDefinitionArn' --output text > /tmp/new-task-arn.txt
+	@echo "Updating service to use new task definition..."
+	aws ecs update-service --cluster $(ECS_CLUSTER) --service $(ECS_SERVICE) --task-definition $$(cat /tmp/new-task-arn.txt) --force-new-deployment --no-cli-pager --query 'service.taskDefinition' --output text
+	@echo "Waiting for deployment to complete..."
+	aws ecs wait services-stable --cluster $(ECS_CLUSTER) --services $(ECS_SERVICE)
+	@echo "✅ Deployment completed successfully!"
+	@rm -f /tmp/task-def.json /tmp/new-task-def.json /tmp/new-task-arn.txt
 
 # Clean up Docker artifacts
 docker-clean:
@@ -358,10 +403,12 @@ help:
 	@echo "  docker-build     - Build Docker container image"
 	@echo "  docker-run       - Run Docker container with API keys from environment"
 	@echo "  docker-run-dev   - Run Docker container with mounted config for development"
+	@echo "  ecr-push         - Login to ECR and push Docker image"
 	@echo "  docker-push      - Push Docker image to registry (set DOCKER_REGISTRY)"
 	@echo "  docker-clean     - Clean up Docker artifacts and containers"
 	@echo ""
 	@echo "Deployment targets:"
+	@echo "  ecs-deploy  - Deploy latest image to ECS (set ECS_CLUSTER, ECS_SERVICE, ECS_TASK_DEFINITION)"
 	@echo "  docker      - Alias for docker-build"
 	@echo "  deploy      - Deploy to configured environment"
 	@echo "  install     - Install CLI tools to system PATH"

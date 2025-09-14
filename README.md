@@ -293,6 +293,42 @@ weather:
         longitude: -120.456111
 ```
 
+## Deployment
+
+The project includes built-in support for AWS ECR and ECS deployment:
+
+### AWS ECR/ECS Deployment
+
+Set the required environment variables:
+```bash
+export DOCKER_REGISTRY=your-account-id.dkr.ecr.region.amazonaws.com
+export ECS_CLUSTER=your-cluster-name
+export ECS_SERVICE=your-service-name
+export ECS_TASK_DEFINITION=your-task-definition-name
+```
+
+Deploy to ECS:
+```bash
+# Build, push to ECR, and deploy to ECS in one command
+make ecs-deploy
+
+# Or run individual steps:
+make ecr-push    # Build and push Docker image to ECR
+make ecs-deploy  # Update ECS service with latest image
+```
+
+**What happens during deployment:**
+1. Builds Docker image for linux/amd64 platform
+2. Authenticates and pushes to ECR
+3. Updates ECS task definition with new image
+4. Triggers ECS service deployment
+5. Waits for deployment to complete
+
+**Prerequisites:**
+- AWS CLI configured with appropriate permissions
+- Docker installed locally
+- `jq` installed for JSON processing (`brew install jq`)
+
 ## Development
 
 ### Build Commands

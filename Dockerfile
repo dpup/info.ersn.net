@@ -73,11 +73,6 @@ ENV PORT=8080
 ENV PF__SERVER__HOST=0.0.0.0
 ENV PF__SERVER__PORT=8080
 
-# Injected at runtime.
-ENV PF__GOOGLE_ROUTES__API_KEY=""
-ENV PF__OPENWEATHER__API_KEY=""
-ENV PF__OPENAI__API_KEY=""
-
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
