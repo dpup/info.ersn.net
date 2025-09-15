@@ -1,25 +1,27 @@
 server:
   port: 8080
+  security:
+    xFrameOptions: DENY  # X-Frame-Options header
 
-security:
-  xFrameOptions: DENY  # X-Frame-Options header
-  
-  # CORS settings
-  corsOrigins:
-    - https://ersn.net
-    - http://localhost:8080
-    - http://localhost:4321
-  corsAllowedMethods:
-    - GET
-  corsAllowedHeaders:
-    - x-csrf-protection
-  corsAllowCredentials: true
-  corsMaxAge: 72h
-  
-  # HSTS settings
-  hstsExpiration: 31536000s
-  hstsIncludeSubdomains: true
-  hstsPreload: true
+    # CORS settings
+    corsOrigins:
+      - https://ersn.net
+      - http://localhost:8080
+      - http://localhost:4321
+      - http://localhost:4322
+    corsAllowedMethods:
+      - GET
+    corsAllowedHeaders:
+      - content-type
+      - x-requested-with
+      - x-csrf-protection
+    corsAllowCredentials: true
+    corsMaxAge: 72h
+
+    # HSTS settings
+    hstsExpiration: 31536000s
+    hstsIncludeSubdomains: true
+    hstsPreload: true
 
 # Client Configurations - Top Level  
 google_routes:
