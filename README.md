@@ -99,6 +99,7 @@ GET /api/v1/roads/{road_id}
         "impact": "moderate",
         "timeReported": "2025-09-11T01:30:00Z",
         "lastUpdated": "2025-09-11T01:45:00Z",
+        "distanceToRouteMeters": 3.5,
         "metadata": {
           "lanes_affected": "1 of 2",
           "emergency_services": "CHP on scene"
@@ -155,6 +156,13 @@ The Roads API provides intelligent alerts that combine data from multiple source
 - `ON_ROUTE` - Directly affects route path (< 100m from route)
 - `NEARBY` - In surrounding area but not blocking route
 - `DISTANT` - Too far from route to be relevant
+
+**Distance Information:**
+- `distanceToRouteMeters` - Distance from alert location to route in meters
+- Provided for all alert classifications to enable client-side proximity rendering
+- ON_ROUTE alerts typically show distances < 100m
+- NEARBY alerts show distances from 100m to several kilometers
+- Useful for client applications to display "2.1 km from route" type information
 
 **AI Enhancement Features:**
 - **Smart Road Status Determination**: AI intelligently analyzes incident titles and descriptions to determine accurate road status (open/restricted/closed) with detailed explanations

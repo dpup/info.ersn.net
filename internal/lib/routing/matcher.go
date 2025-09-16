@@ -11,9 +11,9 @@ import (
 
 // routeMatcher implements the RouteMatcher interface
 type routeMatcher struct {
-	geoUtils     geo.GeoUtils
-	routeCache   map[string]Route
-	cacheMutex   sync.RWMutex
+	geoUtils         geo.GeoUtils
+	routeCache       map[string]Route
+	cacheMutex       sync.RWMutex
 	onRouteThreshold float64 // Distance in meters for ON_ROUTE classification
 }
 
@@ -114,33 +114,33 @@ func (r *routeMatcher) classifyPointBasedAlert(alert UnclassifiedAlert, route Ro
 func (r *routeMatcher) classifyPolylineBasedAlertSimple(alert UnclassifiedAlert, route Route) (distance float64, matches bool, err error) {
 	// Find minimum distance by checking each point in the Caltrans polyline against the Google route
 	minDistance := float64(999999)
-	
+
 	for _, alertCoord := range alert.AffectedPolyline.Points {
 		// Convert API coordinate to geo.Point
 		alertPoint := geo.Point{
 			Latitude:  alertCoord.Latitude,
 			Longitude: alertCoord.Longitude,
 		}
-		
-		// Calculate distance from this Caltrans point to the Google route polyline  
+
+		// Calculate distance from this Caltrans point to the Google route polyline
 		dist, err := r.geoUtils.PointToPolyline(alertPoint, route.Polyline)
 		if err != nil {
 			continue // Skip invalid points
 		}
-		
+
 		if dist < minDistance {
 			minDistance = dist
 		}
 	}
-	
+
 	// If no valid points found, return error
 	if minDistance == 999999 {
 		return 0, false, errors.New("no valid points found in alert polyline")
 	}
-	
+
 	// Determine if it matches based on route's distance threshold
 	matches = minDistance <= route.MaxDistance
-	
+
 	return minDistance, matches, nil
 }
 
@@ -221,7 +221,7 @@ func (r *routeMatcher) UpdateRouteGeometry(ctx context.Context, routeID string, 
 		newRoute := Route{
 			ID:          routeID,
 			Polyline:    newPolyline,
-			MaxDistance: 16093.4, // Default 10 miles
+			MaxDistance: 5000, // Default 5 kilometers
 		}
 		r.routeCache[routeID] = newRoute
 	}

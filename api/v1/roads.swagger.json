@@ -377,6 +377,11 @@
             "type": "string"
           },
           "title": "Additional AI-generated key-value pairs only"
+        },
+        "distanceToRouteMeters": {
+          "type": "number",
+          "format": "double",
+          "title": "Distance from alert location to route in meters (for NEARBY alerts)"
         }
       }
     },

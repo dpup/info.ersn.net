@@ -116,9 +116,10 @@ message RoadAlert {
   string duration = 13;                    // AI-assessed duration: "unknown", "< 1 hour", "several hours", "ongoing"
   google.protobuf.Timestamp time_reported = 14;  // When incident was first reported
   map<string, string> metadata = 15;      // Additional AI-generated key-value pairs only
+  double distance_to_route_meters = 16;   // Distance from alert location to route in meters (for NEARBY alerts)
   // Note: id, original_description removed for cleaner API
-  // Note: affected_segments, affected_polyline, structured_data, enhancement_info, 
-  // distance_to_route, and affected_route_ids are kept internal for processing
+  // Note: affected_segments, affected_polyline, structured_data, enhancement_info,
+  // and affected_route_ids are kept internal for processing
 }
 
 // Note: StructuredDescription and EnhancementMetadata removed - AI-enhanced data 

@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"github.com/dpup/prefab/logging"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
@@ -32,9 +32,9 @@ type RoadsService struct {
 	routeMatcher   routing.RouteMatcher
 	geoUtils       geo.GeoUtils
 	contentHasher  *alerts.ContentHasher
-	
+
 	// Background refresh coordination
-	refreshMutex sync.Mutex
+	refreshMutex      sync.Mutex
 	refreshInProgress bool
 }
 
@@ -102,21 +102,22 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 					s.refreshMutex.Unlock()
 				}()
 
-				refreshCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+				// Create timeout context with logger from original context
+				refreshCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 				defer cancel()
-				
-				logging.Info(ctx, "Background refresh: starting road data refresh")
+
+				logging.Info(refreshCtx, "Background refresh: starting road data refresh")
 				roads, err := s.refreshRoadData(refreshCtx)
 				if err != nil {
-					logging.Errorw(ctx, "Background refresh failed", "error", err)
+					logging.Errorw(refreshCtx, "Background refresh failed", "error", err)
 					return
 				}
 
 				// Cache the refreshed data
 				if err := s.cache.Set(cacheKey, roads, s.config.Roads.RefreshInterval, "roads"); err != nil {
-					logging.Errorw(ctx, "Background refresh: failed to cache roads", "error", err)
+					logging.Errorw(refreshCtx, "Background refresh: failed to cache roads", "error", err)
 				} else {
-					logging.Infow(ctx, "Background refresh: successfully cached roads", "road_count", len(roads))
+					logging.Infow(refreshCtx, "Background refresh: successfully cached roads", "road_count", len(roads))
 				}
 			}()
 		} else {
@@ -255,16 +256,16 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 
 	// Build road object (internal fields like origin, destination, polylines kept internal)
 	road := &api.Road{
-		Id:               monitoredRoad.ID,
-		Name:             monitoredRoad.Name,
-		Section:          monitoredRoad.Section,
-		Status:           s.mapRoadStatus(roadStatus),
-		DurationMinutes:  durationMins,
-		DistanceKm:       distanceKm,
-		CongestionLevel:  s.mapCongestionLevel(congestionLevel),
-		DelayMinutes:     delayMins,
-		ChainControl:     s.mapChainControlStatus(chainControl),
-		Alerts:           alerts,
+		Id:                monitoredRoad.ID,
+		Name:              monitoredRoad.Name,
+		Section:           monitoredRoad.Section,
+		Status:            s.mapRoadStatus(roadStatus),
+		DurationMinutes:   durationMins,
+		DistanceKm:        distanceKm,
+		CongestionLevel:   s.mapCongestionLevel(congestionLevel),
+		DelayMinutes:      delayMins,
+		ChainControl:      s.mapChainControlStatus(chainControl),
+		Alerts:            alerts,
 		StatusExplanation: statusExplanation,
 	}
 
@@ -401,7 +402,7 @@ func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, mon
 		Origin:      geo.Point{Latitude: monitoredRoad.Origin.Latitude, Longitude: monitoredRoad.Origin.Longitude},
 		Destination: geo.Point{Latitude: monitoredRoad.Destination.Latitude, Longitude: monitoredRoad.Destination.Longitude},
 		Polyline:    routePolyline,
-		MaxDistance: 10000, // Default 10 kilometers
+		MaxDistance: 5000, // Default 5 kilometers
 	}
 
 	return s.processCaltransDataWithRoute(ctx, route, monitoredRoad)
@@ -569,18 +570,19 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 	// Build base alert (polylines kept internal for processing)
 	alertType := s.mapStringToAlertType(classifiedAlert.Type)
 	alert := &api.RoadAlert{
-		Type:           alertType,
-		Severity:       api.AlertSeverity_WARNING, // Default, will be updated after AI enhancement
-		Classification: s.mapRoutingToAPIClassification(classifiedAlert.Classification),
-		Title:          classifiedAlert.Title,       // Use real Caltrans title (e.g., "CHP Incident 250911GG0206")
-		Description:    classifiedAlert.Description, // Will be enhanced below
-		StartTime:      timestamppb.New(startTime),
-		EndTime:        nil,
-		LastUpdated:    timestamppb.Now(),
-		Location:       &api.Coordinates{Latitude: classifiedAlert.Location.Latitude, Longitude: classifiedAlert.Location.Longitude},
-		Metadata:       make(map[string]string),
+		Type:                  alertType,
+		Severity:              api.AlertSeverity_WARNING, // Default, will be updated after AI enhancement
+		Classification:        s.mapRoutingToAPIClassification(classifiedAlert.Classification),
+		Title:                 classifiedAlert.Title,       // Use real Caltrans title (e.g., "CHP Incident 250911GG0206")
+		Description:           classifiedAlert.Description, // Will be enhanced below
+		StartTime:             timestamppb.New(startTime),
+		EndTime:               nil,
+		LastUpdated:           timestamppb.Now(),
+		Location:              &api.Coordinates{Latitude: classifiedAlert.Location.Latitude, Longitude: classifiedAlert.Location.Longitude},
+		DistanceToRouteMeters: classifiedAlert.DistanceToRoute, // Distance for client rendering
+		Metadata:              make(map[string]string),
 		// Note: ID, OriginalDescription removed for cleaner API
-		// Note: AffectedSegments, DistanceToRoute, AffectedRouteIds, AffectedPolyline kept internal
+		// Note: AffectedSegments, AffectedRouteIds, AffectedPolyline kept internal for processing
 	}
 
 	var enhancedData *alerts.EnhancedAlert

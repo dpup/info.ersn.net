@@ -68,6 +68,7 @@ func main() {
 	// Create Prefab server with GRPC reflection enabled
 	// Server configuration (port, etc.) will be loaded from prefab.yaml/env vars
 	server := prefab.New(
+		prefab.WithContext(ctx),
 		prefab.WithGRPCReflection(),
 		prefab.WithHTTPHandlerFunc("/", homepageHandler),
 		prefab.WithHTTPHandlerFunc("/api/docs/roads.swagger.json", openAPIHandler("api/v1/roads.swagger.json")),
