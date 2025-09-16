@@ -208,14 +208,47 @@ func (s *RoadsService) GetProcessingMetrics(ctx context.Context, req *api.GetPro
 
 // refreshRoadData fetches fresh data from all external sources
 func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error) {
-	var roads []*api.Road
+	// Fetch Caltrans data once for all roads
+	laneClosures, _ := s.caltransClient.ParseLaneClosures(ctx)
+	chpIncidents, _ := s.caltransClient.ParseCHPIncidents(ctx)
+	allIncidents := append(laneClosures, chpIncidents...)
 
-	// Process each monitored road
+	logging.Infow(ctx, "Retrieved Caltrans incidents for all roads",
+		"lane_closures", len(laneClosures),
+		"chp_incidents", len(chpIncidents))
+
+	// Build routes for all monitored roads
+	var allRoutes []routing.Route
+	var roadRouteMap = make(map[string]routing.Route) // Map road ID to route
+
 	for _, monitoredRoad := range s.config.Roads.MonitoredRoads {
-		road, err := s.processMonitoredRoad(ctx, monitoredRoad)
+		// Get Google polyline for this road
+		_, _, _, _, googlePolyline, err := s.getTrafficDataWithPolyline(ctx, monitoredRoad)
 		if err != nil {
-			logging.Errorw(ctx, "Failed to process road", "road_id", monitoredRoad.ID, "error", err)
-			// Continue processing other roads even if one fails
+			logging.Errorw(ctx, "Failed to get traffic data for route building", "road_id", monitoredRoad.ID, "error", err)
+			googlePolyline = "" // Will use fallback polyline
+		}
+
+		route := s.buildRouteFromMonitoredRoad(ctx, monitoredRoad, googlePolyline)
+		allRoutes = append(allRoutes, route)
+		roadRouteMap[monitoredRoad.ID] = route
+	}
+
+	// Process alerts globally across all routes for deduplication
+	alertsByRoute, err := s.processGlobalAlerts(ctx, allIncidents, allRoutes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to process global alerts: %w", err)
+	}
+
+	// Build roads with their respective alerts
+	var roads []*api.Road
+	for _, monitoredRoad := range s.config.Roads.MonitoredRoads {
+		route := roadRouteMap[monitoredRoad.ID]
+		routeAlerts := alertsByRoute[route.ID]
+
+		road, err := s.buildRoadFromRouteAndAlerts(ctx, monitoredRoad, route, routeAlerts)
+		if err != nil {
+			logging.Errorw(ctx, "Failed to build road", "road_id", monitoredRoad.ID, "error", err)
 			continue
 		}
 		roads = append(roads, road)
@@ -226,6 +259,216 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 	}
 
 	return roads, nil
+}
+
+// buildRouteFromMonitoredRoad creates a routing.Route from config with polyline
+func (s *RoadsService) buildRouteFromMonitoredRoad(ctx context.Context, monitoredRoad config.MonitoredRoad, googlePolyline string) routing.Route {
+	// Create route definition for classification using actual Google polyline if available
+	var routePolyline geo.Polyline
+	if googlePolyline != "" {
+		// Decode Google polyline to get actual route points
+		decodedPoints, err := s.geoUtils.DecodePolyline(googlePolyline)
+		if err != nil {
+			logging.Errorw(ctx, "Failed to decode Google polyline", "road_id", monitoredRoad.ID, "error", err)
+			// Fall back to simple 2-point polyline
+			routePolyline = geo.Polyline{Points: []geo.Point{
+				{Latitude: monitoredRoad.Origin.Latitude, Longitude: monitoredRoad.Origin.Longitude},
+				{Latitude: monitoredRoad.Destination.Latitude, Longitude: monitoredRoad.Destination.Longitude},
+			}}
+		} else {
+			routePolyline = geo.Polyline{Points: decodedPoints}
+		}
+	} else {
+		// Use simple 2-point polyline as fallback
+		routePolyline = geo.Polyline{Points: []geo.Point{
+			{Latitude: monitoredRoad.Origin.Latitude, Longitude: monitoredRoad.Origin.Longitude},
+			{Latitude: monitoredRoad.Destination.Latitude, Longitude: monitoredRoad.Destination.Longitude},
+		}}
+	}
+
+	return routing.Route{
+		ID:          monitoredRoad.ID,
+		Name:        monitoredRoad.Name,
+		Section:     monitoredRoad.Section,
+		Origin:      geo.Point{Latitude: monitoredRoad.Origin.Latitude, Longitude: monitoredRoad.Origin.Longitude},
+		Destination: geo.Point{Latitude: monitoredRoad.Destination.Latitude, Longitude: monitoredRoad.Destination.Longitude},
+		Polyline:    routePolyline,
+		MaxDistance: 5000, // Default 5 kilometers
+	}
+}
+
+// processGlobalAlerts classifies alerts across all routes and applies deduplication
+func (s *RoadsService) processGlobalAlerts(ctx context.Context, allIncidents []caltrans.CaltransIncident, allRoutes []routing.Route) (map[string][]routing.ClassifiedAlert, error) {
+	// Convert Caltrans incidents to unclassified alerts
+	var unclassifiedAlerts []routing.UnclassifiedAlert
+	for _, incident := range allIncidents {
+		unclassifiedAlert := routing.UnclassifiedAlert{
+			ID:          fmt.Sprintf("%s_%d", incident.Name, incident.LastFetched.Unix()),
+			Title:       incident.Name,
+			Location:    geo.Point{Latitude: incident.Coordinates.Latitude, Longitude: incident.Coordinates.Longitude},
+			Description: incident.DescriptionText,
+			Type:        s.mapCaltransTypeToString(incident.FeedType),
+			StyleUrl:    incident.StyleUrl,
+		}
+
+		// Add affected polyline if available
+		if incident.AffectedArea != nil {
+			geoPolyline := geo.Polyline{Points: make([]geo.Point, len(incident.AffectedArea.Points))}
+			for i, point := range incident.AffectedArea.Points {
+				geoPolyline.Points[i] = geo.Point{Latitude: point.Latitude, Longitude: point.Longitude}
+			}
+			unclassifiedAlert.AffectedPolyline = &geoPolyline
+		}
+
+		unclassifiedAlerts = append(unclassifiedAlerts, unclassifiedAlert)
+	}
+
+	// Classify each alert against all routes to find the best classification
+	var globalClassifications []globalAlertClassification
+
+	for _, unclassifiedAlert := range unclassifiedAlerts {
+		for _, route := range allRoutes {
+			classifiedAlert, err := s.routeMatcher.ClassifyAlert(ctx, unclassifiedAlert, []routing.Route{route})
+			if err != nil {
+				logging.Errorw(ctx, "Error classifying alert",
+					"alert_id", unclassifiedAlert.ID,
+					"route_id", route.ID,
+					"error", err)
+				continue
+			}
+
+			// Only include relevant alerts (ON_ROUTE and NEARBY)
+			if classifiedAlert.Classification != routing.Distant {
+				globalClassifications = append(globalClassifications, globalAlertClassification{
+					AlertID:           unclassifiedAlert.ID,
+					RouteID:           route.ID,
+					ClassifiedAlert:   classifiedAlert,
+				})
+			}
+		}
+	}
+
+	// Apply deduplication: if an alert is ON_ROUTE for any road, remove it from NEARBY for others
+	return s.deduplicateAlerts(ctx, globalClassifications), nil
+}
+
+// globalAlertClassification represents an alert's classification for a specific route
+type globalAlertClassification struct {
+	AlertID         string
+	RouteID         string
+	ClassifiedAlert routing.ClassifiedAlert
+}
+
+// deduplicateAlerts applies the deduplication logic
+func (s *RoadsService) deduplicateAlerts(ctx context.Context, classifications []globalAlertClassification) map[string][]routing.ClassifiedAlert {
+	// Track which alerts are ON_ROUTE for any road
+	onRouteAlerts := make(map[string]bool)
+	for _, classification := range classifications {
+		if classification.ClassifiedAlert.Classification == routing.OnRoute {
+			onRouteAlerts[classification.AlertID] = true
+		}
+	}
+
+	// Build final alert assignments, filtering out NEARBY alerts that are ON_ROUTE elsewhere
+	alertsByRoute := make(map[string][]routing.ClassifiedAlert)
+
+	for _, classification := range classifications {
+		alertID := classification.AlertID
+		routeID := classification.RouteID
+
+		// If this alert is ON_ROUTE somewhere and this is a NEARBY classification, skip it
+		if onRouteAlerts[alertID] && classification.ClassifiedAlert.Classification == routing.Nearby {
+			logging.Infow(ctx, "Deduplicating alert: removing NEARBY classification (alert is ON_ROUTE elsewhere)",
+				"alert_id", alertID,
+				"route_id", routeID,
+				"alert_title", classification.ClassifiedAlert.Title)
+			continue
+		}
+
+		// Add this alert to the route
+		alertsByRoute[routeID] = append(alertsByRoute[routeID], classification.ClassifiedAlert)
+	}
+
+	return alertsByRoute
+}
+
+// buildRoadFromRouteAndAlerts builds a complete road from route info and classified alerts
+func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitoredRoad config.MonitoredRoad, route routing.Route, classifiedAlerts []routing.ClassifiedAlert) (*api.Road, error) {
+	// Get traffic data that was already fetched earlier
+	durationMins, distanceKm, congestionLevel, delayMins, _, err := s.getTrafficDataWithPolyline(ctx, monitoredRoad)
+	if err != nil {
+		logging.Errorw(ctx, "Failed to get traffic data for road building", "road_id", monitoredRoad.ID, "error", err)
+		// Use defaults for missing traffic data
+		durationMins = 0
+		distanceKm = 0
+		congestionLevel = "unknown"
+		delayMins = 0
+	}
+
+	// Process the classified alerts for this route
+	roadStatus := api.RoadStatus_OPEN
+	chainControl := api.ChainControlStatus_NONE
+	var statusExplanation string
+	var enhancedAlerts []*api.RoadAlert
+
+	for _, classifiedAlert := range classifiedAlerts {
+		// Convert to API road alert and get enhanced data
+		alert, enhanced, err := s.buildEnhancedRoadAlert(ctx, classifiedAlert, monitoredRoad)
+		if err != nil {
+			logging.Errorw(ctx, "Error building enhanced alert",
+				"alert_title", classifiedAlert.Title,
+				"error", err)
+			continue
+		}
+
+		enhancedAlerts = append(enhancedAlerts, alert)
+
+		// Update road status based on AI analysis (only for ON_ROUTE alerts)
+		if classifiedAlert.Classification == routing.OnRoute && enhanced != nil {
+			// Use AI-determined road status
+			switch enhanced.StructuredDescription.RoadStatus {
+			case "closed":
+				roadStatus = api.RoadStatus_CLOSED
+				if enhanced.StructuredDescription.RestrictionDetails != "" {
+					statusExplanation = enhanced.StructuredDescription.RestrictionDetails
+				}
+			case "restricted":
+				if roadStatus != api.RoadStatus_CLOSED { // Don't downgrade from closed
+					roadStatus = api.RoadStatus_RESTRICTED
+					if statusExplanation == "" { // Keep first/most relevant explanation
+						statusExplanation = enhanced.StructuredDescription.RestrictionDetails
+					}
+				}
+			}
+
+			// Update chain control if specified
+			switch enhanced.StructuredDescription.ChainStatus {
+			case "r1", "r2":
+				chainControl = api.ChainControlStatus_REQUIRED
+			case "active_unspecified":
+				if chainControl == api.ChainControlStatus_NONE { // Don't downgrade from specific R1/R2
+					chainControl = api.ChainControlStatus_ADVISED
+				}
+			}
+		}
+	}
+
+	// Convert congestion level to enum
+	congestionEnum := s.mapCongestionLevel(congestionLevel)
+
+	return &api.Road{
+		Id:               monitoredRoad.ID,
+		Name:             monitoredRoad.Name,
+		Section:          monitoredRoad.Section,
+		Status:           roadStatus,
+		StatusExplanation: statusExplanation,
+		DurationMinutes:  durationMins,
+		DistanceKm:       distanceKm,
+		CongestionLevel:  congestionEnum,
+		DelayMinutes:     delayMins,
+		ChainControl:     chainControl,
+		Alerts:           enhancedAlerts,
+	}, nil
 }
 
 // processMonitoredRoad processes a single road with all data sources
