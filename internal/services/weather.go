@@ -3,9 +3,9 @@ package services
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/dpup/prefab/logging"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
@@ -33,7 +33,7 @@ func NewWeatherService(weatherClient *weather.Client, cache *cache.Cache, config
 
 // ListWeather implements the gRPC method defined in contracts/weather.proto lines 12-17
 func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRequest) (*api.ListWeatherResponse, error) {
-	log.Printf("ListWeather called")
+	logging.Info(ctx, "ListWeather called")
 
 	// Try to get cached weather data first
 	var cachedWeatherData []*api.WeatherData
@@ -41,11 +41,11 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 	
 	found, err := s.cache.Get(cacheKey, &cachedWeatherData)
 	if err != nil {
-		log.Printf("Cache error: %v", err)
+		logging.Errorw(ctx, "Cache error", "error", err, "cache_key", cacheKey)
 	}
 
 	if found && !s.cache.IsStale(cacheKey) {
-		log.Printf("Returning cached weather data (%d locations)", len(cachedWeatherData))
+		logging.Infow(ctx, "Returning cached weather data", "location_count", len(cachedWeatherData))
 		
 		// Get cache metadata for last_updated timestamp
 		entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
@@ -61,12 +61,12 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 	}
 
 	// Cache miss or stale - refresh from external API
-	log.Printf("Refreshing weather data from OpenWeatherMap API")
+	logging.Info(ctx, "Refreshing weather data from OpenWeatherMap API")
 	weatherData, err := s.refreshWeatherData(ctx)
 	if err != nil {
 		// If refresh fails but we have stale cached data, return it
 		if found && !s.cache.IsVeryStale(cacheKey) {
-			log.Printf("Refresh failed, returning stale cached weather data: %v", err)
+			logging.Errorw(ctx, "Refresh failed, returning stale cached weather data", "error", err)
 			entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
 			var lastUpdated *timestamppb.Timestamp
 			if entry != nil {
@@ -83,7 +83,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 
 	// Cache the refreshed data
 	if err := s.cache.Set(cacheKey, weatherData, s.config.Weather.RefreshInterval, "weather"); err != nil {
-		log.Printf("Failed to cache weather data: %v", err)
+		logging.Errorw(ctx, "Failed to cache weather data", "error", err)
 	}
 
 	return &api.ListWeatherResponse{
@@ -94,7 +94,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 
 // GetLocationWeather implements the gRPC method for retrieving weather for a specific location
 func (s *WeatherService) GetLocationWeather(ctx context.Context, req *api.GetLocationWeatherRequest) (*api.GetLocationWeatherResponse, error) {
-	log.Printf("GetLocationWeather called for location ID: %s", req.LocationId)
+	logging.Infow(ctx, "GetLocationWeather called", "location_id", req.LocationId)
 
 	// Get all weather data (will use cache if available)
 	listResp, err := s.ListWeather(ctx, &api.ListWeatherRequest{})
@@ -117,7 +117,7 @@ func (s *WeatherService) GetLocationWeather(ctx context.Context, req *api.GetLoc
 
 // ListWeatherAlerts implements the gRPC method for retrieving weather alerts
 func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWeatherAlertsRequest) (*api.ListWeatherAlertsResponse, error) {
-	log.Printf("ListWeatherAlerts called")
+	logging.Info(ctx, "ListWeatherAlerts called")
 
 	// Try to get cached alerts first
 	var cachedAlerts []*api.WeatherAlert
@@ -125,11 +125,11 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 	
 	found, err := s.cache.Get(cacheKey, &cachedAlerts)
 	if err != nil {
-		log.Printf("Cache error: %v", err)
+		logging.Errorw(ctx, "Cache error", "error", err, "cache_key", cacheKey)
 	}
 
 	if found && !s.cache.IsStale(cacheKey) {
-		log.Printf("Returning cached weather alerts (%d alerts)", len(cachedAlerts))
+		logging.Infow(ctx, "Returning cached weather alerts", "alert_count", len(cachedAlerts))
 		
 		entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
 		var lastUpdated *timestamppb.Timestamp
@@ -144,12 +144,12 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 	}
 
 	// Cache miss or stale - refresh alerts from external API
-	log.Printf("Refreshing weather alerts from OpenWeatherMap API")
+	logging.Info(ctx, "Refreshing weather alerts from OpenWeatherMap API")
 	alerts, err := s.refreshWeatherAlerts(ctx)
 	if err != nil {
 		// If refresh fails but we have stale cached data, return it
 		if found && !s.cache.IsVeryStale(cacheKey) {
-			log.Printf("Refresh failed, returning stale cached alerts: %v", err)
+			logging.Errorw(ctx, "Refresh failed, returning stale cached alerts", "error", err)
 			entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
 			var lastUpdated *timestamppb.Timestamp
 			if entry != nil {
@@ -166,7 +166,7 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 
 	// Cache the refreshed alerts
 	if err := s.cache.Set(cacheKey, alerts, s.config.Weather.RefreshInterval, "weather_alerts"); err != nil {
-		log.Printf("Failed to cache weather alerts: %v", err)
+		logging.Errorw(ctx, "Failed to cache weather alerts", "error", err)
 	}
 
 	return &api.ListWeatherAlertsResponse{
@@ -183,7 +183,7 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 	for _, location := range s.config.Weather.Locations {
 		weatherData, err := s.processWeatherLocation(ctx, location)
 		if err != nil {
-			log.Printf("Failed to process weather for location %s: %v", location.ID, err)
+			logging.Errorw(ctx, "Failed to process weather for location", "location_id", location.ID, "error", err)
 			// Continue processing other locations even if one fails
 			continue
 		}
@@ -199,7 +199,7 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 
 // processWeatherLocation fetches weather data for a single location
 func (s *WeatherService) processWeatherLocation(ctx context.Context, location config.WeatherLocation) (*api.WeatherData, error) {
-	log.Printf("Processing weather for location: %s", location.ID)
+	logging.Infow(ctx, "Processing weather for location", "location_id", location.ID)
 
 	if s.config.OpenWeather.APIKey == "" {
 		return nil, fmt.Errorf("OpenWeatherMap API key not configured")
@@ -218,7 +218,7 @@ func (s *WeatherService) processWeatherLocation(ctx context.Context, location co
 	// Get weather alerts for this location
 	alerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
 	if err != nil {
-		log.Printf("Failed to get weather alerts for %s: %v", location.ID, err)
+		logging.Errorw(ctx, "Failed to get weather alerts", "location_id", location.ID, "error", err)
 		// Continue without alerts rather than failing
 		alerts = nil
 	}
@@ -236,7 +236,7 @@ func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.Weath
 	for _, location := range s.config.Weather.Locations {
 		alerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
 		if err != nil {
-			log.Printf("Failed to get weather alerts for location %s: %v", location.ID, err)
+			logging.Errorw(ctx, "Failed to get weather alerts for location", "location_id", location.ID, "error", err)
 			// Continue processing other locations even if one fails
 			continue
 		}

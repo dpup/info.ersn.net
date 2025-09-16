@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"log"
 	"time"
-	
+
+	"github.com/dpup/prefab/logging"
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/config"
 )
@@ -41,7 +41,7 @@ func (p *PeriodicRefreshService) StartPeriodicRefresh(ctx context.Context) error
 	// Use roads refresh interval from config (default 5 minutes)
 	interval := p.config.Roads.RefreshInterval
 	
-	log.Printf("Starting periodic refresh every %v to maintain cache warmth", interval)
+	logging.Infow(ctx, "Starting periodic refresh", "interval", interval)
 	
 	// Start background goroutine for periodic refresh
 	go p.refreshLoop(ctx, interval)
@@ -54,10 +54,10 @@ func (p *PeriodicRefreshService) Stop() {
 	if !p.running {
 		return
 	}
-	
+
 	p.running = false
 	close(p.stopChan)
-	log.Printf("Stopped periodic refresh service")
+	logging.Info(context.Background(), "Stopped periodic refresh service")
 }
 
 // refreshLoop runs the periodic refresh in background
@@ -71,10 +71,10 @@ func (p *PeriodicRefreshService) refreshLoop(ctx context.Context, interval time.
 	for {
 		select {
 		case <-ctx.Done():
-			log.Printf("Periodic refresh stopping due to context cancellation")
+			logging.Info(ctx, "Periodic refresh stopping due to context cancellation")
 			return
 		case <-p.stopChan:
-			log.Printf("Periodic refresh stopping due to stop signal")
+			logging.Info(ctx, "Periodic refresh stopping due to stop signal")
 			return
 		case <-ticker.C:
 			p.simulateAPIRequest(ctx)
@@ -85,7 +85,7 @@ func (p *PeriodicRefreshService) refreshLoop(ctx context.Context, interval time.
 // simulateAPIRequest makes a simulated request to roads API to trigger cache refresh
 // This leverages the existing refresh logic in RoadsService.ListRoads()
 func (p *PeriodicRefreshService) simulateAPIRequest(ctx context.Context) {
-	log.Printf("Periodic refresh: checking cache warmth")
+	logging.Info(ctx, "Periodic refresh: checking cache warmth")
 	
 	// Create a simulated request context with timeout
 	refreshCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
@@ -98,9 +98,9 @@ func (p *PeriodicRefreshService) simulateAPIRequest(ctx context.Context) {
 	// 3. Only block if no data exists or data is very stale
 	_, err := p.roadsService.ListRoads(refreshCtx, &api.ListRoadsRequest{})
 	if err != nil {
-		log.Printf("Periodic refresh failed: %v", err)
+		logging.Errorw(ctx, "Periodic refresh failed", "error", err)
 	} else {
-		log.Printf("Periodic refresh: cache check completed")
+		logging.Info(ctx, "Periodic refresh: cache check completed")
 	}
 }
 

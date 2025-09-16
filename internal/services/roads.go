@@ -3,12 +3,12 @@ package services
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"sync"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/dpup/prefab/logging"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
@@ -54,7 +54,7 @@ func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedP
 
 // ListRoads implements the gRPC method defined in contracts/roads.proto line 12-17
 func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest) (*api.ListRoadsResponse, error) {
-	log.Printf("ListRoads called")
+	logging.Info(ctx, "ListRoads called")
 
 	// Try to get cached roads first (even if stale)
 	var cachedRoads []*api.Road
@@ -62,12 +62,12 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 
 	entry, found, err := s.cache.GetWithMetadata(cacheKey, &cachedRoads)
 	if err != nil {
-		log.Printf("Cache error: %v", err)
+		logging.Errorw(ctx, "Cache error", "error", err, "cache_key", cacheKey)
 	}
 
 	// If we have fresh cached data, return it immediately
 	if found && !s.cache.IsStale(cacheKey) {
-		log.Printf("Returning fresh cached roads (%d roads)", len(cachedRoads))
+		logging.Infow(ctx, "Returning fresh cached roads", "road_count", len(cachedRoads))
 
 		var lastUpdated *timestamppb.Timestamp
 		if entry != nil {
@@ -82,7 +82,7 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 
 	// If we have stale but not very stale data, serve it immediately and refresh in background
 	if found && !s.cache.IsVeryStale(cacheKey) {
-		log.Printf("Serving stale cached roads (%d roads) while refreshing in background", len(cachedRoads))
+		logging.Infow(ctx, "Serving stale cached roads while refreshing in background", "road_count", len(cachedRoads))
 
 		// Check if a background refresh is already in progress
 		s.refreshMutex.Lock()
@@ -105,22 +105,22 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 				refreshCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 				defer cancel()
 				
-				log.Printf("Background refresh: starting road data refresh")
+				logging.Info(ctx, "Background refresh: starting road data refresh")
 				roads, err := s.refreshRoadData(refreshCtx)
 				if err != nil {
-					log.Printf("Background refresh failed: %v", err)
+					logging.Errorw(ctx, "Background refresh failed", "error", err)
 					return
 				}
 
 				// Cache the refreshed data
 				if err := s.cache.Set(cacheKey, roads, s.config.Roads.RefreshInterval, "roads"); err != nil {
-					log.Printf("Background refresh: failed to cache roads: %v", err)
+					logging.Errorw(ctx, "Background refresh: failed to cache roads", "error", err)
 				} else {
-					log.Printf("Background refresh: successfully cached %d roads", len(roads))
+					logging.Infow(ctx, "Background refresh: successfully cached roads", "road_count", len(roads))
 				}
 			}()
 		} else {
-			log.Printf("Background refresh already in progress, skipping duplicate refresh")
+			logging.Info(ctx, "Background refresh already in progress, skipping duplicate refresh")
 		}
 
 		// Return stale data immediately
@@ -136,12 +136,12 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 	}
 
 	// No cache data or very stale - block and refresh synchronously
-	log.Printf("No cached data or very stale - refreshing road data synchronously")
+	logging.Info(ctx, "No cached data or very stale - refreshing road data synchronously")
 	roads, err := s.refreshRoadData(ctx)
 	if err != nil {
 		// If synchronous refresh fails but we have very stale cached data, return it as last resort
 		if found {
-			log.Printf("Synchronous refresh failed, returning very stale cached roads as fallback: %v", err)
+			logging.Errorw(ctx, "Synchronous refresh failed, returning very stale cached roads as fallback", "error", err)
 			var lastUpdated *timestamppb.Timestamp
 			if entry != nil {
 				lastUpdated = timestamppb.New(entry.CreatedAt)
@@ -157,7 +157,7 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 
 	// Cache the refreshed data
 	if err := s.cache.Set(cacheKey, roads, s.config.Roads.RefreshInterval, "roads"); err != nil {
-		log.Printf("Failed to cache roads: %v", err)
+		logging.Errorw(ctx, "Failed to cache roads", "error", err)
 	}
 
 	return &api.ListRoadsResponse{
@@ -168,7 +168,7 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 
 // GetRoad implements the gRPC method for retrieving a specific road
 func (s *RoadsService) GetRoad(ctx context.Context, req *api.GetRoadRequest) (*api.GetRoadResponse, error) {
-	log.Printf("GetRoad called for road ID: %s", req.RoadId)
+	logging.Infow(ctx, "GetRoad called", "road_id", req.RoadId)
 
 	// Get all roads (will use cache if available)
 	listResp, err := s.ListRoads(ctx, &api.ListRoadsRequest{})
@@ -191,7 +191,7 @@ func (s *RoadsService) GetRoad(ctx context.Context, req *api.GetRoadRequest) (*a
 
 // GetProcessingMetrics implements the gRPC method for processing metrics
 func (s *RoadsService) GetProcessingMetrics(ctx context.Context, req *api.GetProcessingMetricsRequest) (*api.ProcessingMetrics, error) {
-	log.Printf("GetProcessingMetrics called")
+	logging.Info(ctx, "GetProcessingMetrics called")
 
 	// TODO: Implement proper metrics collection
 	// For now, return placeholder metrics
@@ -212,7 +212,7 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 	for _, monitoredRoad := range s.config.Roads.MonitoredRoads {
 		road, err := s.processMonitoredRoad(ctx, monitoredRoad)
 		if err != nil {
-			log.Printf("Failed to process road %s: %v", monitoredRoad.ID, err)
+			logging.Errorw(ctx, "Failed to process road", "road_id", monitoredRoad.ID, "error", err)
 			// Continue processing other roads even if one fails
 			continue
 		}
@@ -228,12 +228,12 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 
 // processMonitoredRoad processes a single road with all data sources
 func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad config.MonitoredRoad) (*api.Road, error) {
-	log.Printf("Processing road: %s", monitoredRoad.ID)
+	logging.Infow(ctx, "Processing road", "road_id", monitoredRoad.ID, "name", monitoredRoad.Name)
 
 	// Get traffic data and route geometry from Google Routes
 	durationMins, distanceKm, congestionLevel, delayMins, googlePolyline, err := s.getTrafficDataWithPolyline(ctx, monitoredRoad)
 	if err != nil {
-		log.Printf("Failed to get traffic data for %s: %v", monitoredRoad.ID, err)
+		logging.Errorw(ctx, "Failed to get traffic data", "road_id", monitoredRoad.ID, "error", err)
 		// Use defaults for missing traffic data
 		durationMins = 0
 		distanceKm = 0
@@ -245,7 +245,7 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 	// Get Caltrans data for road status and chain control using actual route geometry
 	roadStatus, chainControl, alerts, statusExplanation, err := s.getCaltransDataWithRouteGeometry(ctx, monitoredRoad, googlePolyline)
 	if err != nil {
-		log.Printf("Failed to get Caltrans data for %s: %v", monitoredRoad.ID, err)
+		logging.Errorw(ctx, "Failed to get Caltrans data", "road_id", monitoredRoad.ID, "error", err)
 		// Use defaults
 		roadStatus = "open"
 		chainControl = "none"
@@ -377,7 +377,7 @@ func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, mon
 		// Decode Google polyline to get actual route points
 		decodedPoints, err := s.geoUtils.DecodePolyline(googlePolyline)
 		if err != nil {
-			log.Printf("Failed to decode Google polyline for %s: %v", monitoredRoad.ID, err)
+			logging.Errorw(ctx, "Failed to decode Google polyline", "road_id", monitoredRoad.ID, "error", err)
 			// Fall back to simple 2-point polyline
 			routePolyline = geo.Polyline{Points: []geo.Point{
 				{Latitude: monitoredRoad.Origin.Latitude, Longitude: monitoredRoad.Origin.Longitude},
@@ -414,6 +414,11 @@ func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route r
 	laneClosures, _ := s.caltransClient.ParseLaneClosures(ctx)
 	chpIncidents, _ := s.caltransClient.ParseCHPIncidents(ctx)
 
+	logging.Infow(ctx, "Retrieved Caltrans incidents",
+		"road_id", route.ID,
+		"lane_closures", len(laneClosures),
+		"chp_incidents", len(chpIncidents))
+
 	// Combine all incidents
 	allIncidents := append(laneClosures, chpIncidents...)
 
@@ -446,11 +451,27 @@ func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route r
 	for _, unclassifiedAlert := range unclassifiedAlerts {
 		classifiedAlert, err := s.routeMatcher.ClassifyAlert(ctx, unclassifiedAlert, []routing.Route{route})
 		if err != nil {
-			log.Printf("Error classifying alert %s: %v", unclassifiedAlert.ID, err)
+			logging.Errorw(ctx, "Error classifying alert",
+				"alert_id", unclassifiedAlert.ID,
+				"alert_title", unclassifiedAlert.Title,
+				"error", err)
 			continue
 		}
+
+		logging.Infow(ctx, "Classified alert",
+			"alert_title", unclassifiedAlert.Title,
+			"classification", string(classifiedAlert.Classification),
+			"distance_to_route", classifiedAlert.DistanceToRoute,
+			"lat", unclassifiedAlert.Location.Latitude,
+			"lon", unclassifiedAlert.Location.Longitude)
+
 		classifiedAlerts = append(classifiedAlerts, classifiedAlert)
 	}
+
+	logging.Infow(ctx, "Alert classification complete",
+		"road_id", route.ID,
+		"total_incidents", len(allIncidents),
+		"classified_alerts", len(classifiedAlerts))
 
 	// Process classified alerts with AI-enhanced road status determination
 	roadStatus := api.RoadStatus_OPEN
@@ -461,13 +482,18 @@ func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route r
 	for _, classifiedAlert := range classifiedAlerts {
 		// Only include ON_ROUTE and NEARBY alerts
 		if classifiedAlert.Classification == routing.Distant {
+			logging.Infow(ctx, "Skipping distant alert",
+				"alert_title", classifiedAlert.Title,
+				"classification", "DISTANT")
 			continue
 		}
 
 		// Convert to API road alert and get enhanced data
 		alert, enhanced, err := s.buildEnhancedRoadAlert(ctx, classifiedAlert, monitoredRoad)
 		if err != nil {
-			log.Printf("Error building enhanced alert: %v", err)
+			logging.Errorw(ctx, "Error building enhanced alert",
+				"alert_title", classifiedAlert.Title,
+				"error", err)
 			continue
 		}
 
@@ -563,7 +589,7 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 	if s.alertEnhancer != nil {
 		enhanced, err := s.EnhanceAlertWithAI(ctx, classifiedAlert)
 		if err != nil {
-			log.Printf("Alert enhancement failed, using original: %v", err)
+			logging.Errorw(ctx, "Alert enhancement failed, using original", "error", err)
 		} else {
 			enhancedData = enhanced
 			// Update alert with enhanced data at top level
@@ -616,26 +642,26 @@ func (s *RoadsService) EnhanceAlertWithAI(ctx context.Context, classifiedAlert r
 	var cachedAlert alerts.EnhancedAlert
 	key := fmt.Sprintf("enhanced_alert:%s", contentHash)
 	if found, err := s.cache.Get(key, &cachedAlert); err == nil && found {
-		log.Printf("Cache hit for alert content hash %s", contentHash[:8])
+		logging.Infow(ctx, "Cache hit for alert content hash", "hash", contentHash[:8])
 		return &cachedAlert, nil
 	}
 
-	log.Printf("Cache miss for alert content hash %s - calling OpenAI", contentHash[:8])
+	logging.Infow(ctx, "Cache miss for alert content hash - calling OpenAI", "hash", contentHash[:8])
 
 	// Cache miss - call OpenAI enhancement
 	enhanced, err := s.alertEnhancer.EnhanceAlert(ctx, rawAlert)
 	if err != nil {
-		log.Printf("OpenAI enhancement failed for %s: %v", contentHash[:8], err)
+		logging.Errorw(ctx, "OpenAI enhancement failed", "hash", contentHash[:8], "error", err)
 		return nil, err
 	}
 
 	// Cache the result with 24 hour TTL to prevent duplicate OpenAI calls
 	ttl := 24 * time.Hour
 	if err := s.cache.SetEnhancedAlert(contentHash, enhanced, ttl); err != nil {
-		log.Printf("Failed to cache enhanced alert: %v", err)
+		logging.Errorw(ctx, "Failed to cache enhanced alert", "error", err)
 		// Don't fail the request if caching fails
 	} else {
-		log.Printf("Cached enhanced alert with hash %s for 24h", contentHash[:8])
+		logging.Infow(ctx, "Cached enhanced alert for 24h", "hash", contentHash[:8])
 	}
 
 	return &enhanced, nil

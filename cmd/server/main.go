@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/dpup/prefab"
+	"github.com/dpup/prefab/logging"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
@@ -20,6 +21,12 @@ import (
 )
 
 func main() {
+	// Initialize structured logging
+	logger := logging.NewProdLogger()
+	ctx := logging.With(context.Background(), logger)
+
+	logging.Info(ctx, "Starting ERSN Info Server")
+
 	// Load configuration using Prefab's config system
 	appConfig := config.LoadConfig()
 
@@ -33,6 +40,7 @@ func main() {
 
 	// Initialize OpenAI enhancer with caching (required for service)
 	if appConfig.OpenAI.APIKey == "" {
+		logging.Error(ctx, "OpenAI API key is required in configuration for incident enhancement")
 		log.Fatal("OpenAI API key is required in configuration for incident enhancement")
 	}
 
@@ -41,20 +49,20 @@ func main() {
 	// Create OpenAI enhancer (caching is now integrated directly in RoadsService)
 	alertEnhancer := alerts.NewAlertEnhancer(appConfig.OpenAI.APIKey, model)
 
-	log.Printf("OpenAI enhancement enabled with integrated content-based caching (model: %s)", model)
+	logging.Infow(ctx, "OpenAI enhancement enabled", "model", model, "caching", "content-based")
 
 	// Initialize gRPC services
 	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, appConfig, alertEnhancer)
 	weatherService := services.NewWeatherService(weatherClient, cacheInstance, appConfig)
 
-	log.Printf("Live Data API Server starting")
-	log.Printf("Roads monitored: %d", len(appConfig.Roads.MonitoredRoads))
-	log.Printf("Weather locations: %d", len(appConfig.Weather.Locations))
+	logging.Infow(ctx, "Live Data API Server starting",
+		"roads_monitored", len(appConfig.Roads.MonitoredRoads),
+		"weather_locations", len(appConfig.Weather.Locations))
 
 	// Start periodic refresh to maintain cache warmth (replaces complex cache warmer)
 	periodicRefresh := services.NewPeriodicRefreshService(roadsService, appConfig)
-	if err := periodicRefresh.StartPeriodicRefresh(context.Background()); err != nil {
-		log.Printf("Failed to start periodic refresh: %v", err)
+	if err := periodicRefresh.StartPeriodicRefresh(ctx); err != nil {
+		logging.Errorw(ctx, "Failed to start periodic refresh", "error", err)
 	}
 
 	// Create Prefab server with GRPC reflection enabled
@@ -73,15 +81,20 @@ func main() {
 
 	// Register gateway handlers using Prefab's gateway args
 	if err := api.RegisterRoadsServiceHandlerFromEndpoint(server.GatewayArgs()); err != nil {
+		logging.Errorw(ctx, "Failed to register Roads service gateway", "error", err)
 		log.Fatalf("Failed to register Roads service gateway: %v", err)
 	}
 
 	if err := api.RegisterWeatherServiceHandlerFromEndpoint(server.GatewayArgs()); err != nil {
+		logging.Errorw(ctx, "Failed to register Weather service gateway", "error", err)
 		log.Fatalf("Failed to register Weather service gateway: %v", err)
 	}
 
+	logging.Info(ctx, "Server initialization complete, starting HTTP and gRPC services")
+
 	// Start the server (blocks until shutdown)
 	if err := server.Start(); err != nil {
+		logging.Errorw(ctx, "Server failed", "error", err)
 		log.Fatalf("Server failed: %v", err)
 	}
 }
