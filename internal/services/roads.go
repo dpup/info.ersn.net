@@ -103,7 +103,8 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 				}()
 
 				// Create timeout context with logger from original context
-				refreshCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
+				// Allow 5 minutes for processing multiple roads sequentially (4 roads × ~30s each + buffer)
+				refreshCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 				defer cancel()
 
 				logging.Info(refreshCtx, "Background refresh: starting road data refresh")
