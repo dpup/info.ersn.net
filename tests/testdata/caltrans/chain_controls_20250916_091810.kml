@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xsi:schemaLocation="http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" xmlns="http://www.opengis.net/kml/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Document>
+        <name>Caltrans Chain Controls</name>
+        <Style id="notclosed">
+            <IconStyle>
+                <colorMode>normal</colorMode>
+                <Icon>
+                    <href>https://quickmap.dot.ca.gov/img/cc32x32.png</href>
+                </Icon>
+                <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+            </IconStyle>
+            <LabelStyle>
+                <scale>0</scale>
+            </LabelStyle>
+        </Style>
+        <Style id="full-closure">
+            <IconStyle>
+                <colorMode>normal</colorMode>
+                <Icon>
+                    <href>https://quickmap.dot.ca.gov/img/full-closure-32x32.png</href>
+                </Icon>
+                <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+            </IconStyle>
+            <LabelStyle>
+                <scale>0</scale>
+            </LabelStyle>
+        </Style>
+        <Placemark>
+            <name>Eastbound Highway 2 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 39 Islip Saddle thru to  5 miles West of Big Pines</p><p align="left">Closed to traffic.</p><p>Effective from: 02/12/2025 09:23</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 09/16/2025 9:17am</p></div><p style="font-size:xx-small;">District:8 Message ID:175</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-117.85081,34.35694</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>
