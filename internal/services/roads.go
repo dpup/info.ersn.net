@@ -38,6 +38,14 @@ type RoadsService struct {
 	refreshInProgress bool
 }
 
+// trafficData holds traffic information for a road
+type trafficData struct {
+	DurationMins    int32
+	DistanceKm      int32
+	CongestionLevel string
+	DelayMins       int32
+}
+
 // NewRoadsService creates a new RoadsService
 func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedParser, cache *cache.Cache, config *config.Config, alertEnhancer alerts.AlertEnhancer) *RoadsService {
 	return &RoadsService{
@@ -217,16 +225,30 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 		"lane_closures", len(laneClosures),
 		"chp_incidents", len(chpIncidents))
 
-	// Build routes for all monitored roads
+	// Build routes and collect traffic data for all monitored roads
 	var allRoutes []routing.Route
 	var roadRouteMap = make(map[string]routing.Route) // Map road ID to route
+	var trafficDataMap = make(map[string]trafficData) // Map road ID to traffic data
 
 	for _, monitoredRoad := range s.config.Roads.MonitoredRoads {
-		// Get Google polyline for this road
-		_, _, _, _, googlePolyline, err := s.getTrafficDataWithPolyline(ctx, monitoredRoad)
+		// Get traffic data and Google polyline for this road
+		durationMins, distanceKm, congestionLevel, delayMins, googlePolyline, err := s.getTrafficDataWithPolyline(ctx, monitoredRoad)
 		if err != nil {
 			logging.Errorw(ctx, "Failed to get traffic data for route building", "road_id", monitoredRoad.ID, "error", err)
+			// Use defaults for missing traffic data
+			durationMins = 0
+			distanceKm = 0
+			congestionLevel = "unknown"
+			delayMins = 0
 			googlePolyline = "" // Will use fallback polyline
+		}
+
+		// Store traffic data for later use
+		trafficDataMap[monitoredRoad.ID] = trafficData{
+			DurationMins:    durationMins,
+			DistanceKm:      distanceKm,
+			CongestionLevel: congestionLevel,
+			DelayMins:       delayMins,
 		}
 
 		route := s.buildRouteFromMonitoredRoad(ctx, monitoredRoad, googlePolyline)
@@ -240,13 +262,14 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 		return nil, fmt.Errorf("failed to process global alerts: %w", err)
 	}
 
-	// Build roads with their respective alerts
+	// Build roads with their respective alerts and traffic data
 	var roads []*api.Road
 	for _, monitoredRoad := range s.config.Roads.MonitoredRoads {
 		route := roadRouteMap[monitoredRoad.ID]
 		routeAlerts := alertsByRoute[route.ID]
+		traffic := trafficDataMap[monitoredRoad.ID]
 
-		road, err := s.buildRoadFromRouteAndAlerts(ctx, monitoredRoad, route, routeAlerts)
+		road, err := s.buildRoadFromRouteAndAlerts(ctx, monitoredRoad, route, routeAlerts, traffic)
 		if err != nil {
 			logging.Errorw(ctx, "Failed to build road", "road_id", monitoredRoad.ID, "error", err)
 			continue
@@ -393,17 +416,12 @@ func (s *RoadsService) deduplicateAlerts(ctx context.Context, classifications []
 }
 
 // buildRoadFromRouteAndAlerts builds a complete road from route info and classified alerts
-func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitoredRoad config.MonitoredRoad, route routing.Route, classifiedAlerts []routing.ClassifiedAlert) (*api.Road, error) {
-	// Get traffic data that was already fetched earlier
-	durationMins, distanceKm, congestionLevel, delayMins, _, err := s.getTrafficDataWithPolyline(ctx, monitoredRoad)
-	if err != nil {
-		logging.Errorw(ctx, "Failed to get traffic data for road building", "road_id", monitoredRoad.ID, "error", err)
-		// Use defaults for missing traffic data
-		durationMins = 0
-		distanceKm = 0
-		congestionLevel = "unknown"
-		delayMins = 0
-	}
+func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitoredRoad config.MonitoredRoad, route routing.Route, classifiedAlerts []routing.ClassifiedAlert, traffic trafficData) (*api.Road, error) {
+	// Use the pre-fetched traffic data
+	durationMins := traffic.DurationMins
+	distanceKm := traffic.DistanceKm
+	congestionLevel := traffic.CongestionLevel
+	delayMins := traffic.DelayMins
 
 	// Process the classified alerts for this route
 	roadStatus := api.RoadStatus_OPEN
