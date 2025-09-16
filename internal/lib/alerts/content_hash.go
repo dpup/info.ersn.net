@@ -20,10 +20,12 @@ func NewContentHasher() *ContentHasher {
 func (h *ContentHasher) HashRawAlert(raw RawAlert) string {
 	// Normalize the description text for consistent hashing
 	normalizedDesc := h.normalizeText(raw.Description)
-	
-	// Create a content signature including description and location
+	normalizedTitle := h.normalizeText(raw.Title)
+
+	// Create a content signature including title, description and location
 	// This catches the same incident reported with minor text variations
-	contentSignature := fmt.Sprintf("%s|%s|%s", 
+	contentSignature := fmt.Sprintf("%s|%s|%s|%s",
+		normalizedTitle,
 		normalizedDesc,
 		h.normalizeText(raw.Location),
 		raw.StyleUrl, // Include StyleUrl as it indicates incident type

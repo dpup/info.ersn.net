@@ -275,6 +275,10 @@
           "$ref": "#/definitions/v1RoadStatus",
           "title": "Current road status"
         },
+        "statusExplanation": {
+          "type": "string",
+          "title": "Explanation when status is RESTRICTED or CLOSED"
+        },
         "durationMinutes": {
           "type": "integer",
           "format": "int32",

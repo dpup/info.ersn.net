@@ -42,6 +42,7 @@ GET /api/v1/roads
       "name": "Hwy 4",
       "section": "Angels Camp to Murphys",
       "status": "OPEN",
+      "statusExplanation": "",
       "durationMinutes": 11,
       "distanceKm": 13,
       "congestionLevel": "CLEAR",
@@ -75,7 +76,8 @@ GET /api/v1/roads/{road_id}
     "id": "hwy4-murphys-arnold",
     "name": "Hwy 4",
     "section": "Murphys to Arnold",
-    "status": "OPEN",
+    "status": "RESTRICTED",
+    "statusExplanation": "Right lane blocked due to multi-vehicle accident near mile marker 45",
     "durationMinutes": 15,
     "distanceKm": 20,
     "congestionLevel": "CLEAR",
@@ -114,6 +116,19 @@ GET /api/v1/roads/{road_id}
 - `RESTRICTED` - Limited access or restrictions
 - `MAINTENANCE` - Under maintenance
 
+**Status Explanation:**
+When a road's status is `RESTRICTED` or `CLOSED`, the `statusExplanation` field provides a clear, human-readable explanation of the reason. The AI intelligently distinguishes between mainline road impacts vs ramp/exit impacts:
+
+**Examples of RESTRICTED status:**
+- "Right lane blocked due to multi-vehicle accident near mile marker 45" (mainline lane closure)
+- "Off-ramp to Treasure Island is closed" (ramp closure, mainline open)
+- "On-ramp from Main Street is blocked due to construction" (ramp closure)
+
+**Examples of CLOSED status:**
+- "Full mainline closure due to emergency road repairs"
+- "Complete highway shutdown between mile markers 15-20"
+- "All lanes blocked by major incident"
+
 **Congestion Levels:**
 - `CLEAR` - Free flowing traffic
 - `LIGHT` - Light traffic
@@ -142,9 +157,15 @@ The Roads API provides intelligent alerts that combine data from multiple source
 - `DISTANT` - Too far from route to be relevant
 
 **AI Enhancement Features:**
-- **Smart Descriptions**: Technical Caltrans alerts are automatically converted to human-readable summaries using OpenAI
+- **Smart Road Status Determination**: AI intelligently analyzes incident titles and descriptions to determine accurate road status (open/restricted/closed) with detailed explanations
+- **Mainline vs Ramp Intelligence**: AI distinguishes between:
+  - **Mainline impacts**: Lane closures, accidents, or construction on the main highway (status: RESTRICTED/CLOSED)
+  - **Ramp/Exit impacts**: On-ramp, off-ramp, or exit closures that don't affect main traffic flow (status: RESTRICTED with specific explanation)
+- **Smart Descriptions**: Technical Caltrans alerts automatically converted to human-readable summaries using OpenAI GPT-4
+- **Chain Control Detection**: AI identifies R1/R2 chain requirements from incident text and weather conditions
 - **Impact Assessment**: AI evaluates impact levels: `none`, `light`, `moderate`, `severe`
 - **Duration Estimates**: AI provides duration estimates: `unknown`, `< 1 hour`, `several hours`, `ongoing`
+- **Content-Based Caching**: 24-hour cache prevents duplicate AI processing of identical incident content
 - **Condensed Summaries**: Short format optimized for mobile displays
 - **Structured Metadata**: Additional contextual information like lanes affected, emergency services on scene
 

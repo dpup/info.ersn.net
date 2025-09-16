@@ -158,9 +158,12 @@ export PORT=8080
 - Refresh intervals: 5-15 minutes based on data type
 
 **OpenAI API** (Optional):
-- Used for AI-enhanced alert descriptions
-- Processes raw Caltrans data into user-friendly alerts
-- Use structured outputs for consistent results
+- **AI-Enhanced Road Status Determination**: Intelligently analyzes traffic incidents to determine accurate road status (open/restricted/closed)
+- **Status Explanations**: Provides clear explanations when roads are restricted or closed (populates `status_explanation` field)
+- **Smart Classification**: Distinguishes between mainline road closures vs ramp/exit closures for accurate status determination
+- **Alert Enhancement**: Processes raw Caltrans data into user-friendly alert descriptions
+- **Structured Outputs**: Uses OpenAI structured outputs for consistent response format
+- **Content-Based Caching**: 24-hour cache prevents duplicate AI calls for identical content
 
 ## API Endpoints
 
@@ -168,7 +171,15 @@ export PORT=8080
 - `GET /api/v1/roads` - List all configured roads with current conditions
 - `GET /api/v1/roads/{road_id}` - Get specific road details
 - `GET /api/v1/roads/metrics` - Get alert processing metrics
-- Returns: Road status, traffic conditions, chain controls, enhanced alerts
+- Returns: Road status, status explanations, traffic conditions, chain controls, AI-enhanced alerts
+
+**Key API Response Fields**:
+- `status`: Current road status (OPEN/RESTRICTED/CLOSED/MAINTENANCE)
+- `status_explanation`: AI-generated explanation when status is RESTRICTED or CLOSED
+- `alerts[].description`: AI-enhanced human-readable alert descriptions
+- `alerts[].condensed_summary`: Mobile-optimized short summaries
+- `alerts[].impact`: AI-assessed impact levels (none/light/moderate/severe)
+- `alerts[].metadata`: Structured additional information from AI analysis
 
 **Weather Service** (`/api/v1/weather`):
 - `GET /api/v1/weather` - Current weather for all configured locations
@@ -212,6 +223,35 @@ export PORT=8080
 1. Update `prefab.yaml` weather locations section
 2. Test with `./bin/test-weather` using new coordinates
 3. Restart server and verify in `/api/v1/weather` response
+
+## AI Enhancement System
+
+**Road Status Determination**:
+- AI analyzes Caltrans incident data to determine accurate road status
+- Distinguishes between mainline closures (status: CLOSED) vs ramp closures (status: RESTRICTED)
+- Provides clear explanations in `status_explanation` field when roads are not fully open
+- Examples: "Right lane blocked due to accident" vs "Off-ramp closure to Treasure Island"
+
+**Alert Processing Pipeline**:
+1. **Content Hashing**: Generate hash of raw alert content for caching
+2. **Cache Check**: Check 24-hour cache to avoid duplicate OpenAI calls
+3. **AI Analysis**: If cache miss, send to OpenAI for enhancement and status determination
+4. **Response Processing**: Parse structured OpenAI response into API-ready format
+5. **Cache Storage**: Store enhanced result with 24-hour TTL
+
+**AI Enhancement Features**:
+- **Human-Readable Descriptions**: Converts technical Caltrans language to clear, actionable information
+- **Impact Assessment**: Categorizes impact as none/light/moderate/severe
+- **Duration Estimates**: Provides duration context (unknown/< 1 hour/several hours/ongoing)
+- **Condensed Summaries**: Creates mobile-friendly short descriptions
+- **Structured Metadata**: Extracts additional context (lanes affected, emergency services, etc.)
+
+**Development Best Practices**:
+- Monitor OpenAI API usage and costs through logging
+- Test AI enhancements with `./bin/test-caltrans` tool
+- Verify status determination logic with different incident types
+- Check cache hit rates to ensure efficient AI usage
+- Validate structured output parsing for robustness
 
 **Security Guidelines**:
 - API keys are stored in `.envrc` (git-ignored)

@@ -243,27 +243,29 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 	}
 
 	// Get Caltrans data for road status and chain control using actual route geometry
-	roadStatus, chainControl, alerts, err := s.getCaltransDataWithRouteGeometry(ctx, monitoredRoad, googlePolyline)
+	roadStatus, chainControl, alerts, statusExplanation, err := s.getCaltransDataWithRouteGeometry(ctx, monitoredRoad, googlePolyline)
 	if err != nil {
 		log.Printf("Failed to get Caltrans data for %s: %v", monitoredRoad.ID, err)
 		// Use defaults
 		roadStatus = "open"
 		chainControl = "none"
 		alerts = nil
+		statusExplanation = ""
 	}
 
 	// Build road object (internal fields like origin, destination, polylines kept internal)
 	road := &api.Road{
-		Id:              monitoredRoad.ID,
-		Name:            monitoredRoad.Name,
-		Section:         monitoredRoad.Section,
-		Status:          s.mapRoadStatus(roadStatus),
-		DurationMinutes: durationMins,
-		DistanceKm:      distanceKm,
-		CongestionLevel: s.mapCongestionLevel(congestionLevel),
-		DelayMinutes:    delayMins,
-		ChainControl:    s.mapChainControlStatus(chainControl),
-		Alerts:          alerts,
+		Id:               monitoredRoad.ID,
+		Name:             monitoredRoad.Name,
+		Section:          monitoredRoad.Section,
+		Status:           s.mapRoadStatus(roadStatus),
+		DurationMinutes:  durationMins,
+		DistanceKm:       distanceKm,
+		CongestionLevel:  s.mapCongestionLevel(congestionLevel),
+		DelayMinutes:     delayMins,
+		ChainControl:     s.mapChainControlStatus(chainControl),
+		Alerts:           alerts,
+		StatusExplanation: statusExplanation,
 	}
 
 	return road, nil
@@ -368,7 +370,7 @@ func (s *RoadsService) mapChainControlStatus(status string) api.ChainControlStat
 // Removed duplicate analyzeCongestionLevel - now combined above
 
 // getCaltransDataWithRouteGeometry fetches road status, chain control, and alerts using actual route geometry
-func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, monitoredRoad config.MonitoredRoad, googlePolyline string) (string, string, []*api.RoadAlert, error) {
+func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, monitoredRoad config.MonitoredRoad, googlePolyline string) (string, string, []*api.RoadAlert, string, error) {
 	// Create route definition for classification using actual Google polyline if available
 	var routePolyline geo.Polyline
 	if googlePolyline != "" {
@@ -406,7 +408,7 @@ func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, mon
 }
 
 // processCaltransDataWithRoute handles the actual Caltrans data processing with route information
-func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route routing.Route, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, error) {
+func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route routing.Route, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, string, error) {
 
 	// Get all incidents from Caltrans (no geographic pre-filtering)
 	laneClosures, _ := s.caltransClient.ParseLaneClosures(ctx)
@@ -450,9 +452,10 @@ func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route r
 		classifiedAlerts = append(classifiedAlerts, classifiedAlert)
 	}
 
-	// Process classified alerts
-	roadStatus := "open"
-	chainControl := "none"
+	// Process classified alerts with AI-enhanced road status determination
+	roadStatus := api.RoadStatus_OPEN
+	chainControl := api.ChainControlStatus_NONE
+	var statusExplanation string
 	var enhancedAlerts []*api.RoadAlert
 
 	for _, classifiedAlert := range classifiedAlerts {
@@ -461,8 +464,8 @@ func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route r
 			continue
 		}
 
-		// Convert to API road alert
-		alert, err := s.buildEnhancedRoadAlert(ctx, classifiedAlert, monitoredRoad)
+		// Convert to API road alert and get enhanced data
+		alert, enhanced, err := s.buildEnhancedRoadAlert(ctx, classifiedAlert, monitoredRoad)
 		if err != nil {
 			log.Printf("Error building enhanced alert: %v", err)
 			continue
@@ -470,14 +473,53 @@ func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route r
 
 		enhancedAlerts = append(enhancedAlerts, alert)
 
-		// Update road status based on classified alerts
-		if classifiedAlert.Classification == routing.OnRoute &&
-			(classifiedAlert.Type == "closure" || classifiedAlert.Type == "construction") {
-			roadStatus = "restricted"
+		// Update road status based on AI analysis (only for ON_ROUTE alerts)
+		if classifiedAlert.Classification == routing.OnRoute && enhanced != nil {
+			// Use AI-determined road status
+			switch enhanced.StructuredDescription.RoadStatus {
+			case "closed":
+				roadStatus = api.RoadStatus_CLOSED
+				if enhanced.StructuredDescription.RestrictionDetails != "" {
+					statusExplanation = enhanced.StructuredDescription.RestrictionDetails
+				}
+			case "restricted":
+				if roadStatus != api.RoadStatus_CLOSED { // Don't downgrade from closed
+					roadStatus = api.RoadStatus_RESTRICTED
+					if statusExplanation == "" { // Keep first/most relevant explanation
+						statusExplanation = enhanced.StructuredDescription.RestrictionDetails
+					}
+				}
+			}
+
+			// Update chain control based on AI analysis
+			switch enhanced.StructuredDescription.ChainStatus {
+			case "r2":
+				chainControl = api.ChainControlStatus_REQUIRED
+			case "r1":
+				if chainControl != api.ChainControlStatus_REQUIRED {
+					chainControl = api.ChainControlStatus_REQUIRED // Both R1 and R2 map to REQUIRED for now
+				}
+			case "active_unspecified":
+				if chainControl == api.ChainControlStatus_NONE {
+					chainControl = api.ChainControlStatus_ADVISED
+				}
+			}
+		} else if classifiedAlert.Classification == routing.OnRoute {
+			// Fallback logic if AI enhancement failed
+			if classifiedAlert.Type == "closure" || classifiedAlert.Type == "construction" {
+				if roadStatus == api.RoadStatus_OPEN {
+					roadStatus = api.RoadStatus_RESTRICTED
+					statusExplanation = "Road construction or lane closure in effect"
+				}
+			}
 		}
 	}
 
-	return roadStatus, chainControl, enhancedAlerts, nil
+	// Convert status enums back to strings for now (maintain compatibility)
+	roadStatusStr := s.roadStatusToString(roadStatus)
+	chainControlStr := s.chainControlToString(chainControl)
+
+	return roadStatusStr, chainControlStr, enhancedAlerts, statusExplanation, nil
 }
 
 // mapCaltransTypeToString converts Caltrans feed type to string
@@ -495,7 +537,7 @@ func (s *RoadsService) mapCaltransTypeToString(feedType caltrans.CaltransFeedTyp
 }
 
 // buildEnhancedRoadAlert creates an enhanced API road alert from classified alert
-func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAlert routing.ClassifiedAlert, monitoredRoad config.MonitoredRoad) (*api.RoadAlert, error) {
+func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAlert routing.ClassifiedAlert, monitoredRoad config.MonitoredRoad) (*api.RoadAlert, *alerts.EnhancedAlert, error) {
 	startTime := time.Now() // Default to current time
 
 	// Build base alert (polylines kept internal for processing)
@@ -515,12 +557,15 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 		// Note: AffectedSegments, DistanceToRoute, AffectedRouteIds, AffectedPolyline kept internal
 	}
 
+	var enhancedData *alerts.EnhancedAlert
+
 	// Enhance with AI if available
 	if s.alertEnhancer != nil {
 		enhanced, err := s.EnhanceAlertWithAI(ctx, classifiedAlert)
 		if err != nil {
 			log.Printf("Alert enhancement failed, using original: %v", err)
 		} else {
+			enhancedData = enhanced
 			// Update alert with enhanced data at top level
 			alert.Description = enhanced.StructuredDescription.Details
 			alert.CondensedSummary = enhanced.CondensedSummary
@@ -549,7 +594,7 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 		}
 	}
 
-	return alert, nil
+	return alert, enhancedData, nil
 }
 
 // EnhanceAlertWithAI uses the alert enhancer to improve alert descriptions with integrated caching
@@ -557,8 +602,9 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 func (s *RoadsService) EnhanceAlertWithAI(ctx context.Context, classifiedAlert routing.ClassifiedAlert) (*alerts.EnhancedAlert, error) {
 	rawAlert := alerts.RawAlert{
 		ID:          classifiedAlert.ID,
+		Title:       classifiedAlert.Title,
 		Description: classifiedAlert.Description,
-		Location:    fmt.Sprintf("Highway alert near %.4f, %.4f", classifiedAlert.Location.Latitude, classifiedAlert.Location.Longitude),
+		Location:    fmt.Sprintf("%s (%.4f, %.4f)", classifiedAlert.Title, classifiedAlert.Location.Latitude, classifiedAlert.Location.Longitude),
 		StyleUrl:    classifiedAlert.StyleUrl,
 		Timestamp:   time.Now(),
 	}
@@ -654,6 +700,34 @@ func (s *RoadsService) mapRoutingToAPIClassification(classification routing.Aler
 		return api.AlertClassification_DISTANT
 	default:
 		return api.AlertClassification_ALERT_CLASSIFICATION_UNSPECIFIED
+	}
+}
+
+func (s *RoadsService) roadStatusToString(status api.RoadStatus) string {
+	switch status {
+	case api.RoadStatus_OPEN:
+		return "open"
+	case api.RoadStatus_RESTRICTED:
+		return "restricted"
+	case api.RoadStatus_CLOSED:
+		return "closed"
+	default:
+		return "open"
+	}
+}
+
+func (s *RoadsService) chainControlToString(chainControl api.ChainControlStatus) string {
+	switch chainControl {
+	case api.ChainControlStatus_NONE:
+		return "none"
+	case api.ChainControlStatus_ADVISED:
+		return "advised"
+	case api.ChainControlStatus_REQUIRED:
+		return "required"
+	case api.ChainControlStatus_PROHIBITED:
+		return "prohibited"
+	default:
+		return "none"
 	}
 }
 

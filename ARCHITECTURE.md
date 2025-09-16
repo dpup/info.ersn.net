@@ -90,8 +90,8 @@
 │  │                    │          ▼           │                                    │ │
 │  │                    │ ┌─────────────────┐  │                                    │ │
 │  │                    │ │ Alert           │  │                                    │ │
-│  │                    │ │ Enhancement     │  │                                    │ │
-│  │                    │ │                 │  │                                    │ │
+│  │                    │ │ Enhancement &   │  │                                    │ │
+│  │                    │ │ Status Analysis │  │                                    │ │
 │  │                    │ │ ContentHasher   │  │                                    │ │
 │  │                    │ │       │         │  │                                    │ │
 │  │                    │ │       ▼         │  │                                    │ │
@@ -103,7 +103,8 @@
 │  │                    │ │       ▼         │  │                                    │ │
 │  │                    │ │ ┌─────────────┐ │  │                                    │ │
 │  │                    │ │ │ OpenAI API  │ │  │                                    │ │
-│  │                    │ │ │ (if needed) │ │  │                                    │ │
+│  │                    │ │ │• Status Det │ │  │                                    │ │
+│  │                    │ │ │• Enhancement│ │  │                                    │ │
 │  │                    │ │ └─────────────┘ │  │                                    │ │
 │  │                    │ └─────────────────┘  │                                    │ │
 │  └─────────────────────────────────────────────────────────────────────────────────┘ │
@@ -117,7 +118,8 @@
 │  │  │  (5m TTL)       │    │ {content_hash}      │    │ (5m TTL)        │        │ │
 │  │  │                 │    │ (24h TTL)           │    │                 │        │ │
 │  │  │ • Road status   │    │                     │    │ • Current cond  │        │ │
-│  │  │ • Traffic data  │    │ • AI enhanced       │    │ • Alerts        │        │ │
+│  │  │ • Status explan │    │ • AI enhanced       │    │ • Alerts        │        │ │
+│  │  │ • Traffic data  │    │ • Status analysis   │    │                 │        │ │
 │  │  │ • Enhanced      │    │ • Structured desc   │    │                 │        │ │
 │  │  │   alerts        │    │ • Impact/duration   │    │                 │        │ │
 │  │  └─────────────────┘    └─────────────────────┘    └─────────────────┘        │ │
@@ -163,11 +165,16 @@ Raw KML → Parse → Extract Coords → Route Classification → AI Enhancement
 ```
 **Complexity:** Multiple libraries (geo utils, route matcher, content hasher) handling overlapping concerns
 
-### 🧠 AI Enhancement Chain  
+### 🧠 AI Enhancement & Status Determination Chain
 **Current Flow:**
 ```
-Content Hash → Cache Check → OpenAI API → Parse Response → Store Enhanced
+Content Hash → Cache Check → OpenAI API → Status Analysis → Enhancement → Store Enhanced
 ```
+**Features:**
+- **Smart Status Determination**: AI analyzes incidents to determine road status (open/restricted/closed)
+- **Status Explanations**: Clear explanations provided when roads are restricted or closed
+- **Alert Enhancement**: Technical alerts converted to human-readable descriptions
+- **Classification Logic**: Distinguishes mainline closures vs ramp closures for accurate status
 **Complexity:** Separate caching logic from main cache, complex fallback handling
 
 ### 🌐 External API Client Patterns

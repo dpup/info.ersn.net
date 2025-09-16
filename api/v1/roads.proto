@@ -85,16 +85,16 @@ message ProcessingMetrics {
 // Data models
 message Road {
   string id = 1;
-  string name = 2;                    // Highway/road name (e.g., "Hwy 4")
-  string section = 3;                 // Section description (e.g., "Arnold to Bear Valley")
-  RoadStatus status = 4;              // Current road status
-  int32 duration_minutes = 5;         // Current travel time in minutes
-  int32 distance_km = 6;              // Route distance in kilometers
-  CongestionLevel congestion_level = 7; // Traffic congestion level
-  int32 delay_minutes = 8;            // Additional time due to traffic (0 = no delays)
-  ChainControlStatus chain_control = 9; // Chain control requirements
-  repeated RoadAlert alerts = 10;     // Combined from multiple sources
-  // Note: origin, destination, route_polyline, and max_alert_distance are kept internal for processing
+  string name = 2;                       // Highway/road name (e.g., "Hwy 4")
+  string section = 3;                    // Section description (e.g., "Arnold to Bear Valley")
+  RoadStatus status = 4;                 // Current road status
+  string status_explanation = 5;         // Explanation when status is RESTRICTED or CLOSED
+  int32 duration_minutes = 6;            // Current travel time in minutes
+  int32 distance_km = 7;                 // Route distance in kilometers
+  CongestionLevel congestion_level = 8;  // Traffic congestion level
+  int32 delay_minutes = 9;               // Additional time due to traffic (0 = no delays)
+  ChainControlStatus chain_control = 10; // Chain control requirements
+  repeated RoadAlert alerts = 11;        // Combined from multiple sources
 }
 
 
