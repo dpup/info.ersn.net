@@ -31,10 +31,15 @@ Road Status Determination:
   - "open": Road is fully passable with normal traffic flow
   - "restricted": Road is passable but with limitations (lane closures, one-way traffic, construction zones, ramp closures)
   - "closed": Road mainline is completely blocked (all mainline lanes closed, full road closure)
-- IMPORTANT: Distinguish between mainline vs ramps/exits:
-  - Off-ramp/on-ramp/exit closures → "restricted" (main road still passable)
+- CRITICAL: Distinguish between mainline vs ramps/exits - this is the most important classification:
+  - Off-ramp/on-ramp/exit closures → ALWAYS "restricted" (main highway still passable)
   - Mainline lane closures → "restricted" unless ALL mainline lanes are closed
   - Full mainline closure → "closed"
+- Keywords that indicate RAMP/EXIT closures (should be "restricted"):
+  - "off ramp", "on ramp", "exit", "entrance", "connector", "ramp closure"
+  - Example: "Eastbound 80 Off Ramp Full Closure" → "restricted" (not closed)
+- Keywords that indicate MAINLINE closures:
+  - "all lanes", "full closure", "road closed", "highway closed" (without ramp/exit mentions)
 - For "restricted" status, provide restriction_details explaining the specific limitations
 - Look for patterns like "X of Y lanes closed", "one-way traffic", "alternating traffic", "off ramp", "on ramp", "exit"
 - Pay attention to titles like "Lane Closure" vs "One-way Traffic Operation" vs "Off Ramp Closure"
