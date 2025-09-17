@@ -304,9 +304,9 @@ func (s *RoadsService) processGlobalAlerts(ctx context.Context, allIncidents []c
 			// Only include relevant alerts (ON_ROUTE and NEARBY)
 			if classifiedAlert.Classification != routing.Distant {
 				globalClassifications = append(globalClassifications, globalAlertClassification{
-					AlertID:           unclassifiedAlert.ID,
-					RouteID:           route.ID,
-					ClassifiedAlert:   classifiedAlert,
+					AlertID:         unclassifiedAlert.ID,
+					RouteID:         route.ID,
+					ClassifiedAlert: classifiedAlert,
 				})
 			}
 		}
@@ -416,17 +416,17 @@ func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitore
 	congestionEnum := s.mapCongestionLevel(congestionLevel)
 
 	return &api.Road{
-		Id:               monitoredRoad.ID,
-		Name:             monitoredRoad.Name,
-		Section:          monitoredRoad.Section,
-		Status:           roadStatus,
+		Id:                monitoredRoad.ID,
+		Name:              monitoredRoad.Name,
+		Section:           monitoredRoad.Section,
+		Status:            roadStatus,
 		StatusExplanation: statusExplanation,
-		DurationMinutes:  durationMins,
-		DistanceKm:       distanceKm,
-		CongestionLevel:  congestionEnum,
-		DelayMinutes:     delayMins,
-		ChainControl:     chainControl,
-		Alerts:           enhancedAlerts,
+		DurationMinutes:   durationMins,
+		DistanceKm:        distanceKm,
+		CongestionLevel:   congestionEnum,
+		DelayMinutes:      delayMins,
+		ChainControl:      chainControl,
+		Alerts:            enhancedAlerts,
 	}, nil
 }
 
@@ -768,8 +768,6 @@ func (s *RoadsService) mapCaltransTypeToString(feedType caltrans.CaltransFeedTyp
 
 // buildEnhancedRoadAlert creates an enhanced API road alert from classified alert
 func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAlert routing.ClassifiedAlert, monitoredRoad config.MonitoredRoad) (*api.RoadAlert, *alerts.EnhancedAlert, error) {
-	startTime := time.Now() // Default to current time
-
 	// Build base alert (polylines kept internal for processing)
 	alertType := s.mapStringToAlertType(classifiedAlert.Type)
 	alert := &api.RoadAlert{
@@ -778,14 +776,12 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 		Classification:        s.mapRoutingToAPIClassification(classifiedAlert.Classification),
 		Title:                 classifiedAlert.Title,       // Use real Caltrans title (e.g., "CHP Incident 250911GG0206")
 		Description:           classifiedAlert.Description, // Will be enhanced below
-		StartTime:             timestamppb.New(startTime),
+		StartTime:             nil,                         // Will be set from AI enhancement or fallback to current time
 		EndTime:               nil,
-		LastUpdated:           timestamppb.Now(),
+		LastUpdated:           nil, // Will be set from AI enhancement or fallback to current time
 		Location:              &api.Coordinates{Latitude: classifiedAlert.Location.Latitude, Longitude: classifiedAlert.Location.Longitude},
 		DistanceToRouteMeters: classifiedAlert.DistanceToRoute, // Distance for client rendering
 		Metadata:              make(map[string]string),
-		// Note: ID, OriginalDescription removed for cleaner API
-		// Note: AffectedSegments, AffectedRouteIds, AffectedPolyline kept internal for processing
 	}
 
 	var enhancedData *alerts.EnhancedAlert
@@ -803,10 +799,18 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 			alert.LocationDescription = enhanced.StructuredDescription.Location.Description
 			alert.Impact = enhanced.StructuredDescription.Impact
 
-			// Parse time_reported if provided
+			// Parse time_reported if provided - use for StartTime
 			if enhanced.StructuredDescription.TimeReported != "" {
 				if timeReported, err := time.Parse(time.RFC3339, enhanced.StructuredDescription.TimeReported); err == nil {
 					alert.TimeReported = timestamppb.New(timeReported)
+					alert.StartTime = timestamppb.New(timeReported) // Use time_reported as StartTime
+				}
+			}
+
+			// Parse last_update if provided - use for LastUpdated
+			if enhanced.StructuredDescription.LastUpdate != "" {
+				if lastUpdate, err := time.Parse(time.RFC3339, enhanced.StructuredDescription.LastUpdate); err == nil {
+					alert.LastUpdated = timestamppb.New(lastUpdate)
 				}
 			}
 

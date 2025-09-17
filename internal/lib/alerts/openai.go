@@ -12,10 +12,27 @@ const SystemPrompt = `You are a traffic incident analyst. Your task is to transf
 Instructions:
 - Parse the input carefully, extracting only factual details.
 - Remove jargon and abbreviations (e.g., "1183-Trfc Collision-Unkn Inj" → "Traffic collision, injuries unknown").
-- When times are present, convert to ISO 8601 format (UTC if possible). If missing, return null.
 - Provide concise, human-readable text for travelers.
 - Infer impact from the details (use judgment).
 - Populate all fields exactly as specified in the schema.
+
+CRITICAL - Date/Time Extraction:
+Caltrans data contains timestamps in several formats. Look for and parse these specific patterns:
+
+1. CHP Incident timestamps: "Sep 11 2025  9:58AM", "Sep 11 2025 10:19AM"
+2. Last updated stamps: "09/11/2025 10:46am", "Last updated: 09/11/2025 10:46am"
+3. Construction dates: "Dec 31, 2025", "02/12/2025"
+4. Date ranges: "Effective from: 02/12/2025" to "09/16/2025"
+
+For time_reported: Use the EARLIEST timestamp found in the incident description (usually the first CHP timestamp or incident start time)
+For last_update: Use the LATEST timestamp, often from "Last updated:" stamps or most recent incident update
+
+Convert ALL found dates to ISO 8601 format in Pacific Time zone (America/Los_Angeles):
+- "Sep 11 2025  9:58AM" → "2025-09-11T09:58:00-07:00" (PDT) or "2025-09-11T09:58:00-08:00" (PST)
+- "09/11/2025 10:46am" → "2025-09-11T10:46:00-07:00"
+- If only date without time: use "T00:00:00-08:00" for start of day
+
+If NO timestamps are found in the content, return null for both time_reported and last_update.
 
 StyleUrl Definitions (KML styles from Caltrans data):
 - #lcs: Lane closure - traffic can flow in both directions but lanes may be restricted
@@ -100,7 +117,7 @@ var AlertEnhancementSchema = openai.ChatCompletionResponseFormatJSONSchema{
 		"properties": {
 			"time_reported": {
 				"type": ["string", "null"],
-				"description": "ISO timestamp of when first reported, null if not available"
+				"description": "ISO 8601 timestamp of earliest incident time found in Caltrans data (e.g. '2025-09-11T09:58:00-07:00'), null if no timestamps found"
 			},
 			"details": {
 				"type": "string", 
@@ -132,7 +149,7 @@ var AlertEnhancementSchema = openai.ChatCompletionResponseFormatJSONSchema{
 			},
 			"last_update": {
 				"type": ["string", "null"],
-				"description": "Most recent update in ISO format, null if not available"
+				"description": "ISO 8601 timestamp of most recent update found in Caltrans data (e.g. '2025-09-11T10:46:00-07:00'), null if no timestamps found"
 			},
 			"impact": {
 				"type": "string",
