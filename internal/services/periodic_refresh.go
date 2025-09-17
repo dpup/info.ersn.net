@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
+	"runtime/debug"
 	"time"
 
+	"github.com/dpup/prefab/errors"
 	"github.com/dpup/prefab/logging"
-	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/config"
 )
 
@@ -44,7 +45,22 @@ func (p *PeriodicRefreshService) StartPeriodicRefresh(ctx context.Context) error
 	logging.Infow(ctx, "Starting periodic refresh", "interval", interval)
 	
 	// Start background goroutine for periodic refresh
-	go p.refreshLoop(ctx, interval)
+	go func() {
+		defer func() {
+			// Recover from any panics in the periodic refresh goroutine
+			if r := recover(); r != nil {
+				err, _ := errors.ParseStack(debug.Stack())
+				skipFrames := 3
+				numFrames := 5
+				logging.Errorw(ctx, "Periodic refresh: recovered from panic",
+					"error", r, "error.stack_trace", err.MinimalStack(skipFrames, numFrames))
+			}
+			// Mark as not running when goroutine exits
+			p.running = false
+		}()
+
+		p.refreshLoop(ctx, interval)
+	}()
 	
 	return nil
 }
@@ -66,7 +82,7 @@ func (p *PeriodicRefreshService) refreshLoop(ctx context.Context, interval time.
 	defer ticker.Stop()
 	
 	// Do initial refresh immediately
-	p.simulateAPIRequest(ctx)
+	p.refreshCacheData(ctx)
 	
 	for {
 		select {
@@ -77,30 +93,33 @@ func (p *PeriodicRefreshService) refreshLoop(ctx context.Context, interval time.
 			logging.Info(ctx, "Periodic refresh stopping due to stop signal")
 			return
 		case <-ticker.C:
-			p.simulateAPIRequest(ctx)
+			p.refreshCacheData(ctx)
 		}
 	}
 }
 
-// simulateAPIRequest makes a simulated request to roads API to trigger cache refresh
-// This leverages the existing refresh logic in RoadsService.ListRoads()
-func (p *PeriodicRefreshService) simulateAPIRequest(ctx context.Context) {
-	logging.Info(ctx, "Periodic refresh: checking cache warmth")
-	
-	// Create a simulated request context with timeout
-	refreshCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
+// refreshCacheData directly refreshes the cached road data
+func (p *PeriodicRefreshService) refreshCacheData(ctx context.Context) {
+	logging.Info(ctx, "Periodic refresh: starting data refresh")
+
+	// Create a timeout context for the refresh operation
+	// Allow 5 minutes for processing multiple roads sequentially (4 roads × ~30s each + buffer)
+	refreshCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
-	
-	// Call the existing ListRoads method which includes all the refresh logic
-	// With the new stale-data serving logic, this will:
-	// 1. Return stale data immediately if available
-	// 2. Trigger background refresh if data is stale
-	// 3. Only block if no data exists or data is very stale
-	_, err := p.roadsService.ListRoads(refreshCtx, &api.ListRoadsRequest{})
+
+	// Call the road service refresh method directly
+	roads, err := p.roadsService.refreshRoadData(refreshCtx)
 	if err != nil {
-		logging.Errorw(ctx, "Periodic refresh failed", "error", err)
+		logging.Errorw(ctx, "Periodic refresh: failed to refresh road data", "error", err)
+		return
+	}
+
+	// Cache the refreshed data
+	cacheKey := "roads:all"
+	if err := p.roadsService.cache.Set(cacheKey, roads, p.config.Roads.RefreshInterval, "roads"); err != nil {
+		logging.Errorw(ctx, "Periodic refresh: failed to cache roads", "error", err)
 	} else {
-		logging.Info(ctx, "Periodic refresh: cache check completed")
+		logging.Infow(ctx, "Periodic refresh: successfully cached roads", "road_count", len(roads))
 	}
 }
 

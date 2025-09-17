@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/dpup/prefab/logging"
@@ -32,10 +31,6 @@ type RoadsService struct {
 	routeMatcher   routing.RouteMatcher
 	geoUtils       geo.GeoUtils
 	contentHasher  *alerts.ContentHasher
-
-	// Background refresh coordination
-	refreshMutex      sync.Mutex
-	refreshInProgress bool
 }
 
 // trafficData holds traffic information for a road
@@ -61,10 +56,11 @@ func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedP
 }
 
 // ListRoads implements the gRPC method defined in contracts/roads.proto line 12-17
+// Returns cached data with timestamp, relying on periodic background refresh to update data
 func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest) (*api.ListRoadsResponse, error) {
 	logging.Info(ctx, "ListRoads called")
 
-	// Try to get cached roads first (even if stale)
+	// Get cached roads (serve whatever we have, even if stale)
 	var cachedRoads []*api.Road
 	cacheKey := "roads:all"
 
@@ -73,71 +69,29 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 		logging.Errorw(ctx, "Cache error", "error", err, "cache_key", cacheKey)
 	}
 
-	// If we have fresh cached data, return it immediately
-	if found && !s.cache.IsStale(cacheKey) {
-		logging.Infow(ctx, "Returning fresh cached roads", "road_count", len(cachedRoads))
-
+	// If we have cached data (fresh or stale), return it with timestamp
+	if found {
 		var lastUpdated *timestamppb.Timestamp
 		if entry != nil {
 			lastUpdated = timestamppb.New(entry.CreatedAt)
 		}
 
-		return &api.ListRoadsResponse{
-			Roads:       cachedRoads,
-			LastUpdated: lastUpdated,
-		}, nil
-	}
+		isStale := s.cache.IsStale(cacheKey)
+		isVeryStale := s.cache.IsVeryStale(cacheKey)
 
-	// If we have stale but not very stale data, serve it immediately and refresh in background
-	if found && !s.cache.IsVeryStale(cacheKey) {
-		logging.Infow(ctx, "Serving stale cached roads while refreshing in background", "road_count", len(cachedRoads))
-
-		// Check if a background refresh is already in progress
-		s.refreshMutex.Lock()
-		refreshAlreadyInProgress := s.refreshInProgress
-		if !refreshAlreadyInProgress {
-			s.refreshInProgress = true
-		}
-		s.refreshMutex.Unlock()
-
-		// Only trigger background refresh if one isn't already running
-		if !refreshAlreadyInProgress {
-			go func() {
-				defer func() {
-					// Mark refresh as completed
-					s.refreshMutex.Lock()
-					s.refreshInProgress = false
-					s.refreshMutex.Unlock()
-				}()
-
-				// Create independent timeout context for background refresh
-				// Allow 5 minutes for processing multiple roads sequentially (4 roads × ~30s each + buffer)
-				refreshCtx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-				defer cancel()
-
-				logging.Info(refreshCtx, "Background refresh: starting road data refresh")
-				roads, err := s.refreshRoadData(refreshCtx)
-				if err != nil {
-					logging.Errorw(refreshCtx, "Background refresh failed", "error", err)
-					return
-				}
-
-				// Cache the refreshed data
-				if err := s.cache.Set(cacheKey, roads, s.config.Roads.RefreshInterval, "roads"); err != nil {
-					logging.Errorw(refreshCtx, "Background refresh: failed to cache roads", "error", err)
-				} else {
-					logging.Infow(refreshCtx, "Background refresh: successfully cached roads", "road_count", len(roads))
-				}
-			}()
+		var staleness string
+		if !isStale {
+			staleness = "fresh"
+		} else if !isVeryStale {
+			staleness = "stale"
 		} else {
-			logging.Info(ctx, "Background refresh already in progress, skipping duplicate refresh")
+			staleness = "very_stale"
 		}
 
-		// Return stale data immediately
-		var lastUpdated *timestamppb.Timestamp
-		if entry != nil {
-			lastUpdated = timestamppb.New(entry.CreatedAt)
-		}
+		logging.Infow(ctx, "Returning cached roads",
+			"road_count", len(cachedRoads),
+			"staleness", staleness,
+			"last_updated", lastUpdated.AsTime().Format(time.RFC3339))
 
 		return &api.ListRoadsResponse{
 			Roads:       cachedRoads,
@@ -145,24 +99,11 @@ func (s *RoadsService) ListRoads(ctx context.Context, req *api.ListRoadsRequest)
 		}, nil
 	}
 
-	// No cache data or very stale - block and refresh synchronously
-	logging.Info(ctx, "No cached data or very stale - refreshing road data synchronously")
+	// No cached data available - perform synchronous refresh as fallback
+	logging.Info(ctx, "No cached data available - performing fallback refresh")
 	roads, err := s.refreshRoadData(ctx)
 	if err != nil {
-		// If synchronous refresh fails but we have very stale cached data, return it as last resort
-		if found {
-			logging.Errorw(ctx, "Synchronous refresh failed, returning very stale cached roads as fallback", "error", err)
-			var lastUpdated *timestamppb.Timestamp
-			if entry != nil {
-				lastUpdated = timestamppb.New(entry.CreatedAt)
-			}
-
-			return &api.ListRoadsResponse{
-				Roads:       cachedRoads,
-				LastUpdated: lastUpdated,
-			}, nil
-		}
-		return nil, fmt.Errorf("failed to refresh road data: %w", err)
+		return nil, fmt.Errorf("failed to refresh road data and no cached data available: %w", err)
 	}
 
 	// Cache the refreshed data

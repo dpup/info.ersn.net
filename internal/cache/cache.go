@@ -1,10 +1,15 @@
 package cache
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"runtime/debug"
 	"sync"
 	"time"
+
+	"github.com/dpup/prefab/errors"
+	"github.com/dpup/prefab/logging"
 )
 
 // Cache provides thread-safe in-memory caching with TTL
@@ -204,8 +209,19 @@ func (c *Cache) CleanupStale() int {
 }
 
 // StartPeriodicCleanup starts a goroutine that periodically cleans up stale entries
-func (c *Cache) StartPeriodicCleanup(interval time.Duration) {
+func (c *Cache) StartPeriodicCleanup(ctx context.Context, interval time.Duration) {
 	go func() {
+		defer func() {
+			// Recover from any panics in the cache cleanup goroutine
+			if r := recover(); r != nil {
+				err, _ := errors.ParseStack(debug.Stack())
+				skipFrames := 3
+				numFrames := 5
+				logging.Errorw(ctx, "Cache cleanup: recovered from panic",
+					"error", r, "error.stack_trace", err.MinimalStack(skipFrames, numFrames))
+			}
+		}()
+
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
