@@ -78,15 +78,15 @@ roads:
         latitude: 38.461045
         longitude: -120.042368
     # Useful for testing because it is always busy and often has incidents.
-    - name: "101"
-      section: "SF to Oakland"
-      id: "101-sf-oakland"
-      origin:
-        latitude: 37.774929
-        longitude: -122.419418
-      destination:
-        latitude: 37.792769
-        longitude: -122.262866
+    # - name: "101"
+    #   section: "SF to Oakland"
+    #   id: "101-sf-oakland"
+    #   origin:
+    #     latitude: 37.774929
+    #     longitude: -122.419418
+    #   destination:
+    #     latitude: 37.792769
+    #     longitude: -122.262866
 
 weather:
   refreshInterval: "5m"
