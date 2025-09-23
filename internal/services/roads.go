@@ -41,6 +41,16 @@ type trafficData struct {
 	DelayMins       int32
 }
 
+// googleRouteCache holds cached Google Routes API responses to reduce API usage
+type googleRouteCache struct {
+	DurationMins    int32     `json:"duration_mins"`
+	DistanceKm      int32     `json:"distance_km"`
+	CongestionLevel string    `json:"congestion_level"`
+	DelayMins       int32     `json:"delay_mins"`
+	Polyline        string    `json:"polyline"`
+	CachedAt        time.Time `json:"cached_at"`
+}
+
 // NewRoadsService creates a new RoadsService
 func NewRoadsService(googleClient *google.Client, caltransClient *caltrans.FeedParser, cache *cache.Cache, config *config.Config, alertEnhancer alerts.AlertEnhancer) *RoadsService {
 	return &RoadsService{
@@ -476,11 +486,22 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 }
 
 // getTrafficDataWithPolyline fetches traffic data and route geometry from Google Routes API
+// Implements dedicated caching to reduce API calls and stay within 10k monthly limit
 func (s *RoadsService) getTrafficDataWithPolyline(ctx context.Context, monitoredRoad config.MonitoredRoad) (int32, int32, string, int32, string, error) {
 	if s.config.GoogleRoutes.APIKey == "" {
 		return 0, 0, "unknown", 0, "", fmt.Errorf("google Routes API key not configured")
 	}
 
+	// Check Google Routes-specific cache first (separate from main road cache)
+	googleCacheKey := fmt.Sprintf("google_routes_%s", monitoredRoad.ID)
+	var routeCache googleRouteCache
+	if found, err := s.cache.Get(googleCacheKey, &routeCache); err == nil && found {
+		logging.Infow(ctx, "Using cached Google Routes data", "road_id", monitoredRoad.ID, "cached_at", routeCache.CachedAt)
+		return routeCache.DurationMins, routeCache.DistanceKm, routeCache.CongestionLevel, routeCache.DelayMins, routeCache.Polyline, nil
+	}
+
+	// Cache miss - call Google Routes API
+	logging.Infow(ctx, "Calling Google Routes API", "road_id", monitoredRoad.ID)
 	roadData, err := s.googleClient.ComputeRoutes(ctx,
 		monitoredRoad.Origin.ToProto(),
 		monitoredRoad.Destination.ToProto())
@@ -501,6 +522,21 @@ func (s *RoadsService) getTrafficDataWithPolyline(ctx context.Context, monitored
 	// Convert to user-friendly units
 	durationMins := int32(roadData.DurationSeconds / 60)
 	distanceKm := int32(roadData.DistanceMeters / 1000)
+
+	// Cache the Google Routes data with longer TTL to reduce API calls
+	cache := googleRouteCache{
+		DurationMins:    durationMins,
+		DistanceKm:      distanceKm,
+		CongestionLevel: congestionLevel,
+		DelayMins:       delayMins,
+		Polyline:        roadData.Polyline,
+		CachedAt:        time.Now(),
+	}
+
+	// Use 20 minute cache (longer than refresh interval to reduce API calls)
+	if err := s.cache.Set(googleCacheKey, cache, 20*time.Minute, "google_routes"); err != nil {
+		logging.Errorw(ctx, "Failed to cache Google Routes data", "error", err, "road_id", monitoredRoad.ID)
+	}
 
 	return durationMins, distanceKm, congestionLevel, delayMins, roadData.Polyline, nil
 }

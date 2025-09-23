@@ -38,8 +38,8 @@ openweather:
 
 # Service Configurations
 roads:
-  refreshInterval: "5m"
-  staleThreshold: "10m"
+  refreshInterval: "15m"  # Reduced from 5m to stay within 10k monthly Google API limit
+  staleThreshold: "30m"   # Increased to accept slightly stale data
   
   caltransFeeds:
     laneClosures:
