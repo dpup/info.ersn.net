@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -172,9 +173,17 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 	chpIncidents, _ := s.caltransClient.ParseCHPIncidents(ctx)
 	allIncidents := append(laneClosures, chpIncidents...)
 
+	// Fetch chain control data once for all roads
+	chainControls, err := s.caltransClient.ParseChainControlsDetailed(ctx)
+	if err != nil {
+		logging.Errorw(ctx, "Failed to get chain controls", "error", err)
+		chainControls = nil
+	}
+
 	logging.Infow(ctx, "Retrieved Caltrans incidents for all roads",
 		"lane_closures", len(laneClosures),
-		"chp_incidents", len(chpIncidents))
+		"chp_incidents", len(chpIncidents),
+		"chain_controls", len(chainControls))
 
 	// Build routes and collect traffic data for all monitored roads
 	var allRoutes []routing.Route
@@ -220,7 +229,7 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 		routeAlerts := alertsByRoute[route.ID]
 		traffic := trafficDataMap[monitoredRoad.ID]
 
-		road, err := s.buildRoadFromRouteAndAlerts(ctx, monitoredRoad, route, routeAlerts, traffic)
+		road, err := s.buildRoadFromRouteAndAlerts(ctx, monitoredRoad, route, routeAlerts, traffic, chainControls)
 		if err != nil {
 			logging.Errorw(ctx, "Failed to build road", "road_id", monitoredRoad.ID, "error", err)
 			continue
@@ -367,7 +376,7 @@ func (s *RoadsService) deduplicateAlerts(ctx context.Context, classifications []
 }
 
 // buildRoadFromRouteAndAlerts builds a complete road from route info and classified alerts
-func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitoredRoad config.MonitoredRoad, route routing.Route, classifiedAlerts []routing.ClassifiedAlert, traffic trafficData) (*api.Road, error) {
+func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitoredRoad config.MonitoredRoad, route routing.Route, classifiedAlerts []routing.ClassifiedAlert, traffic trafficData, chainControls []caltrans.ChainControlData) (*api.Road, error) {
 	// Use the pre-fetched traffic data
 	durationMins := traffic.DurationMins
 	distanceKm := traffic.DistanceKm
@@ -379,6 +388,7 @@ func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitore
 	chainControl := api.ChainControlStatus_NONE
 	var statusExplanation string
 	var enhancedAlerts []*api.RoadAlert
+	var chainControlInfo *api.ChainControlInfo
 
 	for _, classifiedAlert := range classifiedAlerts {
 		// Convert to API road alert and get enhanced data
@@ -422,6 +432,16 @@ func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitore
 		}
 	}
 
+	// Find chain control info for this route
+	chainControlInfo = s.findChainControlForRoute(ctx, route, chainControls)
+	if chainControlInfo != nil {
+		chainControl = api.ChainControlStatus_REQUIRED
+		logging.Infow(ctx, "Chain control found for route",
+			"road_id", route.ID,
+			"level", chainControlInfo.Level,
+			"location", chainControlInfo.LocationName)
+	}
+
 	// Convert congestion level to enum
 	congestionEnum := s.mapCongestionLevel(congestionLevel)
 
@@ -437,6 +457,7 @@ func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitore
 		DelayMinutes:      delayMins,
 		ChainControl:      chainControl,
 		Alerts:            enhancedAlerts,
+		ChainControlInfo:  chainControlInfo,
 	}, nil
 }
 
@@ -457,7 +478,7 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 	}
 
 	// Get Caltrans data for road status and chain control using actual route geometry
-	roadStatus, chainControl, alerts, statusExplanation, err := s.getCaltransDataWithRouteGeometry(ctx, monitoredRoad, googlePolyline)
+	roadStatus, chainControl, alerts, statusExplanation, chainControlInfo, err := s.getCaltransDataWithRouteGeometry(ctx, monitoredRoad, googlePolyline)
 	if err != nil {
 		logging.Errorw(ctx, "Failed to get Caltrans data", "road_id", monitoredRoad.ID, "error", err)
 		// Use defaults
@@ -465,6 +486,7 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 		chainControl = "none"
 		alerts = nil
 		statusExplanation = ""
+		chainControlInfo = nil
 	}
 
 	// Build road object (internal fields like origin, destination, polylines kept internal)
@@ -480,6 +502,7 @@ func (s *RoadsService) processMonitoredRoad(ctx context.Context, monitoredRoad c
 		ChainControl:      s.mapChainControlStatus(chainControl),
 		Alerts:            alerts,
 		StatusExplanation: statusExplanation,
+		ChainControlInfo:  chainControlInfo,
 	}
 
 	return road, nil
@@ -610,7 +633,8 @@ func (s *RoadsService) mapChainControlStatus(status string) api.ChainControlStat
 // Removed duplicate analyzeCongestionLevel - now combined above
 
 // getCaltransDataWithRouteGeometry fetches road status, chain control, and alerts using actual route geometry
-func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, monitoredRoad config.MonitoredRoad, googlePolyline string) (string, string, []*api.RoadAlert, string, error) {
+// Returns: roadStatus, chainControlStatus, alerts, statusExplanation, chainControlInfo, error
+func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, monitoredRoad config.MonitoredRoad, googlePolyline string) (string, string, []*api.RoadAlert, string, *api.ChainControlInfo, error) {
 	// Create route definition for classification using actual Google polyline if available
 	var routePolyline geo.Polyline
 	if googlePolyline != "" {
@@ -648,16 +672,25 @@ func (s *RoadsService) getCaltransDataWithRouteGeometry(ctx context.Context, mon
 }
 
 // processCaltransDataWithRoute handles the actual Caltrans data processing with route information
-func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route routing.Route, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, string, error) {
+// Returns: roadStatus, chainControlStatus, alerts, statusExplanation, chainControlInfo, error
+func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route routing.Route, monitoredRoad config.MonitoredRoad) (string, string, []*api.RoadAlert, string, *api.ChainControlInfo, error) {
 
 	// Get all incidents from Caltrans (no geographic pre-filtering)
 	laneClosures, _ := s.caltransClient.ParseLaneClosures(ctx)
 	chpIncidents, _ := s.caltransClient.ParseCHPIncidents(ctx)
 
+	// Get chain control data
+	chainControls, err := s.caltransClient.ParseChainControlsDetailed(ctx)
+	if err != nil {
+		logging.Errorw(ctx, "Failed to get chain controls", "error", err)
+		chainControls = nil
+	}
+
 	logging.Infow(ctx, "Retrieved Caltrans incidents",
 		"road_id", route.ID,
 		"lane_closures", len(laneClosures),
-		"chp_incidents", len(chpIncidents))
+		"chp_incidents", len(chpIncidents),
+		"chain_controls", len(chainControls))
 
 	// Combine all incidents
 	allIncidents := append(laneClosures, chpIncidents...)
@@ -781,11 +814,116 @@ func (s *RoadsService) processCaltransDataWithRoute(ctx context.Context, route r
 		}
 	}
 
+	// Find chain control info for this route
+	chainControlInfo := s.findChainControlForRoute(ctx, route, chainControls)
+	if chainControlInfo != nil {
+		chainControl = api.ChainControlStatus_REQUIRED
+		logging.Infow(ctx, "Chain control found for route",
+			"road_id", route.ID,
+			"level", chainControlInfo.Level,
+			"location", chainControlInfo.LocationName)
+	}
+
 	// Convert status enums back to strings for now (maintain compatibility)
 	roadStatusStr := s.roadStatusToString(roadStatus)
 	chainControlStr := s.chainControlToString(chainControl)
 
-	return roadStatusStr, chainControlStr, enhancedAlerts, statusExplanation, nil
+	return roadStatusStr, chainControlStr, enhancedAlerts, statusExplanation, chainControlInfo, nil
+}
+
+// findChainControlForRoute finds the closest chain control point that applies to this route
+func (s *RoadsService) findChainControlForRoute(ctx context.Context, route routing.Route, chainControls []caltrans.ChainControlData) *api.ChainControlInfo {
+	if len(chainControls) == 0 {
+		return nil
+	}
+
+	// Extract highway name from route (e.g., "Hwy 4" -> "4", "Highway 89" -> "89")
+	routeHighway := extractHighwayNumber(route.Name)
+	if routeHighway == "" {
+		return nil
+	}
+
+	var bestMatch *caltrans.ChainControlData
+	bestDistance := float64(10000) // 10km max distance
+
+	for i, cc := range chainControls {
+		// Check if this chain control is for the same highway
+		ccHighway := extractHighwayNumber(cc.Highway)
+		if ccHighway != routeHighway {
+			continue
+		}
+
+		// Check if chain control point is near the route
+		if cc.Coordinates == nil {
+			continue
+		}
+
+		ccPoint := geo.Point{Latitude: cc.Coordinates.Latitude, Longitude: cc.Coordinates.Longitude}
+
+		// Check distance to route polyline
+		for _, routePoint := range route.Polyline.Points {
+			distance, err := s.geoUtils.DistanceFromCoords(
+				ccPoint.Latitude, ccPoint.Longitude,
+				routePoint.Latitude, routePoint.Longitude,
+			)
+			if err != nil {
+				continue
+			}
+
+			// If chain control is within 5km of route and closer than current best
+			if distance < 5000 && distance < bestDistance {
+				bestDistance = distance
+				bestMatch = &chainControls[i]
+			}
+		}
+	}
+
+	if bestMatch == nil {
+		return nil
+	}
+
+	// Convert to API ChainControlInfo
+	return &api.ChainControlInfo{
+		Level:         s.mapChainControlLevel(bestMatch.Level),
+		LocationName:  bestMatch.LocationName,
+		Latitude:      bestMatch.Coordinates.Latitude,
+		Longitude:     bestMatch.Coordinates.Longitude,
+		EffectiveTime: bestMatch.EffectiveTime,
+		Direction:     bestMatch.Direction,
+		Description:   bestMatch.Description,
+	}
+}
+
+// extractHighwayNumber extracts the highway number from various formats
+// "Hwy 4" -> "4", "Highway 89" -> "89", "US 50" -> "50", "I-80" -> "80"
+func extractHighwayNumber(name string) string {
+	patterns := []string{
+		`(?i)(?:Hwy|Highway|Route)\s*(\d+)`,
+		`(?i)(?:US|I)-?\s*(\d+)`,
+		`(?i)^(\d+)$`,
+	}
+
+	for _, pattern := range patterns {
+		re := regexp.MustCompile(pattern)
+		if match := re.FindStringSubmatch(name); len(match) > 1 {
+			return match[1]
+		}
+	}
+	return ""
+}
+
+// mapChainControlLevel converts string level to ChainControlLevel enum
+func (s *RoadsService) mapChainControlLevel(level string) api.ChainControlLevel {
+	switch level {
+	case "R1":
+		return api.ChainControlLevel_CHAIN_CONTROL_LEVEL_R1
+	case "R2":
+		return api.ChainControlLevel_CHAIN_CONTROL_LEVEL_R2
+	case "R3":
+		return api.ChainControlLevel_CHAIN_CONTROL_LEVEL_R3
+	default:
+		return api.ChainControlLevel_CHAIN_CONTROL_LEVEL_UNSPECIFIED
+	}
 }
 
 // mapCaltransTypeToString converts Caltrans feed type to string

@@ -93,8 +93,20 @@ message Road {
   int32 distance_km = 7;                 // Route distance in kilometers
   CongestionLevel congestion_level = 8;  // Traffic congestion level
   int32 delay_minutes = 9;               // Additional time due to traffic (0 = no delays)
-  ChainControlStatus chain_control = 10; // Chain control requirements
+  ChainControlStatus chain_control = 10; // Chain control requirements (legacy, use chain_control_info)
   repeated RoadAlert alerts = 11;        // Combined from multiple sources
+  ChainControlInfo chain_control_info = 12; // Detailed chain control information
+}
+
+// ChainControlInfo provides detailed chain control status for a road
+message ChainControlInfo {
+  ChainControlLevel level = 1;           // R1, R2, or NONE
+  string location_name = 2;              // Where chain control starts (e.g., "Twin Bridges")
+  double latitude = 3;                   // Latitude of chain control checkpoint
+  double longitude = 4;                  // Longitude of chain control checkpoint
+  string effective_time = 5;             // When chain control went into effect (ISO 8601)
+  string direction = 6;                  // Direction of travel (e.g., "Eastbound")
+  string description = 7;                // Human-readable requirements description
 }
 
 
@@ -147,6 +159,15 @@ enum ChainControlStatus {
   ADVISED = 2;
   REQUIRED = 3;
   PROHIBITED = 4;
+}
+
+// ChainControlLevel indicates the specific chain control requirement level
+enum ChainControlLevel {
+  CHAIN_CONTROL_LEVEL_UNSPECIFIED = 0;
+  CHAIN_CONTROL_LEVEL_NONE = 1;          // No chain control in effect
+  CHAIN_CONTROL_LEVEL_R1 = 2;            // Chains required except vehicles with snow tires
+  CHAIN_CONTROL_LEVEL_R2 = 3;            // Chains required except 4WD/AWD with snow tires on all wheels
+  CHAIN_CONTROL_LEVEL_R3 = 4;            // Chains required on all vehicles, no exceptions
 }
 
 enum CongestionLevel {

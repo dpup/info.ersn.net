@@ -52,6 +52,20 @@ type CaltransIncident struct {
 	LastFetched     time.Time
 }
 
+// ChainControlData represents parsed chain control information from KML
+type ChainControlData struct {
+	Highway       string           // e.g., "US 50", "Highway 89"
+	Direction     string           // e.g., "Eastbound", "Northbound"
+	Level         string           // "R1", "R2", "R3"
+	LocationName  string           // e.g., "Twin Bridges", "Emerald Bay"
+	Coordinates   *api.Coordinates // Where chain control starts
+	EffectiveTime string           // ISO 8601 timestamp
+	Description   string           // Human-readable requirements
+	LastUpdated   string           // When data was last updated
+	MessageID     string           // Caltrans message ID
+	District      string           // Caltrans district number
+}
+
 // KML XML structures for parsing
 type KML struct {
 	XMLName  xml.Name `xml:"kml"`
@@ -134,6 +148,124 @@ func NewFeedParser() *FeedParser {
 // URL from research.md line 71
 func (p *FeedParser) ParseChainControls(ctx context.Context) ([]CaltransIncident, error) {
 	return p.parseKMLFeed(ctx, "https://quickmap.dot.ca.gov/data/cc.kml", CHAIN_CONTROL)
+}
+
+// ParseChainControlsDetailed processes chain control KML feed with detailed parsing
+// Returns structured chain control data with level, location, and timing info
+func (p *FeedParser) ParseChainControlsDetailed(ctx context.Context) ([]ChainControlData, error) {
+	incidents, err := p.ParseChainControls(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return p.parseChainControlDetails(incidents), nil
+}
+
+// parseChainControlDetails extracts detailed chain control info from incidents
+func (p *FeedParser) parseChainControlDetails(incidents []CaltransIncident) []ChainControlData {
+	var controls []ChainControlData
+
+	for _, incident := range incidents {
+		control := ChainControlData{
+			Coordinates: incident.Coordinates,
+		}
+
+		// Parse name: "Eastbound US 50 Chain Control level R-2"
+		control.Direction, control.Highway, control.Level = parseChainControlName(incident.Name)
+
+		// Parse description HTML for location, effective time, and requirements
+		control.LocationName, control.EffectiveTime, control.Description, control.LastUpdated, control.District, control.MessageID = parseChainControlDescription(incident.DescriptionHtml)
+
+		controls = append(controls, control)
+	}
+
+	return controls
+}
+
+// parseChainControlName extracts direction, highway, and level from the name
+// Example: "Eastbound US 50 Chain Control level R-2"
+func parseChainControlName(name string) (direction, highway, level string) {
+	// Extract direction
+	directionPattern := regexp.MustCompile(`(?i)^(Eastbound|Westbound|Northbound|Southbound)\s+`)
+	if match := directionPattern.FindStringSubmatch(name); len(match) > 1 {
+		direction = match[1]
+		name = directionPattern.ReplaceAllString(name, "")
+	}
+
+	// Extract level (R-1, R-2, R-3)
+	levelPattern := regexp.MustCompile(`(?i)R-?([123])`)
+	if match := levelPattern.FindStringSubmatch(name); len(match) > 1 {
+		level = "R" + match[1]
+	}
+
+	// Extract highway name (everything before "Chain Control")
+	highwayPattern := regexp.MustCompile(`(?i)^(.+?)\s+Chain\s+Control`)
+	if match := highwayPattern.FindStringSubmatch(name); len(match) > 1 {
+		highway = strings.TrimSpace(match[1])
+	}
+
+	return direction, highway, level
+}
+
+// parseChainControlDescription extracts details from the HTML description
+func parseChainControlDescription(html string) (locationName, effectiveTime, description, lastUpdated, district, messageID string) {
+	// Extract location name (first <p> tag content after the image)
+	// Pattern: <p align="left">Twin Bridges</p>
+	locationPattern := regexp.MustCompile(`<p[^>]*align="left"[^>]*>([^<]+)</p>`)
+	matches := locationPattern.FindAllStringSubmatch(html, -1)
+	if len(matches) > 0 {
+		locationName = strings.TrimSpace(matches[0][1])
+	}
+
+	// Extract R1/R2 description (second <p> tag with chains info)
+	if len(matches) > 1 {
+		description = strings.TrimSpace(matches[1][1])
+	}
+
+	// Extract effective time
+	// Pattern: Chain control effective from: 12/24/2025 08:19
+	effectivePattern := regexp.MustCompile(`Chain control effective from:\s*(\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2})`)
+	if match := effectivePattern.FindStringSubmatch(html); len(match) > 1 {
+		effectiveTime = parseChainControlTime(match[1])
+	}
+
+	// Extract last updated
+	// Pattern: Last updated: 12/24/2025 9:54am
+	lastUpdatedPattern := regexp.MustCompile(`Last updated:\s*(\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}[ap]m)`)
+	if match := lastUpdatedPattern.FindStringSubmatch(html); len(match) > 1 {
+		lastUpdated = parseChainControlTime(match[1])
+	}
+
+	// Extract district and message ID
+	// Pattern: District:3 Message ID:8780
+	metaPattern := regexp.MustCompile(`District:(\d+)\s+Message ID:(\d+)`)
+	if match := metaPattern.FindStringSubmatch(html); len(match) > 2 {
+		district = match[1]
+		messageID = match[2]
+	}
+
+	return locationName, effectiveTime, description, lastUpdated, district, messageID
+}
+
+// parseChainControlTime converts Caltrans time format to ISO 8601
+// Input: "12/24/2025 08:19" or "12/24/2025 9:54am"
+func parseChainControlTime(timeStr string) string {
+	timeStr = strings.TrimSpace(timeStr)
+
+	// Try format with am/pm: "12/24/2025 9:54am"
+	if t, err := time.Parse("1/2/2006 3:04pm", timeStr); err == nil {
+		return t.Format(time.RFC3339)
+	}
+	if t, err := time.Parse("1/2/2006 3:04am", timeStr); err == nil {
+		return t.Format(time.RFC3339)
+	}
+
+	// Try 24-hour format: "12/24/2025 08:19"
+	if t, err := time.Parse("1/2/2006 15:04", timeStr); err == nil {
+		return t.Format(time.RFC3339)
+	}
+
+	// Return original if parsing fails
+	return timeStr
 }
 
 // ParseLaneClosures processes lane closures KML feed  

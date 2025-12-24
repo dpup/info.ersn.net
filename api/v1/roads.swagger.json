@@ -164,6 +164,55 @@
       ],
       "default": "ALERT_TYPE_UNSPECIFIED"
     },
+    "v1ChainControlInfo": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "$ref": "#/definitions/v1ChainControlLevel",
+          "title": "R1, R2, or NONE"
+        },
+        "locationName": {
+          "type": "string",
+          "title": "Where chain control starts (e.g., \"Twin Bridges\")"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Latitude of chain control checkpoint"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "title": "Longitude of chain control checkpoint"
+        },
+        "effectiveTime": {
+          "type": "string",
+          "title": "When chain control went into effect (ISO 8601)"
+        },
+        "direction": {
+          "type": "string",
+          "title": "Direction of travel (e.g., \"Eastbound\")"
+        },
+        "description": {
+          "type": "string",
+          "title": "Human-readable requirements description"
+        }
+      },
+      "title": "ChainControlInfo provides detailed chain control status for a road"
+    },
+    "v1ChainControlLevel": {
+      "type": "string",
+      "enum": [
+        "CHAIN_CONTROL_LEVEL_UNSPECIFIED",
+        "CHAIN_CONTROL_LEVEL_NONE",
+        "CHAIN_CONTROL_LEVEL_R1",
+        "CHAIN_CONTROL_LEVEL_R2",
+        "CHAIN_CONTROL_LEVEL_R3"
+      ],
+      "default": "CHAIN_CONTROL_LEVEL_UNSPECIFIED",
+      "description": "- CHAIN_CONTROL_LEVEL_NONE: No chain control in effect\n - CHAIN_CONTROL_LEVEL_R1: Chains required except vehicles with snow tires\n - CHAIN_CONTROL_LEVEL_R2: Chains required except 4WD/AWD with snow tires on all wheels\n - CHAIN_CONTROL_LEVEL_R3: Chains required on all vehicles, no exceptions",
+      "title": "ChainControlLevel indicates the specific chain control requirement level"
+    },
     "v1ChainControlStatus": {
       "type": "string",
       "enum": [
@@ -300,7 +349,7 @@
         },
         "chainControl": {
           "$ref": "#/definitions/v1ChainControlStatus",
-          "title": "Chain control requirements"
+          "title": "Chain control requirements (legacy, use chain_control_info)"
         },
         "alerts": {
           "type": "array",
@@ -309,6 +358,10 @@
             "$ref": "#/definitions/v1RoadAlert"
           },
           "title": "Combined from multiple sources"
+        },
+        "chainControlInfo": {
+          "$ref": "#/definitions/v1ChainControlInfo",
+          "title": "Detailed chain control information"
         }
       },
       "title": "Data models"

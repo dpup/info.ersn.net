@@ -397,3 +397,137 @@ func TestParseCoordinateList(t *testing.T) {
 	})
 }
 
+func TestParseChainControlsDetailed(t *testing.T) {
+	parser := setupTestParser(t)
+
+	chainControls, err := parser.ParseChainControlsDetailed(context.Background())
+
+	require.NoError(t, err)
+	assert.Greater(t, len(chainControls), 0, "Should parse chain control data")
+
+	// Find a specific chain control to verify parsing
+	var usRoute50 *ChainControlData
+	for i := range chainControls {
+		if chainControls[i].Highway == "US 50" && chainControls[i].Direction == "Eastbound" {
+			usRoute50 = &chainControls[i]
+			break
+		}
+	}
+
+	if usRoute50 != nil {
+		// Verify structure
+		assert.Equal(t, "US 50", usRoute50.Highway)
+		assert.Equal(t, "Eastbound", usRoute50.Direction)
+		assert.Equal(t, "R2", usRoute50.Level)
+		assert.Equal(t, "Twin Bridges", usRoute50.LocationName)
+		assert.NotNil(t, usRoute50.Coordinates)
+		assert.InDelta(t, 38.81137, usRoute50.Coordinates.Latitude, 0.001)
+		assert.InDelta(t, -120.12263, usRoute50.Coordinates.Longitude, 0.001)
+		assert.NotEmpty(t, usRoute50.EffectiveTime)
+		assert.Contains(t, usRoute50.Description, "traction devices")
+		assert.NotEmpty(t, usRoute50.MessageID)
+		assert.Equal(t, "3", usRoute50.District)
+	}
+}
+
+func TestParseChainControlName(t *testing.T) {
+	tests := []struct {
+		name            string
+		input           string
+		expectedDir     string
+		expectedHighway string
+		expectedLevel   string
+	}{
+		{
+			name:            "US Route eastbound R2",
+			input:           "Eastbound US 50 Chain Control level R-2",
+			expectedDir:     "Eastbound",
+			expectedHighway: "US 50",
+			expectedLevel:   "R2",
+		},
+		{
+			name:            "Highway northbound R1",
+			input:           "Northbound Highway 89 Chain Control level R-1",
+			expectedDir:     "Northbound",
+			expectedHighway: "Highway 89",
+			expectedLevel:   "R1",
+		},
+		{
+			name:            "Highway southbound R2",
+			input:           "Southbound Highway 49 Chain Control level R-2",
+			expectedDir:     "Southbound",
+			expectedHighway: "Highway 49",
+			expectedLevel:   "R2",
+		},
+		{
+			name:            "Interstate westbound R3",
+			input:           "Westbound I-80 Chain Control level R-3",
+			expectedDir:     "Westbound",
+			expectedHighway: "I-80",
+			expectedLevel:   "R3",
+		},
+		{
+			name:            "Invalid format",
+			input:           "Some random text",
+			expectedDir:     "",
+			expectedHighway: "",
+			expectedLevel:   "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dir, highway, level := parseChainControlName(tt.input)
+			assert.Equal(t, tt.expectedDir, dir)
+			assert.Equal(t, tt.expectedHighway, highway)
+			assert.Equal(t, tt.expectedLevel, level)
+		})
+	}
+}
+
+func TestParseChainControlDescription(t *testing.T) {
+	tests := []struct {
+		name                 string
+		input                string
+		expectedLocation     string
+		expectedTime         string
+		expectedDescription  string
+		expectedLastUpdated  string
+		expectedDistrict     string
+		expectedMessageID    string
+	}{
+		{
+			name: "Standard chain control description",
+			input: `<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Twin Bridges</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8780</p>`,
+			expectedLocation:    "Twin Bridges",
+			expectedTime:        "2025-12-24T08:19:00Z",
+			expectedDescription: "Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).",
+			expectedLastUpdated: "2025-12-24T09:54:00Z",
+			expectedDistrict:    "3",
+			expectedMessageID:   "8780",
+		},
+		{
+			name: "R1 chain control description",
+			input: `<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Sattley</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:46</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8759</p>`,
+			expectedLocation:    "Sattley",
+			expectedTime:        "2025-12-24T09:46:00Z",
+			expectedDescription: "Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.",
+			expectedLastUpdated: "2025-12-24T09:54:00Z",
+			expectedDistrict:    "3",
+			expectedMessageID:   "8759",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			location, effectiveTime, description, lastUpdated, district, messageID := parseChainControlDescription(tt.input)
+			assert.Equal(t, tt.expectedLocation, location)
+			assert.Equal(t, tt.expectedTime, effectiveTime)
+			assert.Equal(t, tt.expectedDescription, description)
+			assert.Equal(t, tt.expectedLastUpdated, lastUpdated)
+			assert.Equal(t, tt.expectedDistrict, district)
+			assert.Equal(t, tt.expectedMessageID, messageID)
+		})
+	}
+}
+
