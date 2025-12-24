@@ -204,7 +204,7 @@
         },
         "description": {
           "type": "string",
-          "title": "Alert description text"
+          "title": "Original NWS alert description (preserved for reference)"
         },
         "tags": {
           "type": "array",
@@ -212,6 +212,19 @@
             "type": "string"
           },
           "title": "OpenWeatherMap alert tags"
+        },
+        "headline": {
+          "type": "string",
+          "description": "Single sentence summary, \u003c100 chars",
+          "title": "AI-enhanced fields for improved readability"
+        },
+        "summary": {
+          "type": "string",
+          "title": "2-3 sentences, plain text, traveler-focused"
+        },
+        "details": {
+          "type": "string",
+          "title": "Full description with minimal markdown formatting"
         }
       }
     },

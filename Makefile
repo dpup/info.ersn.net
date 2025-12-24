@@ -56,12 +56,15 @@ $(TEST_WEATHER_BINARY): proto
 	$(GOBUILD) -o $(TEST_WEATHER_BINARY) ./$(CMD_DIR)/test-weather
 
 # Generate protobuf code
+# Note: googleapis is a proto-only module (no Go code), so we download it explicitly with @latest
 proto:
 	@echo "Generating protobuf code..."
 	@mkdir -p $(BUILD_DIR) $(PROTO_DIR)
+	$(eval GOOGLEAPIS_DIR := $(shell go mod download -json github.com/googleapis/googleapis@latest | grep '"Dir"' | head -1 | sed 's/.*"Dir": "//;s/".*//'))
+	$(eval GRPC_GATEWAY_DIR := $(shell go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway/v2))
 	@PATH="$(shell go env GOPATH)/bin:$(PATH)" protoc --proto_path=$(PROTO_DIR) \
-		--proto_path=$(shell go list -f '{{ .Dir }}' -m github.com/googleapis/googleapis) \
-		--proto_path=$(shell go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway/v2) \
+		--proto_path=$(GOOGLEAPIS_DIR) \
+		--proto_path=$(GRPC_GATEWAY_DIR) \
 		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		--grpc-gateway_out=$(PROTO_DIR) --grpc-gateway_opt=paths=source_relative \

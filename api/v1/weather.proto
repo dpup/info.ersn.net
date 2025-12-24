@@ -103,8 +103,13 @@ message WeatherAlert {
   string event = 3;                          // Alert event type ("Heat Advisory", "Winter Storm Warning")
   int64 start_timestamp = 4;                 // Unix timestamp when effective
   int64 end_timestamp = 5;                   // Unix timestamp when expires
-  string description = 6;                    // Alert description text
+  string description = 6;                    // Original NWS alert description (preserved for reference)
   repeated string tags = 7;                  // OpenWeatherMap alert tags
+
+  // AI-enhanced fields for improved readability
+  string headline = 8;                       // Single sentence summary, <100 chars
+  string summary = 9;                        // 2-3 sentences, plain text, traveler-focused
+  string details = 10;                       // Full description with minimal markdown formatting
 }
 
 // Enumerations

@@ -2,32 +2,37 @@ package services
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
+	"time"
 
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"github.com/dpup/prefab/logging"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
 	"github.com/dpup/info.ersn.net/server/internal/config"
+	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
 )
 
 // WeatherService implements the gRPC WeatherService
-// Implementation per tasks.md T017 and data-model.md WeatherData entity  
+// Implementation per tasks.md T017 and data-model.md WeatherData entity
 type WeatherService struct {
 	api.UnimplementedWeatherServiceServer
-	weatherClient *weather.Client
-	cache         *cache.Cache
-	config        *config.Config
+	weatherClient  *weather.Client
+	cache          *cache.Cache
+	config         *config.Config
+	alertEnhancer  alerts.WeatherAlertEnhancer
 }
 
 // NewWeatherService creates a new WeatherService
-func NewWeatherService(weatherClient *weather.Client, cache *cache.Cache, config *config.Config) *WeatherService {
+func NewWeatherService(weatherClient *weather.Client, cache *cache.Cache, config *config.Config, alertEnhancer alerts.WeatherAlertEnhancer) *WeatherService {
 	return &WeatherService{
-		weatherClient: weatherClient,
-		cache:         cache,
-		config:        config,
+		weatherClient:  weatherClient,
+		cache:          cache,
+		config:         config,
+		alertEnhancer:  alertEnhancer,
 	}
 }
 
@@ -214,16 +219,24 @@ func (s *WeatherService) processWeatherLocation(ctx context.Context, location co
 	// Set location ID and name from config
 	weatherData.LocationId = location.ID
 	weatherData.LocationName = location.Name
-	
+
 	// Get weather alerts for this location
-	alerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
+	locationAlerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
 	if err != nil {
 		logging.Errorw(ctx, "Failed to get weather alerts", "location_id", location.ID, "error", err)
 		// Continue without alerts rather than failing
-		alerts = nil
+		locationAlerts = nil
 	}
 
-	weatherData.Alerts = alerts
+	// Enhance alerts with AI if enhancer is available
+	for _, alert := range locationAlerts {
+		alert.Id = fmt.Sprintf("%s_%s", location.ID, alert.Id)
+		if s.alertEnhancer != nil {
+			s.enhanceWeatherAlert(ctx, alert)
+		}
+	}
+
+	weatherData.Alerts = locationAlerts
 
 	return weatherData, nil
 }
@@ -234,20 +247,97 @@ func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.Weath
 
 	// Process each configured location
 	for _, location := range s.config.Weather.Locations {
-		alerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
+		locationAlerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
 		if err != nil {
 			logging.Errorw(ctx, "Failed to get weather alerts for location", "location_id", location.ID, "error", err)
 			// Continue processing other locations even if one fails
 			continue
 		}
-		
-		// Add location context to alert IDs to avoid conflicts
-		for _, alert := range alerts {
+
+		// Add location context to alert IDs and enhance each alert
+		for _, alert := range locationAlerts {
 			alert.Id = fmt.Sprintf("%s_%s", location.ID, alert.Id)
+
+			// Enhance the alert with AI if enhancer is available
+			if s.alertEnhancer != nil {
+				s.enhanceWeatherAlert(ctx, alert)
+			}
 		}
-		
-		allAlerts = append(allAlerts, alerts...)
+
+		allAlerts = append(allAlerts, locationAlerts...)
 	}
 
 	return allAlerts, nil
+}
+
+// enhanceWeatherAlert enhances a single weather alert with AI-generated content
+// Uses content-based caching to avoid duplicate OpenAI calls
+func (s *WeatherService) enhanceWeatherAlert(ctx context.Context, alert *api.WeatherAlert) {
+	// Generate content hash for cache key
+	contentHash := s.hashWeatherAlertContent(alert)
+	cacheKey := fmt.Sprintf("weather_alert_enhanced:%s", contentHash)
+
+	// Check cache first
+	var cachedEnhancement alerts.EnhancedWeatherAlert
+	if found, err := s.cache.Get(cacheKey, &cachedEnhancement); err == nil && found {
+		logging.Infow(ctx, "Using cached weather alert enhancement", "hash", contentHash[:8])
+		alert.Headline = cachedEnhancement.Headline
+		alert.Summary = cachedEnhancement.Summary
+		alert.Details = cachedEnhancement.Details
+		return
+	}
+
+	// Cache miss - call OpenAI enhancement
+	logging.Infow(ctx, "Enhancing weather alert with AI", "event", alert.Event, "hash", contentHash[:8])
+
+	rawAlert := alerts.RawWeatherAlert{
+		ID:          alert.Id,
+		Event:       alert.Event,
+		SenderName:  alert.SenderName,
+		Description: alert.Description,
+		Tags:        alert.Tags,
+		Start:       alert.StartTimestamp,
+		End:         alert.EndTimestamp,
+	}
+
+	enhanced, err := s.alertEnhancer.EnhanceWeatherAlert(ctx, rawAlert)
+	if err != nil {
+		logging.Errorw(ctx, "Weather alert enhancement failed, using original", "error", err)
+		// Fall back to using original description for all fields
+		alert.Headline = alert.Event
+		alert.Summary = s.truncateText(alert.Description, 200)
+		alert.Details = alert.Description
+		return
+	}
+
+	// Apply enhancement to alert
+	alert.Headline = enhanced.Headline
+	alert.Summary = enhanced.Summary
+	alert.Details = enhanced.Details
+
+	// Cache the enhancement with 24-hour TTL
+	if err := s.cache.Set(cacheKey, enhanced, 24*time.Hour, "weather_alert_enhanced"); err != nil {
+		logging.Errorw(ctx, "Failed to cache weather alert enhancement", "error", err)
+	}
+}
+
+// hashWeatherAlertContent creates a content hash for weather alert deduplication
+func (s *WeatherService) hashWeatherAlertContent(alert *api.WeatherAlert) string {
+	// Weather alerts are identified by event type + description content
+	// Timestamps change but content stays the same for the same alert
+	contentSignature := fmt.Sprintf("%s|%s|%s",
+		alert.Event,
+		alert.SenderName,
+		alert.Description,
+	)
+	hash := sha256.Sum256([]byte(contentSignature))
+	return fmt.Sprintf("%x", hash)
+}
+
+// truncateText truncates text to a maximum length with ellipsis
+func (s *WeatherService) truncateText(text string, maxLen int) string {
+	if len(text) <= maxLen {
+		return text
+	}
+	return text[:maxLen-3] + "..."
 }
