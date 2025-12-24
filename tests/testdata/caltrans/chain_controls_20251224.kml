@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xsi:schemaLocation="http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" xmlns="http://www.opengis.net/kml/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Document>
+        <name>Caltrans Chain Controls</name>
+        <Style id="notclosed">
+            <IconStyle>
+                <colorMode>normal</colorMode>
+                <Icon>
+                    <href>https://quickmap.dot.ca.gov/img/cc32x32.png</href>
+                </Icon>
+                <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+            </IconStyle>
+            <LabelStyle>
+                <scale>0</scale>
+            </LabelStyle>
+        </Style>
+        <Style id="full-closure">
+            <IconStyle>
+                <colorMode>normal</colorMode>
+                <Icon>
+                    <href>https://quickmap.dot.ca.gov/img/full-closure-32x32.png</href>
+                </Icon>
+                <hotSpot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+            </IconStyle>
+            <LabelStyle>
+                <scale>0</scale>
+            </LabelStyle>
+        </Style>
+        <Placemark>
+            <name>Eastbound US 50 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Twin Bridges</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8780</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.12263,38.81137</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Ebrights</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:48</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8877</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.072143,38.933845</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Bliss State Park</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:48</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8875</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.100198,38.975408</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Emerald Bay</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:48</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8876</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.085238,38.951367</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Tahoe City</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:50</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8869</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.14696,39.1661</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Olympic Valley</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:50</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8868</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.20086,39.20212</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Olympic Valley</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:14</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8867</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.1988,39.20648</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Truckee - West River St</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:14</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8866</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.20396,39.31522</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Hobart Mills</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 07:15</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8863</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.18773,39.39797</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Little Truckee Summit</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 07:15</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8862</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.28199,39.50526</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Little Truckee Summit</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:49</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8861</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.28199,39.50526</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 89 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Onion Valley - 17 Miles n/o Truckee</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:49</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8860</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.28833,39.52546</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Luther Pass</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:02</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8879</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.93968,38.787944</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Christmas Valley</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:02</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8878</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.014996,38.812668</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 49 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Sattley</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:46</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8759</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.435848,39.624511</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 49 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Yuba Pass Summit</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:46</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8758</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.489347,39.617337</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 28 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Nevada Stateline</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:26</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8731</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.006496,39.227059</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 28 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Lardin Way (Dollar Hill)</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:26</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8730</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.09307,39.207873</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 28 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Lardin Way (Dollar Hill)</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:26</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8729</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.094146,39.207083</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 28 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Tahoe City (SR28/89 Jct)</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:26</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8728</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.143396,39.169015</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 267 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Northstar Rd</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:29</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8885</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.10411,39.286015</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 267 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Kings Beach - (Jct. 267/28 - Stewart Way)</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:29</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8884</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.037951,39.25274</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 20 Chain Control level TS</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Nevada St. - Nevada City</p><p align="left">All trucks must stop at the chain check point, Caltrans is currently screening for chains. Drivers must have maximum chains in their possession in order to proceed. Trucks without chains will be turned around. Permit loads are prohibited over the summit.</p><p>Chain control effective from: 12/24/2025 00:52</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8718</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-121.010858,39.273057</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Interstate 80 Chain Control level TS</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Mogul</p><p align="left">All trucks must stop at the chain check point, Caltrans is currently screening for chains. Drivers must have maximum chains in their possession in order to proceed. Trucks without chains will be turned around. Permit loads are prohibited over the summit.</p><p>Chain control effective from: 12/23/2025 22:48</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8908</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.926323,39.513921</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Interstate 80 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Rainbow</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 04:34</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8837</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.49317,39.31176</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Interstate 80 Chain Control level MAX</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Rainbow</p><p align="left">Truck chain requirements are maximum for all trucks.</p><p>Chain control effective from: 12/24/2025 09:20</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8838</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.49317,39.31176</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Interstate 80 Chain Control level MAX</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Kingvale</p><p align="left">Truck chain requirements are maximum for all trucks.</p><p>Chain control effective from: 12/24/2025 09:20</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8836</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.44992,39.31392</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Interstate 80 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Kingvale</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 04:34</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8835</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.44992,39.31392</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Interstate 80 Chain Control level MAX</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">DLI (Donner Lake Interchange)</p><p align="left">Truck chain requirements are maximum for all trucks.</p><p>Chain control effective from: 12/24/2025 09:20</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8834</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.27931,39.32886</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Interstate 80 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">DLI (Donner Lake Interchange)</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 04:34</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8833</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.27931,39.32886</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Interstate 80 Chain Control level MAX</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Truckee</p><p align="left">Truck chain requirements are maximum for all trucks.</p><p>Chain control effective from: 12/24/2025 09:01</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8813</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.22045,39.32371</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Interstate 80 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Truckee</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:58</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8812</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.22045,39.32371</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Interstate 80 Chain Control level MAX</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">DLI (Donner Lake Interchange)</p><p align="left">Truck chain requirements are maximum for all trucks.</p><p>Chain control effective from: 12/24/2025 09:01</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8811</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.28941,39.331</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Interstate 80 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Kingvale</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:01</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8808</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.44614,39.31421</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Interstate 80 Chain Control level MAX</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Kingvale</p><p align="left">Truck chain requirements are maximum for all trucks.</p><p>Chain control effective from: 12/24/2025 09:22</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8809</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.44614,39.31421</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Interstate 80 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">DLI (Donner Lake Interchange)</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:01</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8810</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.28941,39.331</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Interstate 80 Chain Control level TS</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Applegate</p><p align="left">All trucks must stop at the chain check point, Caltrans is currently screening for chains. Drivers must have maximum chains in their possession in order to proceed. Trucks without chains will be turned around. Permit loads are prohibited over the summit.</p><p>Chain control effective from: 12/23/2025 22:10</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8786</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.994743,39.002148</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound US 50 Chain Control level MIN</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Twin Bridges</p><p align="left">Truck chain requirements are minimum for all trucks.</p><p>Chain control effective from: 12/24/2025 08:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8781</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.12263,38.81137</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound US 50 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Meyers</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8782</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.02548,38.84954</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound US 50 Chain Control level MIN</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Meyers</p><p align="left">Truck chain requirements are minimum for all trucks.</p><p>Chain control effective from: 12/24/2025 08:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:3 Message ID:8783</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.02548,38.84954</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 2 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">5 miles West of Big Pines thru to  LA/SBD Co Line</p><p align="left">Closed to traffic.</p><p>Effective from: 12/24/2025 06:09</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:8 Message ID:176</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-117.75145,34.37347</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 2 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 39 Islip Saddle thru to  5 miles West of Big Pines</p><p align="left">Closed to traffic.</p><p>Effective from: 12/24/2025 04:14</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:8 Message ID:175</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-117.85081,34.35694</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 108 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 395</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 07:11</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3332</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.452226,38.348375</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 108 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">3.8 Mi. W of Jct. 395 / USMC Entry Gate</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 07:05</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3330</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.505677,38.358288</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 167 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">CA/NV State Line</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 08:56</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3320</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.799857,38.159843</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 167 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 395</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 07:41</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3311</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.158794,38.045897</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 158 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Nevada St. / 3.5 Mi. N of June Lake Village</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 04:32</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3308</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.118441,37.764422</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Old Mammoth Rd.</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 01:59</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3298</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.965855,37.647056</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Mammoth Welcome Center / 2.5 Mi. W of Jct. 395</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 01:48</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3299</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.9605,37.6467</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">1 Mi W of Jct. 395 / 0.3 Mi. E of Meridian Blvd. _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (15)0</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 03:06</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3300</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.9436,37.6419</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">1 Mi W of Jct. 395 / 1.5 Mi. E of Meridian Blvd.</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 01:53</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3301</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.941,37.6416</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 395</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 03:06</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3302</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.918724,37.640787</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 158 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">South Jct. 395</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:33</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3303</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.05382,37.81286</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 158 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">June Lake Firehouse / E June Lake Town Limits</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 04:32</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3304</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.072719,37.783669</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 158 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Gull Lake Rd.</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 04:32</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3305</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.07762,37.776495</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 158 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">June Mtn. Ski Area</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 04:32</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3306</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.08985,37.770394</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 158 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">June Mtn. Ski Area</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 04:32</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3307</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.091592,37.769569</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Lake Mary Rd. / 4 Mi. W of Jct. 395</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 01:47</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3297</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.982413,37.648723</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Mammoth Mtn. Main Lodge / Minaret Substation</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:48</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3295</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.013596,37.648897</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 203 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Forest Trail Rd.</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:48</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3296</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.984938,37.653311</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 168 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">168W 0.3 Mi. E of Aspendell</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 05:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3258</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.59413,37.24442</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 168 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">168W 0.1 Mi. E of South Lake Rd. / 14.1 Mi. W of Bishop</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 05:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3259</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.579311,37.257935</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 168 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">168W 11.4 Mi. W of Bishop</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 05:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3260</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.556135,37.289619</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Walker Cyn. / 20 Mi. S of Nevada State Line_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(25)20</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:42</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3244</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.45294,38.43528</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Sonora MTCE Stn. / 26 Mi. S of Nevada State Line _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (21)19 _ (17)42</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:42</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3243</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.44737,38.3542</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 108  / 26 Mi. S of Nevada State Line _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(25)26</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 06:57</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3242</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.45285,38.34809</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Rattlesnake / 8 Mi. N of Bridgeport _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(21)11 _ (17)33</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 02:15</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3240</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.322447,38.340917</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Burcham Flat Rd / 3 Mi. S of Jct. 108 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (25)29</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 02:15</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3241</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.4128,38.35403</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Buckeye Rd. / 3 Mi. N of Bridgeport_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(21)5 _ (17)28</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 03:25</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3239</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.28644,38.27346</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 270 / Bodie Rd. _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(20)4 _ (25)50</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3236</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.19486,38.17515</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">10 Mi. N of Lee Vining / 16 Mi. S of Bridgeport _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (17)9 _ (15)35 _ (14)47</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3233</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.160426,38.08463</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">11 Mi. S of Bridgeport / 1 Mi. N of Conway Summit_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(20)9</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3234</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.1774,38.10804</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Bodie Flats / 8 Mi. S of Bridgeport_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(20)6</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3235</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.186151,38.151127</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Foot of Conway / 8 Mi. N of Lee Vining _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(17)7_ (15)34 _ (14)45</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:54</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3232</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.16936,38.06741</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">S Jct. 158 to June Lake_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (20)34</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:06</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3224</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.05299,37.81206</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">S Jct. 158 to June Lake_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(15)14 _ (14)26</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:53</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3225</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.05414,37.81346</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Sand House / 8 Mi. S of Lee Vining ) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (20)32</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 00:46</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3226</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.07508,37.83755</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Lee Vining / JNO High School _ _ _ _ _ _ _ _ _ _ _ __ _ _ _ _ _ _ _ _ _ _ _ _ _ _(17)0 _ (15)26 _ (14)38</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 08:21</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3228</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.12447,37.96402</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Lee Vining City Limits_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (20)23</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 08:59</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3229</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.11772,37.95196</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Mono Lake / 2 Mi. N of Lee Vining_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(14)39_(20)21</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 09:25</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3230</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.137978,37.97998</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 167 / Pole Line Rd. _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (20)16</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 05:38</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3231</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.16047,38.04464</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Crestview MTCE Stn. / 6 Mi. S of S Jct. 158_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(20)40</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 02:17</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3222</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.984,37.751</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Hartly Springs / 2 Mi. S of S Jct. 158 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (20)36</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:06</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3223</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.03457,37.79215</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Crestview MTCE Stn. / 8 Mi. N of Jct. 203 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(15)8 _ (14)20 _ (10)48</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:30</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3221</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.983,37.7507</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Scenic Loop Rc. / 4.5 Mi. N of Jct. 203 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(20)44</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 02:52</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3220</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.95314,37.70857</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Sandshed / 17 Mi. N of Bishop _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (10)18</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 08:30</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3209</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.58301,37.50946</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Scenic Loop Rd. / 4.5 Mi. N of Jct. 203 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(15)5 _ (14)17 _ (10)45</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 02:52</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3219</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.95247,37.709936</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">S End of Trees / 1 Mi. N of 203 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(15)1 _ (14)13 _ (10)41</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 03:00</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3218</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.92491,37.65647</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Jct. 203 / Mammoth Off-Ramp _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(15)0 _ (20)49</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 03:47</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3217</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.91254,37.639</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Sherwin Crk. Rd. / 1 Mi. S of Jct. 203_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(14)10_(10)38</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 03:16</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3216</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.89225,37.63673</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Benton Crossing Rd. / 6 Mi. S of Jct. 203_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(14)6 _ (10)34</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 05:01</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3215</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.81348,37.61582</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Rock Crk Rd / 15 Mi. S of Jct. 203_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ (15)15</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 08:21</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3211</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.67084,37.56059</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound US 395 Chain Control level R-1</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">Windmill / 20 Mi. N of Bishop _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _(10)20</p><p align="left">Chains are required on all vehicles except passenger vehicles and light-duty trucks under 6,000 pounds gross weight and equipped with snow tires on at least two drive wheels. Chains must be carried by vehicles using snow tires. All vehicles towing trailers must have chains on one drive axle. Trailers with brakes must have chains on at least one axle.</p><p>Chain control effective from: 12/24/2025 08:30</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:9 Message ID:3210</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-118.63162,37.53271</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 120 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">CRANE FLAT RD (closure gate in park, not chain sign)</p><p align="left">Closed to traffic.</p><p>Effective from: 11/12/2025 18:01</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2650</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-119.803511,37.747246</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 108 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">KENNEDY MEADOWS - SONORA PASS</p><p align="left">Closed to traffic.</p><p>Effective from: 12/16/2025 12:26</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2638</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-119.75371,38.32572</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 108 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">EAGLE MEADOWS RD</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:38</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2635</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.92533,38.32252</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 108 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">EAGLE MEADOWS RD</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:38</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2634</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.92533,38.32251</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 4 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">TAMARACK</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:20</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2540</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.07671,38.43934</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 4 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">TAMARACK</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:38</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2539</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.07751,38.43711</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 4 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">BIG MEADOWS</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 09:38</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2538</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.10318,38.41775</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">KIRKWOOD</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 01:03</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2596</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.0782,38.7004</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">KIRKWOOD</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 01:03</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2595</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.08017,38.69997</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">MARTIN MEADOW</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 01:03</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2593</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.1201,38.6969</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">SILVER LAKE</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 01:03</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2592</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.12218,38.66776</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">SILVER LAKE</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 00:38</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2591</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.12223,38.66761</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">IRON MT RD</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 00:38</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2590</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.1982,38.62515</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">IRON MT RD</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:51</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2589</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.20005,38.62498</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">PEDDLER VISTA</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 08:51</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2588</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.2693,38.5634</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 89 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">MONITOR PASS</p><p align="left">Closed to traffic.</p><p>Effective from: 12/16/2025 13:05</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2598</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-119.72635,38.66055</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">PICKETTS JUNCTION</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 01:51</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2599</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.9191,38.7794</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 89 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">ALP/ELD CNTY LINE LUTHER PASS</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 01:51</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2600</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.9428,38.7871</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">PICKETT'S JUNCTION</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:30</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2569</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.9278,38.7751</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">RED LAKE CREEK</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/23/2025 21:34</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2567</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-119.95523,38.71362</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 88 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">KIRKWOOD (ALP)</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/23/2025 21:34</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2565</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.0715,38.7027</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 4 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">JCT HWY 89 - EBBETTS PASS</p><p align="left">Closed to traffic.</p><p>Effective from: 11/19/2025 10:00</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2518</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-119.72606,38.65943</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 4 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">MOUNT REBA ROAD</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2513</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.02152,38.4816</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 4 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">BEAR VALLEY</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2512</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.04283,38.46095</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Eastbound Highway 4 Road Closed</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/full-closure-32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">MOUNT REBA ROAD - EBBETTS PASS</p><p align="left">Closed to traffic.</p><p>Effective from: 12/23/2025 22:24</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2514</p>]]></description>
+            <styleUrl>#full-closure</styleUrl>
+            <Point>
+                <coordinates>-120.01496,38.48042</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Westbound Highway 4 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">BEAR VALLEY</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:19</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2511</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.0448,38.4605</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Southbound Highway 207 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">MT. REBA SUMMIT</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:20</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2659</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.0345,38.4921</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark>
+            <name>Northbound Highway 207 Chain Control level R-2</name>
+            <description><![CDATA[<img src="https://quickmap.dot.ca.gov/img/cc32x32.png" style="float:left"><div style=\"font-size:1.15em;\"><p align="left">JCT HWY 4</p><p align="left">Chains or traction devices are required on all vehicles except four wheel/ all wheel drive vehicles with snow-tread tires on all four wheels. (Four wheel/all wheel drive vehicles must carry traction devices in chain control areas).</p><p>Chain control effective from: 12/24/2025 02:20</p><p>Information courtesy of <img src="https://quickmap.dot.ca.gov/QM/imagesquickmap/caltranslogo.png" height=20></p><p class="update-stamp">Last updated: 12/24/2025 9:54am</p></div><p style="font-size:xx-small;">District:10 Message ID:2658</p>]]></description>
+            <styleUrl>#notclosed</styleUrl>
+            <Point>
+                <coordinates>-120.0192,38.484</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>
