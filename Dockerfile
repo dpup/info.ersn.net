@@ -24,10 +24,13 @@ RUN go mod download
 COPY api/ ./api/
 
 # Generate protobuf code and OpenAPI specs
+# Note: googleapis is a proto-only module (no Go code), so we download it explicitly with @latest
 RUN mkdir -p bin api/v1 && \
+    GOOGLEAPIS_DIR=$(go mod download -json github.com/googleapis/googleapis@latest | grep '"Dir"' | head -1 | sed 's/.*"Dir": "//;s/".*//') && \
+    GRPC_GATEWAY_DIR=$(go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway/v2) && \
     PATH="/go/bin:${PATH}" protoc --proto_path=api/v1 \
-        --proto_path=$(go list -f '{{ .Dir }}' -m github.com/googleapis/googleapis) \
-        --proto_path=$(go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway/v2) \
+        --proto_path=${GOOGLEAPIS_DIR} \
+        --proto_path=${GRPC_GATEWAY_DIR} \
         --go_out=api/v1 --go_opt=paths=source_relative \
         --go-grpc_out=api/v1 --go-grpc_opt=paths=source_relative \
         --grpc-gateway_out=api/v1 --grpc-gateway_opt=paths=source_relative \

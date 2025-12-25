@@ -184,16 +184,42 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.WeatherData, error) {
 	var weatherDataList []*api.WeatherData
 
+	// Get existing cached data to preserve on per-location failures
+	var existingData []*api.WeatherData
+	existingDataMap := make(map[string]*api.WeatherData)
+	cacheKey := "weather:all"
+	if found, _ := s.cache.Get(cacheKey, &existingData); found {
+		for _, wd := range existingData {
+			existingDataMap[wd.LocationId] = wd
+		}
+	}
+
+	logging.Infow(ctx, "Starting weather refresh", "location_count", len(s.config.Weather.Locations))
+
 	// Process each configured location
-	for _, location := range s.config.Weather.Locations {
+	for i, location := range s.config.Weather.Locations {
+		logging.Infow(ctx, "Processing weather location", "index", i, "location_id", location.ID, "location_name", location.Name)
+
 		weatherData, err := s.processWeatherLocation(ctx, location)
 		if err != nil {
-			logging.Errorw(ctx, "Failed to process weather for location", "location_id", location.ID, "error", err)
-			// Continue processing other locations even if one fails
+			logging.Errorw(ctx, "Failed to process weather for location",
+				"location_id", location.ID,
+				"location_name", location.Name,
+				"error", err)
+			// Try to preserve existing cached data for this location
+			if existing, ok := existingDataMap[location.ID]; ok {
+				logging.Infow(ctx, "Preserving stale weather data for location", "location_id", location.ID)
+				weatherDataList = append(weatherDataList, existing)
+			}
 			continue
 		}
 		weatherDataList = append(weatherDataList, weatherData)
+		logging.Infow(ctx, "Successfully processed weather location", "location_id", location.ID)
 	}
+
+	logging.Infow(ctx, "Weather refresh complete",
+		"total_locations", len(s.config.Weather.Locations),
+		"successful_locations", len(weatherDataList))
 
 	if len(weatherDataList) == 0 {
 		return nil, fmt.Errorf("no weather data could be processed")
