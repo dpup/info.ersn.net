@@ -180,10 +180,14 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 		chainControls = nil
 	}
 
+	// Fetch road conditions from roads.dot.ca.gov for each unique highway
+	roadConditionsByHighway := s.fetchRoadConditions(ctx)
+
 	logging.Infow(ctx, "Retrieved Caltrans incidents for all roads",
 		"lane_closures", len(laneClosures),
 		"chp_incidents", len(chpIncidents),
-		"chain_controls", len(chainControls))
+		"chain_controls", len(chainControls),
+		"road_conditions_highways", len(roadConditionsByHighway))
 
 	// Build routes and collect traffic data for all monitored roads
 	var allRoutes []routing.Route
@@ -229,7 +233,14 @@ func (s *RoadsService) refreshRoadData(ctx context.Context) ([]*api.Road, error)
 		routeAlerts := alertsByRoute[route.ID]
 		traffic := trafficDataMap[monitoredRoad.ID]
 
-		road, err := s.buildRoadFromRouteAndAlerts(ctx, monitoredRoad, route, routeAlerts, traffic, chainControls)
+		// Get road conditions for this road's highway
+		hwNum := extractHighwayNumber(monitoredRoad.Name)
+		var roadConditions []caltrans.RoadCondition
+		if hwNum != "" {
+			roadConditions = roadConditionsByHighway[hwNum]
+		}
+
+		road, err := s.buildRoadFromRouteAndAlerts(ctx, monitoredRoad, route, routeAlerts, traffic, chainControls, roadConditions)
 		if err != nil {
 			logging.Errorw(ctx, "Failed to build road", "road_id", monitoredRoad.ID, "error", err)
 			continue
@@ -376,7 +387,7 @@ func (s *RoadsService) deduplicateAlerts(ctx context.Context, classifications []
 }
 
 // buildRoadFromRouteAndAlerts builds a complete road from route info and classified alerts
-func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitoredRoad config.MonitoredRoad, route routing.Route, classifiedAlerts []routing.ClassifiedAlert, traffic trafficData, chainControls []caltrans.ChainControlData) (*api.Road, error) {
+func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitoredRoad config.MonitoredRoad, route routing.Route, classifiedAlerts []routing.ClassifiedAlert, traffic trafficData, chainControls []caltrans.ChainControlData, roadConditions []caltrans.RoadCondition) (*api.Road, error) {
 	// Use the pre-fetched traffic data
 	durationMins := traffic.DurationMins
 	distanceKm := traffic.DistanceKm
@@ -431,6 +442,9 @@ func (s *RoadsService) buildRoadFromRouteAndAlerts(ctx context.Context, monitore
 			}
 		}
 	}
+
+	// Apply road conditions from roads.dot.ca.gov (closures, chain controls)
+	s.applyRoadConditions(ctx, monitoredRoad, roadConditions, &roadStatus, &chainControl, &statusExplanation, &enhancedAlerts)
 
 	// Find chain control info for this route
 	chainControlInfo = s.findChainControlForRoute(ctx, route, chainControls)
@@ -1137,6 +1151,127 @@ func (s *RoadsService) chainControlToString(chainControl api.ChainControlStatus)
 		return "prohibited"
 	default:
 		return "none"
+	}
+}
+
+// fetchRoadConditions fetches road conditions for each unique highway in the monitored roads
+func (s *RoadsService) fetchRoadConditions(ctx context.Context) map[string][]caltrans.RoadCondition {
+	result := make(map[string][]caltrans.RoadCondition)
+
+	// Collect unique highway numbers
+	seen := make(map[string]bool)
+	for _, road := range s.config.Roads.MonitoredRoads {
+		hwNum := extractHighwayNumber(road.Name)
+		if hwNum == "" || seen[hwNum] {
+			continue
+		}
+		seen[hwNum] = true
+
+		conditions, err := s.caltransClient.ParseRoadConditions(ctx, hwNum)
+		if err != nil {
+			logging.Errorw(ctx, "Failed to fetch road conditions",
+				"highway", hwNum, "error", err)
+			continue
+		}
+
+		if len(conditions) > 0 {
+			result[hwNum] = conditions
+			logging.Infow(ctx, "Fetched road conditions",
+				"highway", hwNum,
+				"conditions", len(conditions))
+		}
+	}
+
+	return result
+}
+
+// applyRoadConditions processes road conditions from roads.dot.ca.gov and updates road status
+func (s *RoadsService) applyRoadConditions(ctx context.Context, monitoredRoad config.MonitoredRoad, conditions []caltrans.RoadCondition, roadStatus *api.RoadStatus, chainControl *api.ChainControlStatus, statusExplanation *string, alerts *[]*api.RoadAlert) {
+	if len(conditions) == 0 {
+		return
+	}
+
+	for _, condition := range conditions {
+		isOnRoute := caltrans.MatchConditionToSegment(condition, monitoredRoad.Section, monitoredRoad.LocationKeywords)
+
+		classification := api.AlertClassification_NEARBY
+		if isOnRoute {
+			classification = api.AlertClassification_ON_ROUTE
+		}
+
+		logging.Infow(ctx, "Processing road condition",
+			"road_id", monitoredRoad.ID,
+			"type", condition.Type,
+			"on_route", isOnRoute,
+			"description", condition.Description)
+
+		// Create alert from condition
+		alert := s.buildRoadConditionAlert(condition, classification)
+		*alerts = append(*alerts, alert)
+
+		// Only update road status for ON_ROUTE conditions
+		if !isOnRoute {
+			continue
+		}
+
+		switch condition.Type {
+		case caltrans.CONDITION_CLOSURE:
+			*roadStatus = api.RoadStatus_CLOSED
+			*statusExplanation = condition.Description
+			logging.Infow(ctx, "Road condition: CLOSED",
+				"road_id", monitoredRoad.ID,
+				"reason", condition.Reason,
+				"description", condition.Description)
+
+		case caltrans.CONDITION_CHAIN:
+			if *chainControl != api.ChainControlStatus_REQUIRED {
+				*chainControl = api.ChainControlStatus_REQUIRED
+			}
+			logging.Infow(ctx, "Road condition: chains required",
+				"road_id", monitoredRoad.ID,
+				"description", condition.Description)
+
+		case caltrans.CONDITION_RESTRICTION:
+			if *roadStatus != api.RoadStatus_CLOSED {
+				*roadStatus = api.RoadStatus_RESTRICTED
+				if *statusExplanation == "" {
+					*statusExplanation = condition.Description
+				}
+			}
+		}
+	}
+}
+
+// buildRoadConditionAlert creates a RoadAlert from a road condition
+func (s *RoadsService) buildRoadConditionAlert(condition caltrans.RoadCondition, classification api.AlertClassification) *api.RoadAlert {
+	alertType := api.AlertType_CLOSURE
+	severity := api.AlertSeverity_CRITICAL
+
+	switch condition.Type {
+	case caltrans.CONDITION_CLOSURE:
+		alertType = api.AlertType_CLOSURE
+		severity = api.AlertSeverity_CRITICAL
+	case caltrans.CONDITION_CHAIN:
+		alertType = api.AlertType_WEATHER
+		severity = api.AlertSeverity_WARNING
+	case caltrans.CONDITION_RESTRICTION:
+		alertType = api.AlertType_CLOSURE
+		severity = api.AlertSeverity_WARNING
+	case caltrans.CONDITION_INFO:
+		alertType = api.AlertType_ALERT_TYPE_UNSPECIFIED
+		severity = api.AlertSeverity_INFO
+	}
+
+	return &api.RoadAlert{
+		Type:           alertType,
+		Severity:       severity,
+		Classification: classification,
+		Title:          fmt.Sprintf("SR %s Road Condition", condition.Highway),
+		Description:    condition.Description,
+		Metadata: map[string]string{
+			"source": "roads.dot.ca.gov",
+			"reason": condition.Reason,
+		},
 	}
 }
 
