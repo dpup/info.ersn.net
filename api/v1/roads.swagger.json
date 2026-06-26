@@ -57,15 +57,15 @@
         ]
       }
     },
-    "/api/v1/roads": {
+    "/api/v1/metrics": {
       "get": {
-        "summary": "ListRoads returns current conditions for all configured roads",
-        "operationId": "RoadsService_ListRoads",
+        "summary": "GetProcessingMetrics returns alert processing metrics.\nMapped to /api/v1/metrics (not /api/v1/roads/metrics) so it does not collide\nwith the /api/v1/roads/{road_id} id space.",
+        "operationId": "RoadsService_GetProcessingMetrics",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListRoadsResponse"
+              "$ref": "#/definitions/v1ProcessingMetrics"
             }
           },
           "default": {
@@ -80,15 +80,15 @@
         ]
       }
     },
-    "/api/v1/roads/metrics": {
+    "/api/v1/roads": {
       "get": {
-        "summary": "GetProcessingMetrics returns alert processing metrics",
-        "operationId": "RoadsService_GetProcessingMetrics",
+        "summary": "ListRoads returns current conditions for all configured roads",
+        "operationId": "RoadsService_ListRoads",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ProcessingMetrics"
+              "$ref": "#/definitions/v1ListRoadsResponse"
             }
           },
           "default": {

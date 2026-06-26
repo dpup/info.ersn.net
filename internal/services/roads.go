@@ -153,19 +153,15 @@ func (s *RoadsService) GetRoad(ctx context.Context, req *api.GetRoadRequest) (*a
 	return nil, status.Errorf(codes.NotFound, "road not found: %s", req.RoadId)
 }
 
-// GetProcessingMetrics implements the gRPC method for processing metrics
+// GetProcessingMetrics implements the gRPC method for processing metrics.
+//
+// Metrics collection is not implemented yet. Rather than shipping a misleading
+// all-zeros payload that looks like real telemetry, return Unimplemented (HTTP
+// 501) so consumers can tell the difference. Replace this with real counters
+// (instrument the refresh pipeline) when metrics are needed.
 func (s *RoadsService) GetProcessingMetrics(ctx context.Context, req *api.GetProcessingMetricsRequest) (*api.ProcessingMetrics, error) {
-	logging.Info(ctx, "GetProcessingMetrics called")
-
-	// TODO: Implement proper metrics collection
-	// For now, return placeholder metrics
-	return &api.ProcessingMetrics{
-		TotalRawAlerts:      0,
-		FilteredAlerts:      0,
-		EnhancedAlerts:      0,
-		EnhancementFailures: 0,
-		AvgProcessingTimeMs: 0.0,
-	}, nil
+	logging.Info(ctx, "GetProcessingMetrics called (not implemented)")
+	return nil, status.Error(codes.Unimplemented, "processing metrics are not yet implemented")
 }
 
 // refreshRoadData fetches fresh data from all external sources

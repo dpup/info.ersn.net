@@ -46,10 +46,12 @@ service RoadsService {
     };
   }
 
-  // GetProcessingMetrics returns alert processing metrics
+  // GetProcessingMetrics returns alert processing metrics.
+  // Mapped to /api/v1/metrics (not /api/v1/roads/metrics) so it does not collide
+  // with the /api/v1/roads/{road_id} id space.
   rpc GetProcessingMetrics(GetProcessingMetricsRequest) returns (ProcessingMetrics) {
     option (google.api.http) = {
-      get: "/api/v1/roads/metrics"
+      get: "/api/v1/metrics"
     };
   }
 

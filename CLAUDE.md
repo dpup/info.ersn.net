@@ -186,7 +186,7 @@ export PORT=8181
 **Roads Service** (`/api/v1/roads`):
 - `GET /api/v1/roads` - List all configured roads with current conditions
 - `GET /api/v1/roads/{road_id}` - Get specific road details
-- `GET /api/v1/roads/metrics` - Get alert processing metrics
+- `GET /api/v1/metrics` - Alert processing metrics (currently returns 501 Unimplemented; not yet wired to real counters)
 - `GET /api/v1/incidents?area=mother-lode` - Region-wide CHP/Caltrans incident feed (flat, not route-scoped; see `roads.incidentAreas` in `prefab.yaml`)
 - Returns: Road status, status explanations, traffic conditions, chain controls, AI-enhanced alerts
 
