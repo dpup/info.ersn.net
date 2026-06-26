@@ -27,7 +27,9 @@ func (s *RoadsService) ListIncidents(ctx context.Context, req *api.ListIncidents
 
 	area, ok := s.resolveIncidentArea(req.Area)
 	if !ok {
-		return nil, status.Errorf(codes.InvalidArgument, "unknown incident area: %q", req.Area)
+		// area is a path identity (like a road/location id), so an unknown one
+		// is NotFound (404), consistent with GetRoad/GetLocationWeather.
+		return nil, status.Errorf(codes.NotFound, "unknown incident area: %q", req.Area)
 	}
 
 	cacheKey := fmt.Sprintf("incidents:%s", area.ID)
@@ -80,17 +82,10 @@ func (s *RoadsService) ListIncidents(ctx context.Context, req *api.ListIncidents
 	}, nil
 }
 
-// resolveIncidentArea looks up an area by id. An empty id resolves to the first
-// configured area for convenience.
+// resolveIncidentArea looks up a configured area by id. The id is required (it
+// is a path param); there is no default area.
 func (s *RoadsService) resolveIncidentArea(id string) (config.IncidentArea, bool) {
-	areas := s.config.Roads.IncidentAreas
-	if len(areas) == 0 {
-		return config.IncidentArea{}, false
-	}
-	if id == "" {
-		return areas[0], true
-	}
-	for _, a := range areas {
+	for _, a := range s.config.Roads.IncidentAreas {
 		if a.ID == id {
 			return a, true
 		}

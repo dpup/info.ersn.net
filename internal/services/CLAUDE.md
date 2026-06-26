@@ -35,8 +35,10 @@ stay within the monthly API budget — adding monitored roads increases that loa
 2. Implement the method on the existing service struct (the gateway wiring in
    `cmd/server/main.go` is already registered per-service, so new RPCs on an
    existing service need no extra registration).
-3. Query params on a `GET` map automatically from request fields (e.g.
-   `?area=` → `ListIncidentsRequest.area`, `?zones=` → repeated `zones`).
+3. Request fields map automatically: fields named in the path template are path
+   params (`/incidents/{area}` → `ListIncidentsRequest.area`), the rest become
+   query params (`?zones=` → repeated `zones`). Convention: path params identify
+   a resource (road/location/area id); query params filter a collection.
 4. Add focused unit tests next to the file (construct inputs directly; don't hit
    the network).
 

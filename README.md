@@ -195,10 +195,13 @@ monitored roads (issue #7). Unlike road `alerts[]`, this is a flat list scoped b
 a configured geographic area rather than per-route, and is not AI-enhanced.
 
 ```http
-GET /api/v1/incidents?area=mother-lode
+GET /api/v1/incidents/{area}
 ```
 
-**Response Example:**
+The `area` is a path param (an area id like `mother-lode`); an unknown area
+returns 404. Areas are defined in `prefab.yaml` under `roads.incidentAreas`.
+
+**Response Example** (`GET /api/v1/incidents/mother-lode`):
 ```json
 {
   "incidents": [
@@ -208,7 +211,7 @@ GET /api/v1/incidents?area=mother-lode
       "severity": "WARNING",
       "location": { "latitude": 38.07, "longitude": -120.54 },
       "locationDescription": "Sr49 / Monitor Rd",
-      "description": "1125-Traffic Hazard",
+      "description": "Traffic Hazard",
       "status": "ACTIVE",
       "logNumber": "260625SA0982",
       "started": "2026-06-25T17:46:00-07:00",
@@ -221,9 +224,9 @@ GET /api/v1/incidents?area=mother-lode
 }
 ```
 
-Areas are defined in `prefab.yaml` under `roads.incidentAreas` as bounding boxes.
-The default `mother-lode` area covers the Gold Country foothills while excluding
-the Central Valley floor.
+Areas are bounding boxes defined in `prefab.yaml` under `roads.incidentAreas`.
+The `mother-lode` area covers the Gold Country foothills while excluding the
+Central Valley floor.
 
 ### Weather API
 

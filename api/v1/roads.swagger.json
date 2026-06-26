@@ -25,9 +25,9 @@
     "application/json"
   ],
   "paths": {
-    "/api/v1/incidents": {
+    "/api/v1/incidents/{area}": {
       "get": {
-        "summary": "ListIncidents returns region-wide CHP/Caltrans dispatch incidents.\nUnlike the alerts embedded in each Road, this is not scoped to a monitored\nroute - it surfaces every incident within a configured area (e.g.\n?area=mother-lode). Data comes from the same Caltrans/CHP KML feeds but is\nreturned as a flat, structured list without per-route classification or AI\nenhancement (kept lightweight for a region-wide view).",
+        "summary": "ListIncidents returns region-wide CHP/Caltrans dispatch incidents for a\nconfigured area, e.g. /api/v1/incidents/mother-lode. The area is a path\nparam (an identity, like a road or location id) for consistency with\nGetRoad/GetLocationWeather. Unlike the alerts embedded in each Road, this is\nnot scoped to a monitored route - it surfaces every incident within the\narea as a flat, structured list without per-route classification or AI\nenhancement (kept lightweight for a region-wide view).",
         "operationId": "RoadsService_ListIncidents",
         "responses": {
           "200": {
@@ -46,9 +46,9 @@
         "parameters": [
           {
             "name": "area",
-            "description": "Area id (e.g. \"mother-lode\"). Empty defaults to the first configured area.",
-            "in": "query",
-            "required": false,
+            "description": "Area id path param (e.g. \"mother-lode\"). Unknown id -\u003e 404.",
+            "in": "path",
+            "required": true,
             "type": "string"
           }
         ],

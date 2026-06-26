@@ -55,15 +55,16 @@ service RoadsService {
     };
   }
 
-  // ListIncidents returns region-wide CHP/Caltrans dispatch incidents.
-  // Unlike the alerts embedded in each Road, this is not scoped to a monitored
-  // route - it surfaces every incident within a configured area (e.g.
-  // ?area=mother-lode). Data comes from the same Caltrans/CHP KML feeds but is
-  // returned as a flat, structured list without per-route classification or AI
+  // ListIncidents returns region-wide CHP/Caltrans dispatch incidents for a
+  // configured area, e.g. /api/v1/incidents/mother-lode. The area is a path
+  // param (an identity, like a road or location id) for consistency with
+  // GetRoad/GetLocationWeather. Unlike the alerts embedded in each Road, this is
+  // not scoped to a monitored route - it surfaces every incident within the
+  // area as a flat, structured list without per-route classification or AI
   // enhancement (kept lightweight for a region-wide view).
   rpc ListIncidents(ListIncidentsRequest) returns (ListIncidentsResponse) {
     option (google.api.http) = {
-      get: "/api/v1/incidents"
+      get: "/api/v1/incidents/{area}"
     };
   }
 }
@@ -77,9 +78,9 @@ message GetRoadRequest {
 
 message GetProcessingMetricsRequest {}
 
-// ListIncidentsRequest filters incidents to a configured area.
+// ListIncidentsRequest selects the configured area whose incidents to return.
 message ListIncidentsRequest {
-  string area = 1;  // Area id (e.g. "mother-lode"). Empty defaults to the first configured area.
+  string area = 1;  // Area id path param (e.g. "mother-lode"). Unknown id -> 404.
 }
 
 // Response messages

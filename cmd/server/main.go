@@ -158,7 +158,7 @@ for the Ebbett's Pass region.
   Roads API:
     <a href="/api/v1/roads">GET /api/v1/roads</a>               - List all monitored roads
     <a href="/api/v1/roads/hwy4-angels-murphys">GET /api/v1/roads/{road_id}</a>     - Get specific road details
-    <a href="/api/v1/incidents?area=mother-lode">GET /api/v1/incidents?area=...</a>  - Region-wide CHP/Caltrans incidents
+    <a href="/api/v1/incidents/mother-lode">GET /api/v1/incidents/{area}</a>    - Region-wide CHP/Caltrans incidents
 
   Weather API:
     <a href="/api/v1/weather">GET /api/v1/weather</a>             - Current weather + fire-weather state
@@ -180,7 +180,7 @@ for the Ebbett's Pass region.
 <span class="header">Example Usage:</span>
   curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>
   curl <a href="/api/v1/weather">https://info.ersn.net/api/v1/weather</a>
-  curl <a href="/api/v1/incidents?area=mother-lode">https://info.ersn.net/api/v1/incidents?area=mother-lode</a>
+  curl <a href="/api/v1/incidents/mother-lode">https://info.ersn.net/api/v1/incidents/mother-lode</a>
   curl <a href="/api/v1/weather/alerts?zones=CAZ064,CAZ065,CAZ258,CAZ259">https://info.ersn.net/api/v1/weather/alerts?zones=CAZ064,CAZ065</a>
 </pre>
 </body>
