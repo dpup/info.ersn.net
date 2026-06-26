@@ -172,7 +172,7 @@ func (s *RoadsService) buildIncident(in caltrans.CaltransIncident, area config.I
 		Location:            &api.Coordinates{Latitude: in.Coordinates.Latitude, Longitude: in.Coordinates.Longitude},
 		LocationDescription: locationDesc,
 		Description:         description,
-		Status:              "active",
+		Status:              api.IncidentStatus_ACTIVE,
 		LogNumber:           d.logNumber,
 		Area:                area.ID,
 	}

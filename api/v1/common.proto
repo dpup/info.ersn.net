@@ -15,3 +15,54 @@ message Polyline {
   string encoded_polyline = 1;      // Google polyline encoded string
   repeated Coordinates points = 2;   // Decoded coordinate points
 }
+
+// Shared enumerations used across the roads and weather APIs.
+
+// AlertSeverity grades how serious an alert is. Used by road alerts, region
+// incidents, and weather alerts (NWS severity is mapped onto this scale).
+enum AlertSeverity {
+  ALERT_SEVERITY_UNSPECIFIED = 0;
+  INFO = 1;
+  WARNING = 2;
+  CRITICAL = 3;
+}
+
+// AlertSource identifies which upstream feed produced a weather alert.
+enum AlertSource {
+  ALERT_SOURCE_UNSPECIFIED = 0;
+  NWS = 1;             // National Weather Service (authoritative)
+  OPENWEATHERMAP = 2;  // OpenWeatherMap One Call API
+}
+
+// FireWeatherState escalates Normal -> Elevated -> Red Flag.
+enum FireWeatherState {
+  FIRE_WEATHER_STATE_UNSPECIFIED = 0;
+  NORMAL = 1;     // No fire-weather product in effect
+  ELEVATED = 2;   // Fire Weather Watch in effect
+  RED_FLAG = 3;   // Red Flag Warning in effect
+}
+
+// IncidentStatus is the lifecycle state of a region-wide incident. The feeds
+// only list active incidents today.
+enum IncidentStatus {
+  INCIDENT_STATUS_UNSPECIFIED = 0;
+  ACTIVE = 1;
+}
+
+// AlertImpact is the AI-assessed impact of a road alert.
+enum AlertImpact {
+  ALERT_IMPACT_UNSPECIFIED = 0;
+  IMPACT_NONE = 1;
+  IMPACT_LIGHT = 2;
+  IMPACT_MODERATE = 3;
+  IMPACT_SEVERE = 4;
+}
+
+// AlertDuration is the AI-assessed duration of a road alert.
+enum AlertDuration {
+  ALERT_DURATION_UNSPECIFIED = 0;
+  DURATION_UNKNOWN = 1;
+  DURATION_UNDER_ONE_HOUR = 2;
+  DURATION_SEVERAL_HOURS = 3;
+  DURATION_ONGOING = 4;
+}

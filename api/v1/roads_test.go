@@ -28,8 +28,8 @@ func TestRoadAlert_NewStructure(t *testing.T) {
 			Longitude: -120.5436,
 		},
 		LocationDescription: "Highway 4 eastbound at mile marker 31",
-		Impact:              "moderate",
-		Duration:            "< 1 hour",
+		Impact:              AlertImpact_IMPACT_MODERATE,
+		Duration:            AlertDuration_DURATION_UNDER_ONE_HOUR,
 		TimeReported:        timestamppb.New(time.Now().Add(-time.Minute * 10)),
 		Metadata: map[string]string{
 			"vehicles_involved": "2",
@@ -51,8 +51,8 @@ func TestRoadAlert_NewStructure(t *testing.T) {
 	assert.Equal(t, 38.0675, alert.Location.Latitude)
 	assert.Equal(t, -120.5436, alert.Location.Longitude)
 	assert.Equal(t, "Highway 4 eastbound at mile marker 31", alert.LocationDescription)
-	assert.Equal(t, "moderate", alert.Impact)
-	assert.Equal(t, "< 1 hour", alert.Duration)
+	assert.Equal(t, AlertImpact_IMPACT_MODERATE, alert.Impact)
+	assert.Equal(t, AlertDuration_DURATION_UNDER_ONE_HOUR, alert.Duration)
 	assert.NotNil(t, alert.TimeReported)
 	assert.Equal(t, "2", alert.Metadata["vehicles_involved"])
 }
@@ -61,8 +61,8 @@ func TestRoadAlert_AIEnhancedFields(t *testing.T) {
 	// Test AI-enhanced fields are properly supported
 	alert := &RoadAlert{
 		Type:                AlertType_INCIDENT,
-		Impact:              "severe",
-		Duration:            "several hours",
+		Impact:              AlertImpact_IMPACT_SEVERE,
+		Duration:            AlertDuration_DURATION_SEVERAL_HOURS,
 		LocationDescription: "Highway 4 near Bear Valley Road",
 		CondensedSummary:    "Multi-vehicle collision, injuries reported",
 		Metadata: map[string]string{
@@ -72,8 +72,8 @@ func TestRoadAlert_AIEnhancedFields(t *testing.T) {
 	}
 
 	// Verify AI fields
-	assert.Equal(t, "severe", alert.Impact)
-	assert.Equal(t, "several hours", alert.Duration)
+	assert.Equal(t, AlertImpact_IMPACT_SEVERE, alert.Impact)
+	assert.Equal(t, AlertDuration_DURATION_SEVERAL_HOURS, alert.Duration)
 	assert.Equal(t, "Highway 4 near Bear Valley Road", alert.LocationDescription)
 	assert.Equal(t, "Multi-vehicle collision, injuries reported", alert.CondensedSummary)
 	assert.Equal(t, "CHP, EMS, Fire", alert.Metadata["responders"])

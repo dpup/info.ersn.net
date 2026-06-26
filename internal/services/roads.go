@@ -987,7 +987,7 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 			alert.Description = enhanced.StructuredDescription.Details
 			alert.CondensedSummary = enhanced.CondensedSummary
 			alert.LocationDescription = enhanced.StructuredDescription.Location.Description
-			alert.Impact = enhanced.StructuredDescription.Impact
+			alert.Impact = mapAlertImpact(enhanced.StructuredDescription.Impact)
 
 			// Parse time_reported if provided - use for StartTime
 			if enhanced.StructuredDescription.TimeReported != "" {
@@ -1064,6 +1064,22 @@ func (s *RoadsService) EnhanceAlertWithAI(ctx context.Context, classifiedAlert r
 	}
 
 	return &enhanced, nil
+}
+
+// mapAlertImpact maps the AI enhancer's impact string to the AlertImpact enum.
+func mapAlertImpact(impact string) api.AlertImpact {
+	switch strings.ToLower(strings.TrimSpace(impact)) {
+	case "none":
+		return api.AlertImpact_IMPACT_NONE
+	case "light":
+		return api.AlertImpact_IMPACT_LIGHT
+	case "moderate":
+		return api.AlertImpact_IMPACT_MODERATE
+	case "severe":
+		return api.AlertImpact_IMPACT_SEVERE
+	default:
+		return api.AlertImpact_ALERT_IMPACT_UNSPECIFIED
+	}
 }
 
 // Helper mapping functions

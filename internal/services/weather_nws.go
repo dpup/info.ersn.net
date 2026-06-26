@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/dpup/prefab/logging"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -58,8 +59,8 @@ func nwsAlertsToProto(alerts []nws.Alert) []*api.WeatherAlert {
 			Headline:    a.Headline,
 			Summary:     a.Headline,
 			Details:     a.Description,
-			Source:      "NWS",
-			Severity:    a.Severity,
+			Source:      api.AlertSource_NWS,
+			Severity:    mapNWSSeverity(a.Severity),
 			Zones:       a.Zones,
 		}
 		if !a.Effective.IsZero() {
@@ -91,7 +92,7 @@ func (s *WeatherService) computeFireWeather(location config.WeatherLocation, ale
 
 	fw := nws.ClassifyFireWeather(alerts, zones)
 	out := &api.FireWeather{
-		State:       fw.State,
+		State:       mapFireWeatherState(fw.State),
 		SourceEvent: fw.SourceEvent,
 		Headline:    fw.Headline,
 		SenderName:  fw.SenderName,
@@ -104,4 +105,32 @@ func (s *WeatherService) computeFireWeather(location config.WeatherLocation, ale
 		out.Expires = timestamppb.New(fw.Expires)
 	}
 	return out
+}
+
+// mapNWSSeverity maps NWS severity terms onto the shared AlertSeverity scale.
+func mapNWSSeverity(s string) api.AlertSeverity {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "extreme", "severe":
+		return api.AlertSeverity_CRITICAL
+	case "moderate":
+		return api.AlertSeverity_WARNING
+	case "minor":
+		return api.AlertSeverity_INFO
+	default:
+		return api.AlertSeverity_ALERT_SEVERITY_UNSPECIFIED
+	}
+}
+
+// mapFireWeatherState maps the nws package's string state to the proto enum.
+func mapFireWeatherState(s string) api.FireWeatherState {
+	switch s {
+	case nws.FireWeatherNormal:
+		return api.FireWeatherState_NORMAL
+	case nws.FireWeatherElevated:
+		return api.FireWeatherState_ELEVATED
+	case nws.FireWeatherRedFlag:
+		return api.FireWeatherState_RED_FLAG
+	default:
+		return api.FireWeatherState_FIRE_WEATHER_STATE_UNSPECIFIED
+	}
 }

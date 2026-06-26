@@ -145,12 +145,33 @@
         }
       }
     },
+    "v1AlertSeverity": {
+      "type": "string",
+      "enum": [
+        "ALERT_SEVERITY_UNSPECIFIED",
+        "INFO",
+        "WARNING",
+        "CRITICAL"
+      ],
+      "default": "ALERT_SEVERITY_UNSPECIFIED",
+      "description": "AlertSeverity grades how serious an alert is. Used by road alerts, region\nincidents, and weather alerts (NWS severity is mapped onto this scale)."
+    },
+    "v1AlertSource": {
+      "type": "string",
+      "enum": [
+        "ALERT_SOURCE_UNSPECIFIED",
+        "NWS",
+        "OPENWEATHERMAP"
+      ],
+      "default": "ALERT_SOURCE_UNSPECIFIED",
+      "description": "AlertSource identifies which upstream feed produced a weather alert.\n\n - NWS: National Weather Service (authoritative)\n - OPENWEATHERMAP: OpenWeatherMap One Call API"
+    },
     "v1FireWeather": {
       "type": "object",
       "properties": {
         "state": {
-          "type": "string",
-          "title": "\"normal\" | \"elevated\" | \"red-flag\""
+          "$ref": "#/definitions/v1FireWeatherState",
+          "title": "normal | elevated | red-flag"
         },
         "sourceEvent": {
           "type": "string",
@@ -183,6 +204,17 @@
         }
       },
       "description": "FireWeather classifies fire-weather risk derived from authoritative NWS\nfire-weather products. It escalates Normal -\u003e Elevated -\u003e Red Flag. Red Flag\nis only reported when an NWS Red Flag Warning is actually in effect."
+    },
+    "v1FireWeatherState": {
+      "type": "string",
+      "enum": [
+        "FIRE_WEATHER_STATE_UNSPECIFIED",
+        "NORMAL",
+        "ELEVATED",
+        "RED_FLAG"
+      ],
+      "default": "FIRE_WEATHER_STATE_UNSPECIFIED",
+      "description": "FireWeatherState escalates Normal -\u003e Elevated -\u003e Red Flag.\n\n - NORMAL: No fire-weather product in effect\n - ELEVATED: Fire Weather Watch in effect\n - RED_FLAG: Red Flag Warning in effect"
     },
     "v1GetLocationWeatherResponse": {
       "type": "object",
@@ -269,13 +301,13 @@
           "title": "Full description with minimal markdown formatting"
         },
         "source": {
-          "type": "string",
-          "description": "\"NWS\" or \"OpenWeatherMap\"",
+          "$ref": "#/definitions/v1AlertSource",
+          "description": "Which upstream feed produced the alert",
           "title": "Provenance / NWS fields"
         },
         "severity": {
-          "type": "string",
-          "title": "NWS severity: Extreme/Severe/Moderate/Minor/Unknown"
+          "$ref": "#/definitions/v1AlertSeverity",
+          "title": "Severity (NWS levels mapped onto the shared scale)"
         },
         "zones": {
           "type": "array",

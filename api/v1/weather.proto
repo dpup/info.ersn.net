@@ -5,6 +5,7 @@ package api.v1;
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "common.proto";
 
 option go_package = "github.com/dpup/info.ersn.net/server/api/v1";
 
@@ -104,7 +105,7 @@ message WeatherData {
 // fire-weather products. It escalates Normal -> Elevated -> Red Flag. Red Flag
 // is only reported when an NWS Red Flag Warning is actually in effect.
 message FireWeather {
-  string state = 1;                          // "normal" | "elevated" | "red-flag"
+  FireWeatherState state = 1;                // normal | elevated | red-flag
   string source_event = 2;                   // Driving NWS product (e.g. "Red Flag Warning"); empty when normal
   string headline = 3;                       // Headline of the governing alert
   string sender_name = 4;                    // Issuing NWS office
@@ -137,8 +138,8 @@ message WeatherAlert {
   string details = 10;                       // Full description with minimal markdown formatting
 
   // Provenance / NWS fields
-  string source = 11;                        // "NWS" or "OpenWeatherMap"
-  string severity = 12;                      // NWS severity: Extreme/Severe/Moderate/Minor/Unknown
+  AlertSource source = 11;                   // Which upstream feed produced the alert
+  AlertSeverity severity = 12;               // Severity (NWS levels mapped onto the shared scale)
   repeated string zones = 13;                // NWS forecast zones this alert applies to (e.g. "CAZ064")
 
   google.protobuf.Timestamp start_time = 14; // When the alert becomes effective

@@ -175,6 +175,30 @@
       "default": "ALERT_CLASSIFICATION_UNSPECIFIED",
       "title": "- ON_ROUTE: Directly affects route path (\u003c 100m from route)\n - NEARBY: In surrounding area but not blocking route (\u003c route threshold)\n - DISTANT: Too far from route to be relevant (\u003e route threshold)"
     },
+    "v1AlertDuration": {
+      "type": "string",
+      "enum": [
+        "ALERT_DURATION_UNSPECIFIED",
+        "DURATION_UNKNOWN",
+        "DURATION_UNDER_ONE_HOUR",
+        "DURATION_SEVERAL_HOURS",
+        "DURATION_ONGOING"
+      ],
+      "default": "ALERT_DURATION_UNSPECIFIED",
+      "description": "AlertDuration is the AI-assessed duration of a road alert."
+    },
+    "v1AlertImpact": {
+      "type": "string",
+      "enum": [
+        "ALERT_IMPACT_UNSPECIFIED",
+        "IMPACT_NONE",
+        "IMPACT_LIGHT",
+        "IMPACT_MODERATE",
+        "IMPACT_SEVERE"
+      ],
+      "default": "ALERT_IMPACT_UNSPECIFIED",
+      "description": "AlertImpact is the AI-assessed impact of a road alert."
+    },
     "v1AlertSeverity": {
       "type": "string",
       "enum": [
@@ -183,7 +207,8 @@
         "WARNING",
         "CRITICAL"
       ],
-      "default": "ALERT_SEVERITY_UNSPECIFIED"
+      "default": "ALERT_SEVERITY_UNSPECIFIED",
+      "description": "AlertSeverity grades how serious an alert is. Used by road alerts, region\nincidents, and weather alerts (NWS severity is mapped onto this scale)."
     },
     "v1AlertType": {
       "type": "string",
@@ -325,8 +350,8 @@
           "title": "Incident detail text from the feed"
         },
         "status": {
-          "type": "string",
-          "title": "\"active\" (feeds only list active incidents)"
+          "$ref": "#/definitions/v1IncidentStatus",
+          "title": "Lifecycle state (feeds only list active incidents)"
         },
         "logNumber": {
           "type": "string",
@@ -348,6 +373,15 @@
         }
       },
       "description": "Incident is a region-wide CHP/Caltrans dispatch incident, surfaced\nindependently of any monitored road."
+    },
+    "v1IncidentStatus": {
+      "type": "string",
+      "enum": [
+        "INCIDENT_STATUS_UNSPECIFIED",
+        "ACTIVE"
+      ],
+      "default": "INCIDENT_STATUS_UNSPECIFIED",
+      "description": "IncidentStatus is the lifecycle state of a region-wide incident. The feeds\nonly list active incidents today."
     },
     "v1ListIncidentsResponse": {
       "type": "object",
@@ -517,12 +551,12 @@
           "title": "Human-friendly location description"
         },
         "impact": {
-          "type": "string",
-          "title": "AI-assessed impact: \"none\", \"light\", \"moderate\", \"severe\""
+          "$ref": "#/definitions/v1AlertImpact",
+          "title": "AI-assessed impact"
         },
         "duration": {
-          "type": "string",
-          "title": "AI-assessed duration: \"unknown\", \"\u003c 1 hour\", \"several hours\", \"ongoing\""
+          "$ref": "#/definitions/v1AlertDuration",
+          "title": "AI-assessed duration"
         },
         "timeReported": {
           "type": "string",

@@ -302,7 +302,7 @@ func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.Weath
 		// Add location context to alert IDs and enhance each alert
 		for _, alert := range locationAlerts {
 			alert.Id = fmt.Sprintf("%s_%s", location.ID, alert.Id)
-			alert.Source = "OpenWeatherMap"
+			alert.Source = api.AlertSource_OPENWEATHERMAP
 
 			// Enhance the alert with AI if enhancer is available
 			if s.alertEnhancer != nil {

@@ -55,7 +55,7 @@ GET /api/v1/roads
           "title": "Lane Closure Advisory",
           "description": "Routine maintenance work on shoulder, no traffic impact expected.",
           "condensedSummary": "Shoulder work, no delays",
-          "impact": "none",
+          "impact": "IMPACT_NONE",
         }
       ]
     }
@@ -96,7 +96,7 @@ GET /api/v1/roads/{road_id}
           "longitude": -120.1234
         },
         "locationDescription": "Highway 4 near mile marker 45",
-        "impact": "moderate",
+        "impact": "IMPACT_MODERATE",
         "timeReported": "2025-09-11T01:30:00Z",
         "lastUpdated": "2025-09-11T01:45:00Z",
         "distanceToRouteMeters": 3.5,
@@ -171,8 +171,8 @@ The Roads API provides intelligent alerts that combine data from multiple source
   - **Ramp/Exit impacts**: On-ramp, off-ramp, or exit closures that don't affect main traffic flow (status: RESTRICTED with specific explanation)
 - **Smart Descriptions**: Technical Caltrans alerts automatically converted to human-readable summaries using OpenAI GPT-4
 - **Chain Control Detection**: AI identifies R1/R2 chain requirements from incident text and weather conditions
-- **Impact Assessment**: AI evaluates impact levels: `none`, `light`, `moderate`, `severe`
-- **Duration Estimates**: AI provides duration estimates: `unknown`, `< 1 hour`, `several hours`, `ongoing`
+- **Impact Assessment**: AI evaluates impact levels (`AlertImpact`): `IMPACT_NONE`, `IMPACT_LIGHT`, `IMPACT_MODERATE`, `IMPACT_SEVERE`
+- **Duration Estimates**: AI provides duration estimates (`AlertDuration`): `DURATION_UNKNOWN`, `DURATION_UNDER_ONE_HOUR`, `DURATION_SEVERAL_HOURS`, `DURATION_ONGOING`
 - **Content-Based Caching**: 24-hour cache prevents duplicate AI processing of identical incident content
 - **Condensed Summaries**: Short format optimized for mobile displays
 - **Structured Metadata**: Additional contextual information like lanes affected, emergency services on scene
@@ -208,7 +208,7 @@ GET /api/v1/incidents?area=mother-lode
       "location": { "latitude": 38.07, "longitude": -120.54 },
       "locationDescription": "Sr49 / Monitor Rd",
       "description": "1125-Traffic Hazard",
-      "status": "active",
+      "status": "ACTIVE",
       "logNumber": "260625SA0982",
       "started": "2026-06-25T17:46:00-07:00",
       "lastUpdated": "2026-06-25T18:34:00-07:00",
@@ -273,7 +273,7 @@ alerts in the given forecast zones (issue #4).
       "id": "urn:oid:2.49.0.1.840.0.abc",
       "source": "NWS",
       "event": "Red Flag Warning",
-      "severity": "Severe",
+      "severity": "CRITICAL",
       "zones": ["CAZ064", "CAZ065"],
       "senderName": "NWS Sacramento CA",
       "headline": "Red Flag Warning in effect until 8 PM PDT",
@@ -293,7 +293,7 @@ authoritative NWS fire-weather products:
 
 ```json
 "fireWeather": {
-  "state": "red-flag",            // normal | elevated | red-flag
+  "state": "RED_FLAG",           // NORMAL | ELEVATED | RED_FLAG
   "sourceEvent": "Red Flag Warning",
   "headline": "Red Flag Warning in effect until 8 PM PDT",
   "senderName": "NWS Sacramento CA",

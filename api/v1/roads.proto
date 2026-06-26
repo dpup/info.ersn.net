@@ -106,7 +106,7 @@ message Incident {
   Coordinates location = 4;              // Point location
   string location_description = 5;        // Human-readable location (e.g. "Sr132 Ofr / I580 E")
   string description = 6;                 // Incident detail text from the feed
-  string status = 7;                      // "active" (feeds only list active incidents)
+  IncidentStatus status = 7;              // Lifecycle state (feeds only list active incidents)
   string log_number = 8;                  // CHP/CAD log number (e.g. "250916ST0066")
   google.protobuf.Timestamp started = 9;  // When the incident was first reported
   google.protobuf.Timestamp last_updated = 10; // Last update from the feed
@@ -163,8 +163,8 @@ message RoadAlert {
   google.protobuf.Timestamp last_updated = 9;
   Coordinates location = 10;               // Structured location with lat/lon
   string location_description = 11;        // Human-friendly location description
-  string impact = 12;                      // AI-assessed impact: "none", "light", "moderate", "severe"
-  string duration = 13;                    // AI-assessed duration: "unknown", "< 1 hour", "several hours", "ongoing"
+  AlertImpact impact = 12;                 // AI-assessed impact
+  AlertDuration duration = 13;             // AI-assessed duration
   google.protobuf.Timestamp time_reported = 14;  // When incident was first reported
   map<string, string> metadata = 15;      // Additional AI-generated key-value pairs only
   double distance_to_route_meters = 16;   // Distance from alert location to route in meters (for NEARBY alerts)
@@ -226,12 +226,7 @@ enum AlertType {
   WEATHER = 4;
 }
 
-enum AlertSeverity {
-  ALERT_SEVERITY_UNSPECIFIED = 0;
-  INFO = 1;
-  WARNING = 2;
-  CRITICAL = 3;
-}
+// AlertSeverity moved to common.proto (shared with the weather API).
 
 enum AlertClassification {
   ALERT_CLASSIFICATION_UNSPECIFIED = 0;
