@@ -93,6 +93,39 @@ func TestFromWildfire(t *testing.T) {
 	}
 }
 
+func TestEvacLevelAndSeverity(t *testing.T) {
+	cases := []struct{ status, level, sev string }{
+		{"Evacuation Order", "ORDER", SevExtreme},
+		{"Evacuation Warning", "WARNING", SevSevere},
+		{"Shelter in Place", "SHELTER_IN_PLACE", SevSevere},
+		{"Advisory", "ADVISORY", SevModerate},
+		{"Evacuation Order Lifted", "", SevInfo},
+		{"Normal", "", SevInfo},
+	}
+	for _, c := range cases {
+		if got := normalizeEvacLevel(c.status); got != c.level {
+			t.Errorf("normalizeEvacLevel(%q) = %q, want %q", c.status, got, c.level)
+		}
+		if got := fromEvacLevel(c.level); got != c.sev {
+			t.Errorf("fromEvacLevel(%q) = %q, want %q", c.level, got, c.sev)
+		}
+	}
+}
+
+// TestEvacFailLoud documents the load-bearing rule: an empty result is
+// UNAVAILABLE, never an implied all-clear.
+func TestEvacFailLoud(t *testing.T) {
+	if !layerMeta(LayerEvacuation).emptyUnavailable {
+		t.Error("evacuation layer must be empty-unavailable (fail-loud)")
+	}
+	if layerMeta(LayerEvacuation).sourceURL == "" {
+		t.Error("evacuation layer must always carry the authoritative source URL")
+	}
+	if layerMeta(LayerRoadIncident).emptyUnavailable {
+		t.Error("non-evac layers should not be empty-unavailable")
+	}
+}
+
 func TestSafeURL(t *testing.T) {
 	if safeURL("https://protect.genasys.com/x") == "" {
 		t.Error("https URL should pass")

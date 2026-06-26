@@ -12,6 +12,7 @@ import (
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/calfire"
+	"github.com/dpup/info.ersn.net/server/internal/clients/caloes"
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
 	"github.com/dpup/info.ersn.net/server/internal/clients/usgs"
 	"github.com/dpup/info.ersn.net/server/internal/clients/wfigs"
@@ -40,6 +41,7 @@ type Service struct {
 	usgs     *usgs.Client
 	calfire  *calfire.Client
 	wfigs    *wfigs.Client
+	caloes   *caloes.Client
 }
 
 // NewService wires the hazard service to the existing services + clients. The
@@ -54,6 +56,7 @@ func NewService(cfg *config.Config, roads *services.RoadsService, weather *servi
 		usgs:     usgs.NewClient(),
 		calfire:  calfire.NewClient(),
 		wfigs:    wfigs.NewClient(),
+		caloes:   caloes.NewClient(),
 	}
 }
 
@@ -74,6 +77,7 @@ func (s *Service) builders() map[string]builder {
 		LayerFireWeather:  s.fireWeather,
 		LayerEarthquake:   s.earthquakes,
 		LayerWildfire:     s.wildfires,
+		LayerEvacuation:   s.evacuations,
 	}
 }
 
@@ -113,11 +117,20 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		features = nil
 	}
 
+	meta := layerMeta(layer)
+	// Fail-loud for active-events-only sources (evac): an empty result is
+	// ambiguous, so it's UNAVAILABLE/"unknown", never an implied all-clear.
+	if meta.emptyUnavailable && status == "OK" && len(features) == 0 {
+		status = "UNAVAILABLE"
+	}
+
 	fc := newCollection(features, &Metadata{
 		Layer:         layer,
 		Area:          areaID,
 		GeneratedAt:   time.Now().UTC().Format(time.RFC3339),
 		SourceStatus:  status,
+		Attribution:   meta.attribution,
+		SourceURL:     meta.sourceURL,
 		SchemaVersion: schemaVersion,
 	})
 
@@ -165,6 +178,26 @@ func (s *Service) ServeScanners(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "public, max-age=3600")
 	_ = json.NewEncoder(w).Encode(out)
+}
+
+// layerMetadata carries per-layer collection metadata + the fail-loud flag.
+type layerMetadata struct {
+	attribution      string
+	sourceURL        string
+	emptyUnavailable bool // empty result => UNAVAILABLE (active-events-only sources)
+}
+
+func layerMeta(layer string) layerMetadata {
+	switch layer {
+	case LayerEvacuation:
+		return layerMetadata{
+			attribution:      "Cal OES / California County Governments — reference only",
+			sourceURL:        caloes.SourceURL,
+			emptyUnavailable: true,
+		}
+	default:
+		return layerMetadata{}
+	}
 }
 
 func (s *Service) resolveArea(id string) (config.HazardArea, bool) {
@@ -460,6 +493,37 @@ func (s *Service) wildfires(ctx context.Context, area config.HazardArea) ([]Feat
 		}
 		p.setSeverity(fromWildfire(perim.PercentContained))
 		out = append(out, Feature{Type: "Feature", Geometry: RawGeom(perim.GeometryType, perim.GeometryCoords), Properties: p})
+	}
+	return out, nil
+}
+
+func (s *Service) evacuations(ctx context.Context, area config.HazardArea) ([]Feature, error) {
+	zones, err := s.caloes.GetActiveEvacuations(ctx, area.EvacCounties)
+	if err != nil {
+		return nil, err
+	}
+	var out []Feature
+	for _, z := range zones {
+		level := normalizeEvacLevel(z.Status)
+		if level == "" {
+			continue // only surface active Order/Warning/Advisory/SIP zones
+		}
+		human := strings.Title(strings.ToLower(strings.ReplaceAll(level, "_", " ")))
+		p := Properties{
+			ID:          "evac:" + nonEmpty(z.ZoneID, z.ZoneName),
+			Layer:       LayerEvacuation,
+			Kind:        "Evacuation",
+			Category:    strings.ToLower(level),
+			Headline:    fmt.Sprintf("Evacuation %s — %s", human, nonEmpty(z.ZoneName, z.County)),
+			Description: z.PublicInfo,
+			Status:      level,
+			AreaLabel:   nonEmpty(z.ZoneName, z.County),
+			UpdatedAt:   tsOrEmpty(z.LastUpdated),
+			Source:      Source{ID: "caloes", Name: "Cal OES", URL: caloes.SourceURL, Attribution: "Cal OES — reference only"},
+			Evacuation:  &EvacuationProps{ZoneID: z.ZoneID, Level: level, EventType: z.EventType, County: z.County},
+		}
+		p.setSeverity(fromEvacLevel(level))
+		out = append(out, Feature{Type: "Feature", Geometry: RawGeom(z.GeometryType, z.GeometryCoords), Properties: p})
 	}
 	return out, nil
 }

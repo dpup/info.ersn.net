@@ -92,6 +92,40 @@ func fromFireWeatherState(state string) string {
 	}
 }
 
+// normalizeEvacLevel maps Cal OES free-text STATUS to a coded level. Returns ""
+// for non-active statuses (lifted/normal) so the caller drops them.
+func normalizeEvacLevel(status string) string {
+	s := strings.ToLower(strings.TrimSpace(status))
+	switch {
+	case strings.Contains(s, "lifted"), strings.Contains(s, "normal"), s == "":
+		return ""
+	case strings.Contains(s, "order"):
+		return "ORDER"
+	case strings.Contains(s, "shelter"):
+		return "SHELTER_IN_PLACE"
+	case strings.Contains(s, "warning"):
+		return "WARNING"
+	case strings.Contains(s, "advisory"):
+		return "ADVISORY"
+	default:
+		return ""
+	}
+}
+
+// fromEvacLevel maps a coded evacuation level onto the unified scale.
+func fromEvacLevel(level string) string {
+	switch level {
+	case "ORDER":
+		return SevExtreme
+	case "WARNING", "SHELTER_IN_PLACE":
+		return SevSevere
+	case "ADVISORY":
+		return SevModerate
+	default:
+		return SevInfo
+	}
+}
+
 // fromWildfire maps a fire's containment onto the unified scale (a configurable
 // heuristic; CAL FIRE doesn't expose growth rate). Active & <50% contained reads
 // SEVERE, partly contained MODERATE, fully contained MINOR.
