@@ -164,19 +164,17 @@ for the Ebbett's Pass region.
     <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>      - NWS zone alerts + OpenWeatherMap alerts
     <a href="/api/v1/weather/alerts?zones=CAZ064,CAZ065,CAZ258,CAZ259">GET /api/v1/weather/alerts?zones=...</a> - Filter to NWS forecast zones
 
-<span class="header">Coverage:</span>
-  Hwy 4  - Angels Camp, Murphys, Arnold, Bear Valley (Calaveras)
-  Hwy 49 - Angels Camp to Sonora; Columbia, Twain Harte, Dorrington (Tuolumne)
-
 <span class="header">API Documentation:</span>
   <a href="/api/docs/roads.swagger.json">Roads API OpenAPI Spec</a>            - Machine-readable API docs (Roads)
   <a href="/api/docs/weather.swagger.json">Weather API OpenAPI Spec</a>          - Machine-readable API docs (Weather)
+  <a href="/api/docs/common.swagger.json">Common Types OpenAPI Spec</a>         - Shared message definitions
 
 <span class="header">Data Sources:</span>
   • Google Routes API               - Traffic conditions and travel times
-  • Caltrans KML Feeds              - Lane closures and CHP incidents
-  • OpenWeatherMap API              - Weather data and alerts
+  • Caltrans KML Feeds              - Lane closures, CHP incidents, chain control
+  • OpenWeatherMap API              - Weather conditions and alerts
   • National Weather Service        - Zone alerts and fire-weather products
+  • OpenAI                          - AI enhancement of road alerts
 
 <span class="header">Example Usage:</span>
   curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>

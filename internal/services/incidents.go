@@ -105,17 +105,7 @@ func (s *RoadsService) refreshIncidents(ctx context.Context, area config.Inciden
 		return nil, fmt.Errorf("both incident feeds failed: chp=%v lanes=%v", chpErr, lcErr)
 	}
 
-	var incidents []*api.Incident
-	for _, in := range chpIncidents {
-		if inc := s.buildIncident(in, area); inc != nil {
-			incidents = append(incidents, inc)
-		}
-	}
-	for _, in := range laneClosures {
-		if inc := s.buildIncident(in, area); inc != nil {
-			incidents = append(incidents, inc)
-		}
-	}
+	incidents := s.normalizeIncidents(area, chpIncidents, laneClosures)
 
 	logging.Infow(ctx, "Region-wide incidents refreshed",
 		"area", area.ID,
@@ -124,6 +114,32 @@ func (s *RoadsService) refreshIncidents(ctx context.Context, area config.Inciden
 		"in_area", len(incidents))
 
 	return incidents, nil
+}
+
+// normalizeIncidents builds a clean, one-entry-per-incident list from the raw
+// feeds. It drops geometry-only placemarks and collapses duplicates: the
+// Caltrans lane-closure feed emits a separate LineString "path" placemark per
+// closure (no description) and repeats closures across directions, neither of
+// which belongs in a flat list. CHP incidents come first, then lane closures.
+func (s *RoadsService) normalizeIncidents(area config.IncidentArea, lists ...[]caltrans.CaltransIncident) []*api.Incident {
+	var incidents []*api.Incident
+	seen := make(map[string]bool)
+	for _, list := range lists {
+		for _, in := range list {
+			inc := s.buildIncident(in, area)
+			if inc == nil || inc.Description == "" {
+				continue // outside bounds, no coordinates, or a geometry-only placemark
+			}
+			if inc.Id != "" {
+				if seen[inc.Id] {
+					continue
+				}
+				seen[inc.Id] = true
+			}
+			incidents = append(incidents, inc)
+		}
+	}
+	return incidents
 }
 
 // buildIncident converts a Caltrans incident into the API representation,

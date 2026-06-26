@@ -117,6 +117,42 @@ func TestIncidentSeverity(t *testing.T) {
 	}
 }
 
+func TestNormalizeIncidents_DedupAndSkipGeometry(t *testing.T) {
+	s := &RoadsService{}
+	area := motherLode()
+	coord := &api.Coordinates{Latitude: 38.07, Longitude: -120.54}
+
+	chp := []caltrans.CaltransIncident{
+		{FeedType: caltrans.CHP_INCIDENT, Name: "CHP Incident 260625SA0982",
+			DescriptionHtml: chpDescription2026, Coordinates: coord},
+	}
+	lanes := []caltrans.CaltransIncident{
+		// Info placemark (kept).
+		{FeedType: caltrans.LANE_CLOSURE, Name: "Route 4 One-way Traffic Operation",
+			DescriptionHtml: laneClosure2026, Coordinates: coord},
+		// Same closure repeated for the other direction (deduped by id C4TA).
+		{FeedType: caltrans.LANE_CLOSURE, Name: "Route 4 One-way Traffic Operation",
+			DescriptionHtml: laneClosure2026, Coordinates: coord},
+		// Geometry-only "path" placemark: no description -> dropped.
+		{FeedType: caltrans.LANE_CLOSURE, Name: "C4TA Log 42 path",
+			DescriptionHtml: "", DescriptionText: "", Coordinates: coord},
+	}
+
+	got := s.normalizeIncidents(area, chp, lanes)
+	if len(got) != 2 {
+		t.Fatalf("got %d incidents, want 2 (1 CHP + 1 deduped closure)", len(got))
+	}
+	// CHP first, then the single closure.
+	if got[0].Type != api.AlertType_INCIDENT || got[1].Type != api.AlertType_CLOSURE {
+		t.Errorf("ordering/types wrong: %v, %v", got[0].Type, got[1].Type)
+	}
+	for _, inc := range got {
+		if inc.Description == "" {
+			t.Errorf("incident %s has empty description", inc.Id)
+		}
+	}
+}
+
 func TestExtractLogNumber(t *testing.T) {
 	cases := map[string]string{
 		"CHP Incident 250916ST0066": "250916ST0066",

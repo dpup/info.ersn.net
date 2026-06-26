@@ -48,6 +48,19 @@ intentionally **not** AI-enhanced — region-wide volume would be too costly —
 parsing of log number / type / location / time is done structurally from the KML
 description. See `internal/clients/CLAUDE.md` for the 2026 feed-format caveat.
 
+Each incident normalizes to the same primitives the other APIs use (shared
+`AlertType`/`AlertSeverity` enums, `Coordinates`, `google.protobuf.Timestamp`,
+`location_description`). `normalizeIncidents` then keeps the list clean:
+
+- **Drops geometry-only placemarks.** The lane-closure feed emits a separate
+  LineString "path" placemark per closure with no description — skipped by the
+  empty-description check.
+- **Dedupes by `id`.** Closures are repeated across directions in `lcs2way`;
+  only the first is kept.
+
+CHP incidents carry a `started` time; lane closures are scheduled operations with
+no dispatch time, so their `started` is null (expected, not a bug).
+
 ## Weather alerts & fire weather
 
 `ListWeatherAlerts` returns authoritative **NWS** zone alerts first (source
