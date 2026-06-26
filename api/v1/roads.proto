@@ -168,7 +168,8 @@ message RoadAlert {
   google.protobuf.Timestamp time_reported = 14;  // When incident was first reported
   map<string, string> metadata = 15;      // Additional AI-generated key-value pairs only
   double distance_to_route_meters = 16;   // Distance from alert location to route in meters (for NEARBY alerts)
-  // Note: id, original_description removed for cleaner API
+  string id = 17;                          // Stable CHP log / closure id; matches Incident.id for the same event (empty if none)
+  // Note: original_description removed for cleaner API
   // Note: affected_segments, affected_polyline, structured_data, enhancement_info,
   // and affected_route_ids are kept internal for processing
 }

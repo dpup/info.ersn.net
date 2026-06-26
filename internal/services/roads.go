@@ -961,6 +961,7 @@ func (s *RoadsService) buildEnhancedRoadAlert(ctx context.Context, classifiedAle
 	// Build base alert (polylines kept internal for processing)
 	alertType := s.mapStringToAlertType(classifiedAlert.Type)
 	alert := &api.RoadAlert{
+		Id:                    logNumberFromText(classifiedAlert.Title, classifiedAlert.Description), // Stable id; matches Incident.id
 		Type:                  alertType,
 		Severity:              api.AlertSeverity_WARNING, // Default, will be updated after AI enhancement
 		Classification:        s.mapRoutingToAPIClassification(classifiedAlert.Classification),

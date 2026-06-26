@@ -307,11 +307,18 @@ func parseIncidentDetail(in caltrans.CaltransIncident) incidentDetail {
 
 // extractLogNumber pulls the incident's identifier from its name or description.
 func extractLogNumber(in caltrans.CaltransIncident, html string) string {
-	// CHP log token in the name (e.g. "CHP Incident 250916ST0066").
-	if m := chpLogTokenRe.FindString(in.Name); m != "" {
+	return logNumberFromText(in.Name, html)
+}
+
+// logNumberFromText extracts the stable CHP log / closure id from a title
+// (e.g. "CHP Incident 250916ST0066") and/or description HTML. Shared by the
+// incidents feed and per-road alerts so the same event carries the same id.
+func logNumberFromText(title, html string) string {
+	// CHP log token in the title (e.g. "CHP Incident 250916ST0066").
+	if m := chpLogTokenRe.FindString(title); m != "" {
 		return m
 	}
-	if m := chpLabelRe.FindStringSubmatch(in.Name); len(m) > 1 {
+	if m := chpLabelRe.FindStringSubmatch(title); len(m) > 1 {
 		return m[1]
 	}
 	if m := chpLabelRe.FindStringSubmatch(html); len(m) > 1 {

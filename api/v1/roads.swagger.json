@@ -574,6 +574,10 @@
           "type": "number",
           "format": "double",
           "title": "Distance from alert location to route in meters (for NEARBY alerts)"
+        },
+        "id": {
+          "type": "string",
+          "title": "Stable CHP log / closure id; matches Incident.id for the same event (empty if none)"
         }
       }
     },
