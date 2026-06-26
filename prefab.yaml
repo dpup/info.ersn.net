@@ -14,9 +14,13 @@ server:
       - http://localhost:8181
       - http://localhost:4321
       - http://localhost:4322
-    corsAllowedMethods:
+    # NOTE: keys must be corsAllowMethods / corsAllowHeaders (no "ed") - those are
+    # what Prefab reads (server.security.corsAllowMethods). The misspelled
+    # corsAllowedMethods/corsAllowedHeaders were silently ignored, leaving the
+    # permissive defaults (all methods) in place.
+    corsAllowMethods:
       - GET
-    corsAllowedHeaders:
+    corsAllowHeaders:
       - content-type
       - x-requested-with
       - x-csrf-protection
