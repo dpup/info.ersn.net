@@ -51,7 +51,10 @@ openweather:
 
 # Service Configurations
 roads:
-  refreshInterval: "15m"  # Reduced from 5m to stay within 10k monthly Google API limit
+  # Google Routes calls are gated by a 45m per-road cache (see roads.go), not this
+  # interval, to stay under the Compute Routes Pro free tier (5,000/month). The
+  # request uses TRAFFIC_AWARE_OPTIMAL (Pro) but NOT traffic-on-polyline (Enterprise).
+  refreshInterval: "15m"
   staleThreshold: "30m"   # Increased to accept slightly stale data
   
   caltransFeeds:

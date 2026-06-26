@@ -31,14 +31,6 @@ type RouteData struct {
 	StaticDurationSeconds int32
 	DistanceMeters        int32
 	Polyline              string
-	SpeedReadings         []SpeedReading
-}
-
-// SpeedReading represents traffic speed data for route segments
-type SpeedReading struct {
-	StartIndex    int32
-	EndIndex      int32
-	SpeedCategory string // "NORMAL", "SLOW", "TRAFFIC_JAM"
 }
 
 // NewClient creates a new Google Routes API client
@@ -82,9 +74,13 @@ func (c *Client) ComputeRoutes(ctx context.Context, origin, destination *api.Coo
 				},
 			},
 		},
-		"travelMode":         "DRIVE",
-		"routingPreference":  "TRAFFIC_AWARE_OPTIMAL",
-		"extraComputations":  []string{"TRAFFIC_ON_POLYLINE"},
+		// TRAFFIC_AWARE_OPTIMAL gives traffic-aware duration (so we can compute
+		// delay = duration - staticDuration). This keeps the request on the Pro
+		// SKU. We deliberately do NOT request extraComputations=TRAFFIC_ON_POLYLINE
+		// / speedReadingIntervals: that data is unused and would bump the request
+		// to the much pricier Enterprise SKU (1k vs 5k free/month).
+		"travelMode":        "DRIVE",
+		"routingPreference": "TRAFFIC_AWARE_OPTIMAL",
 	}
 
 	jsonBody, err := json.Marshal(requestBody)
@@ -100,7 +96,7 @@ func (c *Client) ComputeRoutes(ctx context.Context, origin, destination *api.Coo
 
 	// Critical: Field mask is REQUIRED or API returns errors (research.md line 44)
 	req.Header.Set("X-Goog-Api-Key", c.apiKey)
-	req.Header.Set("X-Goog-FieldMask", "routes.duration,routes.staticDuration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.travelAdvisory.speedReadingIntervals")
+	req.Header.Set("X-Goog-FieldMask", "routes.duration,routes.staticDuration,routes.distanceMeters,routes.polyline.encodedPolyline")
 	req.Header.Set("Content-Type", "application/json")
 
 	// Execute request with rate limiting awareness (3K QPM from research.md line 56)
@@ -146,24 +142,11 @@ func (c *Client) processRouteResponse(route GoogleRoute) (*RouteData, error) {
 		return nil, fmt.Errorf("failed to parse static duration: %w", err)
 	}
 
-	// Process speed readings from traffic advisory
-	var speedReadings []SpeedReading
-	if route.TravelAdvisory != nil && len(route.TravelAdvisory.SpeedReadingIntervals) > 0 {
-		for _, interval := range route.TravelAdvisory.SpeedReadingIntervals {
-			speedReadings = append(speedReadings, SpeedReading{
-				StartIndex:    interval.StartPolylinePointIndex,
-				EndIndex:      interval.EndPolylinePointIndex,
-				SpeedCategory: interval.Speed,
-			})
-		}
-	}
-
 	return &RouteData{
 		DurationSeconds:       durationSeconds,
 		StaticDurationSeconds: staticDurationSeconds,
 		DistanceMeters:        route.DistanceMeters,
 		Polyline:              route.Polyline.EncodedPolyline,
-		SpeedReadings:         speedReadings,
 	}, nil
 }
 
@@ -190,26 +173,13 @@ type GoogleRoutesResponse struct {
 
 // GoogleRoute represents a single route in the response
 type GoogleRoute struct {
-	Duration         string             `json:"duration"`
-	StaticDuration   string             `json:"staticDuration"`
-	DistanceMeters   int32              `json:"distanceMeters"`
-	Polyline         GooglePolyline     `json:"polyline"`
-	TravelAdvisory   *GoogleTravelAdvisory `json:"travelAdvisory,omitempty"`
+	Duration       string         `json:"duration"`
+	StaticDuration string         `json:"staticDuration"`
+	DistanceMeters int32          `json:"distanceMeters"`
+	Polyline       GooglePolyline `json:"polyline"`
 }
 
 // GooglePolyline represents the route polyline
 type GooglePolyline struct {
 	EncodedPolyline string `json:"encodedPolyline"`
-}
-
-// GoogleTravelAdvisory represents traffic information
-type GoogleTravelAdvisory struct {
-	SpeedReadingIntervals []GoogleSpeedInterval `json:"speedReadingIntervals"`
-}
-
-// GoogleSpeedInterval represents speed data for a route segment
-type GoogleSpeedInterval struct {
-	StartPolylinePointIndex int32  `json:"startPolylinePointIndex"`
-	EndPolylinePointIndex   int32  `json:"endPolylinePointIndex"`
-	Speed                   string `json:"speed"` // "NORMAL", "SLOW", "TRAFFIC_JAM"
 }

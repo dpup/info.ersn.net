@@ -568,8 +568,11 @@ func (s *RoadsService) getTrafficDataWithPolyline(ctx context.Context, monitored
 		CachedAt:        time.Now(),
 	}
 
-	// Use 20 minute cache (longer than refresh interval to reduce API calls)
-	if err := s.cache.Set(googleCacheKey, cache, 20*time.Minute, "google_routes"); err != nil {
+	// Cache Google Routes data for 45 minutes. With the 15m refresh loop this
+	// yields ~1 API call per road every 45 min (~32/day/road, ~3.9k/month for the
+	// 4 monitored roads) - comfortably under the Compute Routes Pro free tier of
+	// 5,000/month. Traffic data this old is fine for these rural highways.
+	if err := s.cache.Set(googleCacheKey, cache, 45*time.Minute, "google_routes"); err != nil {
 		logging.Errorw(ctx, "Failed to cache Google Routes data", "error", err, "road_id", monitoredRoad.ID)
 	}
 

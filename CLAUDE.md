@@ -153,6 +153,12 @@ export PORT=8181
 - Rate limit: 3,000 QPM (queries per minute)
 - Requires field mask for optimal performance
 - Coordinate-based POST requests to `/directions/v2:computeRoutes`
+- **Billing/SKU**: the request uses `routingPreference: TRAFFIC_AWARE_OPTIMAL`
+  (Compute Routes **Pro** SKU, 5,000 free/month). Do NOT add
+  `extraComputations: TRAFFIC_ON_POLYLINE` or request
+  `routes.travelAdvisory.speedReadingIntervals` — those bump it to the
+  **Enterprise** SKU (only 1,000 free/month) and that per-segment speed data is
+  not exposed by the API. A 45m per-road cache keeps total calls under 5k/month.
 
 **OpenWeatherMap API**:
 - Rate limit: 60 calls/minute (free tier)

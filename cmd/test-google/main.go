@@ -38,7 +38,7 @@ func main() {
 
 	// Get API key from flag, config file, or environment
 	key := *apiKey
-	
+
 	// If config file is provided, load configuration using shared LoadConfig
 	if *configFile != "" {
 		// For now, the shared LoadConfig always loads from the default prefab.yaml
@@ -50,7 +50,7 @@ func main() {
 			fmt.Printf("Using API key from configuration\n")
 		}
 	}
-	
+
 	// Fall back to environment variables
 	if key == "" {
 		key = os.Getenv("PF__GOOGLE_ROUTES__API_KEY")
@@ -58,7 +58,7 @@ func main() {
 			key = os.Getenv("GOOGLE_ROUTES_API_KEY") // fallback for backward compatibility
 		}
 	}
-	
+
 	if key == "" {
 		log.Fatal("Google Routes API key required. Use -api-key flag, --config flag, or PF__GOOGLE_ROUTES__API_KEY env var")
 	}
@@ -69,7 +69,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Invalid origin coordinates: %v", err)
 	}
-	
+
 	_, err = fmt.Sscanf(*destStr, "%f,%f", &destLat, &destLon)
 	if err != nil {
 		log.Fatalf("Invalid destination coordinates: %v", err)
@@ -84,7 +84,7 @@ func main() {
 
 	// Create client and test
 	client := google.NewClient(key)
-	
+
 	// Create coordinate structures
 	origin := &api.Coordinates{
 		Latitude:  originLat,
@@ -94,7 +94,7 @@ func main() {
 		Latitude:  destLat,
 		Longitude: destLon,
 	}
-	
+
 	fmt.Printf("Testing ComputeRoutes...\n")
 	route, err := client.ComputeRoutes(context.Background(), origin, destination)
 	if err != nil {
@@ -105,18 +105,6 @@ func main() {
 	fmt.Printf("Distance: %.2f km\n", float64(route.DistanceMeters)/1000.0)
 	fmt.Printf("Duration: %.1f minutes\n", float64(route.DurationSeconds)/60.0)
 	fmt.Printf("Polyline: %s...\n", route.Polyline[:min(len(route.Polyline), 50)])
-	
-	if len(route.SpeedReadings) > 0 {
-		fmt.Printf("Speed readings: %d\n", len(route.SpeedReadings))
-		fmt.Printf("Traffic conditions found:\n")
-		conditions := make(map[string]int)
-		for _, reading := range route.SpeedReadings {
-			conditions[reading.SpeedCategory]++
-		}
-		for category, count := range conditions {
-			fmt.Printf("  %s: %d segments\n", category, count)
-		}
-	}
 
 	fmt.Printf("\n🎉 All Google Routes API tests passed!\n")
 }
