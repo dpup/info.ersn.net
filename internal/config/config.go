@@ -50,8 +50,8 @@ type RoadsConfig struct {
 }
 
 // IncidentArea defines a named geographic region for the region-wide incidents
-// feed (GET /api/v1/incidents?area=<id>). Incidents whose coordinates fall
-// inside Bounds are included.
+// feed (GET /api/v1/incidents/{area}). Incidents whose coordinates fall inside
+// Bounds are included.
 type IncidentArea struct {
 	ID     string    `koanf:"id"`
 	Name   string    `koanf:"name"`
@@ -74,8 +74,9 @@ func (b GeoBounds) Contains(lat, lon float64) bool {
 
 // CaltransConfig holds Caltrans KML feed settings
 type CaltransConfig struct {
-	LaneClosures CaltransFeedConfig `koanf:"laneClosures"`
-	CHPIncidents CaltransFeedConfig `koanf:"chpIncidents"`
+	LaneClosures   CaltransFeedConfig `koanf:"laneClosures"`
+	CHPIncidents   CaltransFeedConfig `koanf:"chpIncidents"`
+	RoadConditions CaltransFeedConfig `koanf:"roadConditions"`
 }
 
 // CaltransFeedConfig holds individual feed configuration
@@ -86,11 +87,12 @@ type CaltransFeedConfig struct {
 
 // MonitoredRoad represents a road to monitor
 type MonitoredRoad struct {
-	Name        string      `koanf:"name"`
-	Section     string      `koanf:"section"`
-	ID          string      `koanf:"id"`
-	Origin      Coordinates `koanf:"origin"`
-	Destination Coordinates `koanf:"destination"`
+	Name             string      `koanf:"name"`
+	Section          string      `koanf:"section"`
+	ID               string      `koanf:"id"`
+	Origin           Coordinates `koanf:"origin"`
+	Destination      Coordinates `koanf:"destination"`
+	LocationKeywords []string    `koanf:"locationKeywords"`
 }
 
 // WeatherConfig holds weather monitoring configuration
