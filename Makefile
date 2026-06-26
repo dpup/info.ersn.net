@@ -260,8 +260,11 @@ lint:
 # Build Docker container image
 docker: docker-build
 
-# Build Docker container image
-docker-build:
+# Build Docker container image.
+# Depends on `proto` (regenerate the committed *.pb.go so the image is built
+# from code matching the current .proto) and `test` (never build/deploy a red
+# tree). The image itself only compiles - it does not regenerate or test.
+docker-build: proto test
 	@echo "Building Docker image: $(DOCKER_IMAGE_NAME):$(DOCKER_TAG)"
 	docker build \
 		--platform linux/amd64 \

@@ -3,7 +3,11 @@
 ###############################################################################
 # Stage 1: Build the Go application
 ###############################################################################
-FROM golang:1.24-alpine AS go-builder
+# Run the builder on the NATIVE build platform and cross-compile to the target
+# arch. Running an amd64 Go toolchain under QEMU emulation (e.g. building
+# --platform=linux/amd64 on an arm64 host) makes the Go runtime SIGSEGV in
+# netpoll, so we never emulate the toolchain - we cross-compile instead.
+FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS go-builder
 
 WORKDIR /app
 
@@ -11,7 +15,12 @@ WORKDIR /app
 # provides; fail fast instead.
 ENV GOTOOLCHAIN=local
 
-# Cache Go modules by copying go.mod and go.sum first
+# Provided by BuildKit from the --platform flag (default to linux/amd64).
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+
+# Cache Go modules by copying go.mod and go.sum first. Runs on the native build
+# platform, so no emulation.
 COPY go.mod go.sum ./
 RUN go mod download
 
@@ -21,8 +30,9 @@ RUN go mod download
 # it just compiles. Regenerate locally with `make proto` after .proto changes.
 COPY . .
 
-# Build the Go application with static linking
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /ersn-server ./cmd/server
+# Cross-compile a static binary for the target platform.
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+    go build -ldflags="-s -w" -o /ersn-server ./cmd/server
 
 ###############################################################################
 # Stage 2: Final lightweight runtime image
