@@ -54,5 +54,20 @@ UNAVAILABLE` with empty features — never a fabricated clear state. The evac la
    perimeters); M4 evacuation (Cal OES, fail-loud); M5 `/situation/{area}`
    aggregator. Update the design doc's milestone table as each lands.
 
-Status: **M1 shipped** (per-layer endpoints for existing feeds). No `/situation`
-aggregator yet (M5).
+## /situation/{area} — the one-call rollup (M5)
+
+`situation.go` fans out over every layer concurrently (`buildLayer` per layer,
+same fail-loud rules as the GeoJSON endpoints) and returns a JSON summary, not
+GeoJSON: per-layer `source_status` + `feature_count`, a cross-layer
+`highest_severity`, severity histogram, the most-severe `top_headlines`, and the
+scanner sidecar. The map still fetches `*.geojson` per layer; this is the
+dashboard's single status fetch.
+
+**Unknown-aware evacuation posture (don't regress):** `summary.active_evacuations`
+is `null` whenever the evac layer is `UNAVAILABLE`, and `evacuation_status` says
+which. A client MUST treat `null` as "unknown — check Genasys", never as zero.
+A real `0` only appears when Cal OES answered OK with no active zones. The rollup
+math lives in the pure `summarize()` (unit-tested in `situation_test.go`).
+
+Status: **M0–M5 shipped.** All eight layers + `/situation/{area}` +
+`/scanners/{area}` are live. See the design doc's milestone table.

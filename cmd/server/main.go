@@ -81,6 +81,7 @@ func main() {
 		prefab.WithGRPCInterceptor(cacheHeadersInterceptor),
 		prefab.WithHTTPHandler(hazards.HandlerPrefix, hazardsService),
 		prefab.WithHTTPHandlerFunc(hazards.ScannersPrefix, hazardsService.ServeScanners),
+		prefab.WithHTTPHandlerFunc(hazards.SituationPrefix, hazardsService.ServeSituation),
 		prefab.WithHTTPHandlerFunc("/", homepageHandler),
 		prefab.WithHTTPHandlerFunc("/api/docs/roads.swagger.json", openAPIHandler("api/v1/roads.swagger.json")),
 		prefab.WithHTTPHandlerFunc("/api/docs/weather.swagger.json", openAPIHandler("api/v1/weather.swagger.json")),
@@ -172,7 +173,9 @@ for the Ebbett's Pass region.
     <a href="/api/v1/weather/alerts?zones=CAZ064,CAZ065,CAZ258,CAZ259">GET /api/v1/weather/alerts?zones=...</a> - Filter to NWS forecast zones
 
   Hazards API (unified GeoJSON for map clients):
-    <a href="/api/v1/hazards/calaveras/road_incident.geojson">GET /api/v1/hazards/{area}/{layer}.geojson</a> - road_incident, chain_control, road_segment, weather_alert, fire_weather
+    <a href="/api/v1/hazards/calaveras/road_incident.geojson">GET /api/v1/hazards/{area}/{layer}.geojson</a> - road_incident, chain_control, road_segment, weather_alert, fire_weather, earthquake, wildfire, evacuation
+    <a href="/api/v1/situation/calaveras">GET /api/v1/situation/{area}</a>     - One-call rollup: per-layer status + severity summary (evac unknown-aware)
+    <a href="/api/v1/scanners/calaveras">GET /api/v1/scanners/{area}</a>      - Broadcastify scanner feeds for the area
 
 <span class="header">API Documentation:</span>
   <a href="/api/docs/roads.swagger.json">Roads API OpenAPI Spec</a>            - Machine-readable API docs (Roads)

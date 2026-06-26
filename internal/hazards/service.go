@@ -108,29 +108,15 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	status := "OK"
-	features, err := build(ctx, area)
-	if err != nil {
-		// Fail-loud: surface UNAVAILABLE, never fabricate features.
-		logging.Errorw(ctx, "Hazard layer build failed", "layer", layer, "area", areaID, "error", err)
-		status = "UNAVAILABLE"
-		features = nil
-	}
+	res := s.buildLayer(ctx, area, layer, build)
 
-	meta := layerMeta(layer)
-	// Fail-loud for active-events-only sources (evac): an empty result is
-	// ambiguous, so it's UNAVAILABLE/"unknown", never an implied all-clear.
-	if meta.emptyUnavailable && status == "OK" && len(features) == 0 {
-		status = "UNAVAILABLE"
-	}
-
-	fc := newCollection(features, &Metadata{
+	fc := newCollection(res.features, &Metadata{
 		Layer:         layer,
 		Area:          areaID,
 		GeneratedAt:   time.Now().UTC().Format(time.RFC3339),
-		SourceStatus:  status,
-		Attribution:   meta.attribution,
-		SourceURL:     meta.sourceURL,
+		SourceStatus:  res.status,
+		Attribution:   res.meta.attribution,
+		SourceURL:     res.meta.sourceURL,
 		SchemaVersion: schemaVersion,
 	})
 
@@ -166,15 +152,7 @@ func (s *Service) ServeScanners(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("unknown hazard area: %q", areaID), http.StatusNotFound)
 		return
 	}
-	out := make([]scannerOut, 0, len(area.ScannerFeeds))
-	for _, f := range area.ScannerFeeds {
-		out = append(out, scannerOut{
-			FeedID:          f.FeedID,
-			ChannelLabel:    f.ChannelLabel,
-			Agency:          f.Agency,
-			BroadcastifyURL: "https://www.broadcastify.com/listen/feed/" + f.FeedID,
-		})
-	}
+	out := s.scanners(area)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "public, max-age=3600")
 	_ = json.NewEncoder(w).Encode(out)
@@ -198,6 +176,33 @@ func layerMeta(layer string) layerMetadata {
 	default:
 		return layerMetadata{}
 	}
+}
+
+// layerResult is the outcome of building one layer: its features plus the
+// fail-loud-adjusted source status and metadata.
+type layerResult struct {
+	features []Feature
+	status   string
+	meta     layerMetadata
+}
+
+// buildLayer runs one layer's builder and applies the fail-loud rules uniformly
+// (builder error => UNAVAILABLE; empty active-events-only source => UNAVAILABLE).
+// Both the single-layer endpoint and the situation aggregator go through here so
+// the "empty never means all-clear" semantics can't drift between them.
+func (s *Service) buildLayer(ctx context.Context, area config.HazardArea, layer string, build builder) layerResult {
+	status := "OK"
+	features, err := build(ctx, area)
+	if err != nil {
+		logging.Errorw(ctx, "Hazard layer build failed", "layer", layer, "area", area.ID, "error", err)
+		status = "UNAVAILABLE"
+		features = nil
+	}
+	meta := layerMeta(layer)
+	if meta.emptyUnavailable && status == "OK" && len(features) == 0 {
+		status = "UNAVAILABLE"
+	}
+	return layerResult{features: features, status: status, meta: meta}
 }
 
 func (s *Service) resolveArea(id string) (config.HazardArea, bool) {

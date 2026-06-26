@@ -7,6 +7,38 @@ There are no formal releases — the service deploys from `main`. Each entry bel
 is timestamped; add a new dated section at the top when the API surface changes.
 The API is JSON over HTTP (`/api/v1/...`); field names are camelCase.
 
+## 2026-06-26 23:55 UTC
+
+### Added — hazard layers M2–M5 (earthquake, wildfire, evacuation, situation rollup)
+
+Completes the hazard aggregation roadmap. All additive — existing endpoints and
+the M1 layers are unchanged.
+
+New GeoJSON layers at `GET /api/v1/hazards/{area}/{layer}.geojson`:
+
+- `earthquake` — USGS events (M≥2.5, last 7 days) within the area bounds, as
+  Points with `properties.earthquake` (`magnitude, depth_km, felt`).
+- `wildfire` — CAL FIRE active incidents joined to NIFC/WFIGS perimeters by fire
+  name. Polygon where a perimeter exists, else a Point; `properties.wildfire`
+  (`acres, containment, county, has_perimeter`).
+- `evacuation` — Cal OES active evacuation zones (Order/Warning/Advisory/SIP) as
+  Polygons; `properties.evacuation` (`zone_id, level, event_type, county`).
+  **Fail-loud / life-safety:** this is an active-events-only source, so an empty
+  result is `metadata.source_status = UNAVAILABLE` (never an implied all-clear),
+  and `metadata.source_url` always links the authoritative Genasys viewer
+  (`protect.genasys.com`). Attribution is "reference only".
+
+New JSON (non-GeoJSON) endpoints:
+
+- `GET /api/v1/situation/{area}` — one-call rollup for a dashboard: per-layer
+  `source_status` + `feature_count`, a cross-layer `summary` (`highest_severity`,
+  `severity_counts`, `top_headlines`), and a `scanners` sidecar.
+  **`summary.active_evacuations` is `null` when evacuation data is unavailable**
+  (`summary.evacuation_status` says which) — render `null` as "unknown", never as
+  zero. A real `0` only appears when Cal OES answered with no active zones.
+- `GET /api/v1/scanners/{area}` — Broadcastify scanner feeds for the area
+  (`feed_id, channel_label, agency, broadcastify_url`). Link-out only; no embed.
+
 ## 2026-06-26 22:28 UTC
 
 ### Added — unified hazard GeoJSON feed (M1)

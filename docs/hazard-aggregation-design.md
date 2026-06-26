@@ -1,6 +1,6 @@
 # Hazard Aggregation & Unified Geo Feed — Technical Design
 
-Status: **Draft for review** · Owner: info.ersn.net · Last updated: 2026-06-26
+Status: **Implemented (M0–M5)** · Owner: info.ersn.net · Last updated: 2026-06-26
 
 ## 1. Summary
 
@@ -455,14 +455,14 @@ same way with no server changes.
 
 ## 9. Build plan
 
-| Milestone | Scope | Proves |
-|---|---|---|
-| **M0** | `geojson` package, unified model, severity mapping, this doc | the contract |
-| **M1** | Re-project **existing** feeds (incidents, weather alert, fire wx, road segments, chain control — all reuse current clients) into `/hazards/{area}/{layer}.geojson` | the model with zero new upstreams → a real map layer immediately |
-| **M2** | `usgs` earthquakes + `scanners` config endpoint (**prereq:** confirm Broadcastify permits non-owner embed; else `broadcastify_url` link-out only) | cheap breadth |
-| **M3** | `calfire` + `wfigs` wildfire (incidents + simplified perimeters) | the marquee layer |
-| **M4** | `caloes` evacuations with fail-loud + link-out | the high-liability layer, done carefully |
-| **M5** | `/situation/{area}` aggregator, per-layer status, docs + CHANGELOG | the unified page fetch |
+| Milestone | Scope | Proves | Status |
+|---|---|---|---|
+| **M0** | `geojson` package, unified model, severity mapping, this doc | the contract | ✅ shipped |
+| **M1** | Re-project **existing** feeds (incidents, weather alert, fire wx, road segments, chain control — all reuse current clients) into `/hazards/{area}/{layer}.geojson` | the model with zero new upstreams → a real map layer immediately | ✅ shipped |
+| **M2** | `usgs` earthquakes + `scanners` config endpoint (link-out only — `broadcastify_url`, no non-owner embed) | cheap breadth | ✅ shipped |
+| **M3** | `calfire` + `wfigs` wildfire (incidents + simplified perimeters, joined by name) | the marquee layer | ✅ shipped |
+| **M4** | `caloes` evacuations with fail-loud + link-out | the high-liability layer, done carefully | ✅ shipped |
+| **M5** | `/situation/{area}` aggregator, per-layer status, docs + CHANGELOG | the unified page fetch | ✅ shipped |
 
 M1 is deliberately first: it ships a working, map-ready unified feed using only
 data we already have, validating the schema before we take on new upstreams.
