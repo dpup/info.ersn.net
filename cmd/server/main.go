@@ -74,6 +74,7 @@ func main() {
 	server := prefab.New(
 		prefab.WithContext(ctx),
 		prefab.WithGRPCReflection(),
+		prefab.WithGRPCInterceptor(cacheHeadersInterceptor),
 		prefab.WithHTTPHandlerFunc("/", homepageHandler),
 		prefab.WithHTTPHandlerFunc("/api/docs/roads.swagger.json", openAPIHandler("api/v1/roads.swagger.json")),
 		prefab.WithHTTPHandlerFunc("/api/docs/weather.swagger.json", openAPIHandler("api/v1/weather.swagger.json")),
