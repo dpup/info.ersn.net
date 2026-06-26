@@ -288,8 +288,10 @@ alerts in the given forecast zones (issue #4).
 
 #### Fire-Weather Classification (issue #5)
 
-Each entry in `GET /api/v1/weather` includes a `fireWeather` object derived from
-authoritative NWS fire-weather products:
+`GET /api/v1/weather` (and `/weather/{id}`) includes a single region-wide
+`fireWeather` object at the response top level, derived from authoritative NWS
+fire-weather products (these products are issued per forecast zone, not per
+point, so the classification is regional):
 
 ```json
 "fireWeather": {
@@ -303,8 +305,8 @@ authoritative NWS fire-weather products:
 }
 ```
 
-`state` escalates `normal` → `elevated` (Fire Weather Watch) → `red-flag` (Red
-Flag Warning). It is only ever `red-flag` when NWS has an active Red Flag Warning
+`state` escalates `NORMAL` → `ELEVATED` (Fire Weather Watch) → `RED_FLAG` (Red
+Flag Warning). It is only ever `RED_FLAG` when NWS has an active Red Flag Warning
 for the relevant zone — never a value the feed can't confirm.
 
 ## Quick Start

@@ -116,10 +116,6 @@ type WeatherLocation struct {
 	ID          string      `koanf:"id"`
 	Name        string      `koanf:"name"`
 	Coordinates Coordinates `koanf:"coordinates"`
-	// NWSZones optionally restricts this location's fire-weather classification
-	// to specific NWS zones. When empty, the region-wide WeatherConfig.NWS.Zones
-	// are used (conservative: a region product applies to all locations).
-	NWSZones []string `koanf:"nwsZones"`
 }
 
 // Coordinates represents lat/lon coordinates - unified structure

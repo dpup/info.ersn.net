@@ -68,6 +68,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 		return &api.ListWeatherResponse{
 			WeatherData: cachedWeatherData,
 			LastUpdated: lastUpdated,
+			FireWeather: s.computeRegionFireWeather(ctx),
 		}, nil
 	}
 
@@ -87,6 +88,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 			return &api.ListWeatherResponse{
 				WeatherData: cachedWeatherData,
 				LastUpdated: lastUpdated,
+				FireWeather: s.computeRegionFireWeather(ctx),
 			}, nil
 		}
 		return nil, fmt.Errorf("failed to refresh weather data: %w", err)
@@ -100,6 +102,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 	return &api.ListWeatherResponse{
 		WeatherData: weatherData,
 		LastUpdated: timestamppb.Now(),
+		FireWeather: s.computeRegionFireWeather(ctx),
 	}, nil
 }
 
@@ -119,6 +122,7 @@ func (s *WeatherService) GetLocationWeather(ctx context.Context, req *api.GetLoc
 			return &api.GetLocationWeatherResponse{
 				WeatherData: weatherData,
 				LastUpdated: listResp.LastUpdated,
+				FireWeather: listResp.FireWeather,
 			}, nil
 		}
 	}
@@ -202,10 +206,6 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 
 	logging.Infow(ctx, "Starting weather refresh", "location_count", len(s.config.Weather.Locations))
 
-	// Fetch NWS zone alerts once for fire-weather classification across all
-	// locations (issue #5).
-	nwsAlerts := s.getNWSAlerts(ctx)
-
 	// Process each configured location
 	for i, location := range s.config.Weather.Locations {
 		logging.Infow(ctx, "Processing weather location", "index", i, "location_id", location.ID, "location_name", location.Name)
@@ -223,11 +223,8 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 			}
 			continue
 		}
-		weatherData.FireWeather = s.computeFireWeather(location, nwsAlerts)
 		weatherDataList = append(weatherDataList, weatherData)
-		logging.Infow(ctx, "Successfully processed weather location",
-			"location_id", location.ID,
-			"fire_weather", weatherData.FireWeather.State)
+		logging.Infow(ctx, "Successfully processed weather location", "location_id", location.ID)
 	}
 
 	logging.Infow(ctx, "Weather refresh complete",

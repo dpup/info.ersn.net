@@ -64,7 +64,10 @@ no dispatch time, so their `started` is null (expected, not a bug).
 ## Weather alerts & fire weather
 
 `ListWeatherAlerts` returns authoritative **NWS** zone alerts first (source
-`"NWS"`) followed by OpenWeatherMap per-location alerts (source
-`"OpenWeatherMap"`), so clients can prefer NWS. `?zones=CAZ064,...` filters to NWS
-alerts in those zones. Per-location `fire_weather` is derived from the same NWS
-alert set, defaulting to the region zones unless a location sets `nwsZones`.
+`NWS`) followed by OpenWeatherMap alerts (source `OPENWEATHERMAP`), so clients
+can prefer NWS. `?zones=CAZ064,...` filters to NWS alerts in those zones.
+
+`fire_weather` is **region-wide** (NWS fire-weather products are issued by zone,
+not point), so it lives on the response (`ListWeatherResponse` /
+`GetLocationWeatherResponse`) computed once from the configured `weather.nws.zones`
+— not duplicated on every location.

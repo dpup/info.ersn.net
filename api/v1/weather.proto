@@ -72,11 +72,13 @@ message ListWeatherAlertsRequest {
 message ListWeatherResponse {
   repeated WeatherData weather_data = 1;
   google.protobuf.Timestamp last_updated = 2;
+  FireWeather fire_weather = 3;              // Region-wide fire-weather classification (NWS-derived)
 }
 
 message GetLocationWeatherResponse {
   WeatherData weather_data = 1;
   google.protobuf.Timestamp last_updated = 2;
+  FireWeather fire_weather = 3;              // Region-wide fire-weather classification (NWS-derived)
 }
 
 message ListWeatherAlertsResponse {
@@ -98,7 +100,10 @@ message WeatherData {
   int32 wind_direction_degrees = 10;         // Wind direction in degrees (0-360) 
   int32 visibility_km = 11;                  // Visibility distance in kilometers
   repeated WeatherAlert alerts = 12;         // Active weather alerts
-  FireWeather fire_weather = 13;             // Fire-weather classification (NWS-derived)
+  // Fire-weather is region-wide; it now lives on the response (ListWeatherResponse /
+  // GetLocationWeatherResponse) instead of being duplicated on every location.
+  reserved 13;
+  reserved "fire_weather";
 }
 
 // FireWeather classifies fire-weather risk derived from authoritative NWS

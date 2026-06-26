@@ -10,7 +10,6 @@ import (
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/nws"
-	"github.com/dpup/info.ersn.net/server/internal/config"
 )
 
 // getNWSAlerts returns the active NWS alerts for the configured service-area
@@ -81,16 +80,11 @@ func nwsAlertID(a nws.Alert) string {
 	return fmt.Sprintf("nws_%s_%d", a.Event, a.Effective.Unix())
 }
 
-// computeFireWeather classifies fire-weather risk for a location from the shared
-// NWS alert list. It uses the location's NWSZones override when set, otherwise
-// the region-wide configured zones.
-func (s *WeatherService) computeFireWeather(location config.WeatherLocation, alerts []nws.Alert) *api.FireWeather {
-	zones := location.NWSZones
-	if len(zones) == 0 {
-		zones = s.config.Weather.NWS.Zones
-	}
-
-	fw := nws.ClassifyFireWeather(alerts, zones)
+// computeRegionFireWeather classifies fire-weather risk for the whole service
+// area from the shared NWS alert list. Fire-weather products are regional, so a
+// single classification applies to every monitored location.
+func (s *WeatherService) computeRegionFireWeather(ctx context.Context) *api.FireWeather {
+	fw := nws.ClassifyFireWeather(s.getNWSAlerts(ctx), s.config.Weather.NWS.Zones)
 	out := &api.FireWeather{
 		State:       mapFireWeatherState(fw.State),
 		SourceEvent: fw.SourceEvent,

@@ -225,6 +225,10 @@
         "lastUpdated": {
           "type": "string",
           "format": "date-time"
+        },
+        "fireWeather": {
+          "$ref": "#/definitions/v1FireWeather",
+          "title": "Region-wide fire-weather classification (NWS-derived)"
         }
       }
     },
@@ -257,6 +261,10 @@
         "lastUpdated": {
           "type": "string",
           "format": "date-time"
+        },
+        "fireWeather": {
+          "$ref": "#/definitions/v1FireWeather",
+          "title": "Region-wide fire-weather classification (NWS-derived)"
         }
       },
       "title": "Response messages"
@@ -386,10 +394,6 @@
             "$ref": "#/definitions/v1WeatherAlert"
           },
           "title": "Active weather alerts"
-        },
-        "fireWeather": {
-          "$ref": "#/definitions/v1FireWeather",
-          "title": "Fire-weather classification (NWS-derived)"
         }
       },
       "title": "Data models"
