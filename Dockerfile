@@ -7,44 +7,18 @@ FROM golang:1.24-alpine AS go-builder
 
 WORKDIR /app
 
-# Install required system dependencies for building
-RUN apk add --no-cache git protobuf protobuf-dev make
-
-# Don't let `go install` silently pull a newer Go toolchain than this image
+# Don't let `go build` silently pull a newer Go toolchain than this image
 # provides; fail fast instead.
 ENV GOTOOLCHAIN=local
-
-# Install the protoc plugins at versions compatible with this image's Go.
-# Pinned (not @latest) because @latest moves: protoc-gen-go-grpc@latest now
-# requires Go >= 1.25 and would break this Go 1.24 build. Keep these in sync
-# with the versions in go.mod (protobuf, grpc-gateway).
-RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.8 && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1 && \
-    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.27.2 && \
-    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.27.2
 
 # Cache Go modules by copying go.mod and go.sum first
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy proto files and generate protobuf code
-COPY api/ ./api/
-
-# Generate protobuf code and OpenAPI specs
-# Note: googleapis is a proto-only module (no Go code), so we download it explicitly with @latest
-RUN mkdir -p bin api/v1 && \
-    GOOGLEAPIS_DIR=$(go mod download -json github.com/googleapis/googleapis@latest | grep '"Dir"' | head -1 | sed 's/.*"Dir": "//;s/".*//') && \
-    GRPC_GATEWAY_DIR=$(go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway/v2) && \
-    PATH="/go/bin:${PATH}" protoc --proto_path=api/v1 \
-        --proto_path=${GOOGLEAPIS_DIR} \
-        --proto_path=${GRPC_GATEWAY_DIR} \
-        --go_out=api/v1 --go_opt=paths=source_relative \
-        --go-grpc_out=api/v1 --go-grpc_opt=paths=source_relative \
-        --grpc-gateway_out=api/v1 --grpc-gateway_opt=paths=source_relative \
-        --openapiv2_out=api/v1 --openapiv2_opt=logtostderr=true \
-        api/v1/*.proto
-
-# Copy the rest of the application code
+# Copy the rest of the application code. The generated protobuf Go code
+# (*.pb.go, *_grpc.pb.go, *.pb.gw.go) and OpenAPI specs are committed to the
+# repo, so the image does NOT install protoc/plugins or run code generation -
+# it just compiles. Regenerate locally with `make proto` after .proto changes.
 COPY . .
 
 # Build the Go application with static linking

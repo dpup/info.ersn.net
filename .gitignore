@@ -97,10 +97,9 @@ config.local.yaml
 config.production.yaml
 config.development.yaml
 
-# Generated protobuf files (can be regenerated from source)
-*.pb.go
-*_grpc.pb.go
-*.pb.gw.go
+# NOTE: Generated protobuf Go code (*.pb.go, *_grpc.pb.go, *.pb.gw.go) is
+# committed (not ignored) so the Docker build doesn't have to install protoc +
+# plugins at build time. Regenerate with `make proto` after changing any .proto.
 
 # Temporary files
 *.tmp
