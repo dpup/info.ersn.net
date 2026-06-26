@@ -191,3 +191,16 @@ weather:
       coordinates:
         latitude: 38.333800
         longitude: -120.271300
+
+# Unified hazard/situation feed (docs/hazard-aggregation-design.md). Powers
+# GET /api/v1/hazards/{area}/{layer}.geojson — standardized GeoJSON for map clients.
+hazards:
+  areas:
+    - id: "calaveras"
+      name: "Calaveras County"
+      bounds:
+        minLatitude: 37.8
+        maxLatitude: 38.55
+        minLongitude: -120.9
+        maxLongitude: -120.0
+      incidentArea: "mother-lode"   # reuse the roads incidents region filter

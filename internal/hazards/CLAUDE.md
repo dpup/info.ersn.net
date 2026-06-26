@@ -1,0 +1,58 @@
+# Hazard Aggregation (unified GeoJSON feed)
+
+Implements the design in `docs/hazard-aggregation-design.md`. Aggregates the
+service's hazard sources into ONE standardized, map-ready interface:
+
+```
+GET /api/v1/hazards/{area}/{layer}.geojson
+```
+
+Returns an RFC 7946 `FeatureCollection` (+ a `metadata` foreign member) that an
+open maps client (MapLibre GL, Leaflet, OpenLayers) layers directly.
+
+## The model (don't break the envelope)
+
+- `geojson.go` — RFC 7946 types + geometry constructors. **Coordinates are
+  `[longitude, latitude]`** (the inverse of the service's internal
+  `{latitude, longitude}`); always build geometry via `PointGeom`/
+  `LineStringGeom`/`PolygonGeom`, which do the swap and trim to 5 decimals.
+- `properties.go` — the common `Properties` envelope shared by every layer, plus
+  a namespaced per-kind block (`incident`, `road`, `chain_control`, `weather`,
+  `fire_weather`). The envelope is identical across layers — that's the
+  unification; a client renders any card from `headline/severity/source`.
+- `severity.go` — the one severity scale (`INFO..EXTREME`, rank 0–4) every source
+  maps onto. It's editorial response-urgency, not magnitude. Use `setSeverity`
+  so `severity_rank` stays in sync.
+
+## Served outside grpc-gateway, but CORS is automatic
+
+These endpoints are hand-built GeoJSON via `prefab.WithHTTPHandler` (GeoJSON's
+polymorphic geometry fights proto). Prefab still wraps every `WithHTTPHandler`
+with `securityMiddleware` (verified in `builder.go`), so **CORS / the
+`*.ersn.net` allowlist apply automatically — do not add manual `SecurityHeaders`
+calls.** Each response sets `Content-Type: application/geo+json` and
+`Cache-Control`.
+
+## Fail-loud
+
+If a layer's source errors, the handler returns `metadata.source_status =
+UNAVAILABLE` with empty features — never a fabricated clear state. The evac layer
+(M4) extends this: any empty active-evac result is `UNAVAILABLE`/`unknown`, never
+"all clear".
+
+## Adding a layer (M2–M5)
+
+1. Add the `layer` const in `properties.go` and a per-kind block struct.
+2. Add the severity mapping in `severity.go` (cover every enum value).
+3. Write a `builder` method `func (s *Service) <layer>(ctx, area) ([]Feature, error)`
+   and register it in `builders()`.
+4. New upstreams get a client under `internal/clients/`, mirroring `nws`
+   (HTTPDoer, no key where possible) and a `LimitReader` body cap.
+5. M1 re-projects existing feeds only (road_incident, chain_control,
+   road_segment, weather_alert null-geom, fire_weather null-geom). Roadmap:
+   M2 earthquake (USGS) + scanners config; M3 wildfire (CAL FIRE + WFIGS
+   perimeters); M4 evacuation (Cal OES, fail-loud); M5 `/situation/{area}`
+   aggregator. Update the design doc's milestone table as each lands.
+
+Status: **M1 shipped** (per-layer endpoints for existing feeds). No `/situation`
+aggregator yet (M5).

@@ -7,6 +7,32 @@ There are no formal releases — the service deploys from `main`. Each entry bel
 is timestamped; add a new dated section at the top when the API surface changes.
 The API is JSON over HTTP (`/api/v1/...`); field names are camelCase.
 
+## 2026-06-26 22:28 UTC
+
+### Added — unified hazard GeoJSON feed (M1)
+
+New map-ready endpoints aggregating hazard data into one standardized RFC 7946
+GeoJSON interface (see `docs/hazard-aggregation-design.md`):
+
+```
+GET /api/v1/hazards/{area}/{layer}.geojson
+```
+
+- Areas are configured under `hazards.areas` in `prefab.yaml` (first: `calaveras`).
+- M1 layers (re-project existing feeds): `road_incident`, `chain_control`,
+  `road_segment` (LineString), `weather_alert` (null-geometry banner),
+  `fire_weather` (null-geometry banner). Roadmap: `earthquake`, `wildfire`,
+  `evacuation`, and a `/situation/{area}` aggregator.
+- Every feature uses a common `properties` envelope (`id, layer, kind, severity,
+  severity_rank, headline, source, …`) + a namespaced per-kind block, and a
+  unified severity scale `INFO..EXTREME` (rank 0–4) for sort/color.
+- Coordinates are RFC 7946 `[longitude, latitude]`. Collections carry a
+  `metadata` member with `source_status` (OK/STALE/UNAVAILABLE) for fail-loud
+  provenance. `Content-Type: application/geo+json`.
+- Consumes directly in MapLibre GL / Leaflet (`addSource({type:'geojson'})`).
+
+This is additive — existing endpoints are unchanged.
+
 ## 2026-06-26 16:47 UTC
 
 A large API cleanup pass. Several responses changed shape — see **Breaking

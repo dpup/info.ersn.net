@@ -16,6 +16,24 @@ type Config struct {
 	OpenWeather  OpenWeatherClient  `koanf:"openweather"`
 	Roads        RoadsConfig        `koanf:"roads"`
 	Weather      WeatherConfig      `koanf:"weather"`
+	Hazards      HazardsConfig      `koanf:"hazards"`
+}
+
+// HazardsConfig holds the unified hazard/situation feed configuration
+// (docs/hazard-aggregation-design.md). Each area is a named region the
+// /api/v1/hazards/{area}/{layer}.geojson endpoints serve.
+type HazardsConfig struct {
+	Areas []HazardArea `koanf:"areas"`
+}
+
+// HazardArea is a named region for the hazard feed.
+type HazardArea struct {
+	ID     string    `koanf:"id"`
+	Name   string    `koanf:"name"`
+	Bounds GeoBounds `koanf:"bounds"`
+	// IncidentArea is the roads.incidentAreas id reused for the road_incident
+	// layer (so we don't re-implement region filtering).
+	IncidentArea string `koanf:"incidentArea"`
 }
 
 // RefreshConfig holds common refresh timing settings
@@ -159,6 +177,9 @@ func LoadConfig() *Config {
 	}
 	if err := prefab.Config.Unmarshal("weather", &appConfig.Weather); err != nil {
 		log.Fatalf("Failed to unmarshal weather section: %v", err)
+	}
+	if err := prefab.Config.Unmarshal("hazards", &appConfig.Hazards); err != nil {
+		log.Fatalf("Failed to unmarshal hazards section: %v", err)
 	}
 	return appConfig
 }

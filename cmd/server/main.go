@@ -18,6 +18,7 @@ import (
 	"github.com/dpup/info.ersn.net/server/internal/clients/nws"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
 	"github.com/dpup/info.ersn.net/server/internal/config"
+	"github.com/dpup/info.ersn.net/server/internal/hazards"
 	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
 	"github.com/dpup/info.ersn.net/server/internal/services"
 )
@@ -59,6 +60,9 @@ func main() {
 	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, appConfig, alertEnhancer)
 	weatherService := services.NewWeatherService(weatherClient, nwsClient, cacheInstance, appConfig, weatherAlertEnhancer)
 
+	// Unified hazard/situation GeoJSON feed (re-projects the feeds above).
+	hazardsService := hazards.NewService(appConfig, roadsService, weatherService, caltransClient)
+
 	logging.Infow(ctx, "Live Data API Server starting",
 		"roads_monitored", len(appConfig.Roads.MonitoredRoads),
 		"weather_locations", len(appConfig.Weather.Locations))
@@ -75,6 +79,7 @@ func main() {
 		prefab.WithContext(ctx),
 		prefab.WithGRPCReflection(),
 		prefab.WithGRPCInterceptor(cacheHeadersInterceptor),
+		prefab.WithHTTPHandler(hazards.HandlerPrefix, hazardsService),
 		prefab.WithHTTPHandlerFunc("/", homepageHandler),
 		prefab.WithHTTPHandlerFunc("/api/docs/roads.swagger.json", openAPIHandler("api/v1/roads.swagger.json")),
 		prefab.WithHTTPHandlerFunc("/api/docs/weather.swagger.json", openAPIHandler("api/v1/weather.swagger.json")),
@@ -164,6 +169,9 @@ for the Ebbett's Pass region.
     <a href="/api/v1/weather">GET /api/v1/weather</a>             - Current weather + fire-weather state
     <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>      - NWS zone alerts + OpenWeatherMap alerts
     <a href="/api/v1/weather/alerts?zones=CAZ064,CAZ065,CAZ258,CAZ259">GET /api/v1/weather/alerts?zones=...</a> - Filter to NWS forecast zones
+
+  Hazards API (unified GeoJSON for map clients):
+    <a href="/api/v1/hazards/calaveras/road_incident.geojson">GET /api/v1/hazards/{area}/{layer}.geojson</a> - road_incident, chain_control, road_segment, weather_alert, fire_weather
 
 <span class="header">API Documentation:</span>
   <a href="/api/docs/roads.swagger.json">Roads API OpenAPI Spec</a>            - Machine-readable API docs (Roads)
