@@ -92,6 +92,20 @@ func fromFireWeatherState(state string) string {
 	}
 }
 
+// fromWildfire maps a fire's containment onto the unified scale (a configurable
+// heuristic; CAL FIRE doesn't expose growth rate). Active & <50% contained reads
+// SEVERE, partly contained MODERATE, fully contained MINOR.
+func fromWildfire(percentContained int32) string {
+	switch {
+	case percentContained >= 100:
+		return SevMinor
+	case percentContained < 50:
+		return SevSevere
+	default:
+		return SevModerate
+	}
+}
+
 // fromMagnitude maps an earthquake magnitude onto the unified scale.
 func fromMagnitude(m float64) string {
 	switch {

@@ -74,6 +74,25 @@ func TestSeverityMappings(t *testing.T) {
 	}
 }
 
+func TestNormFireName(t *testing.T) {
+	// CAL FIRE "Salt Springs Fire" and WFIGS "Salt Springs" must join.
+	if normFireName("Salt Springs Fire") != normFireName("Salt Springs") {
+		t.Errorf("%q != %q", normFireName("Salt Springs Fire"), normFireName("Salt Springs"))
+	}
+	if normFireName("Salt Springs Fire") != "saltsprings" {
+		t.Errorf("got %q", normFireName("Salt Springs Fire"))
+	}
+}
+
+func TestFromWildfire(t *testing.T) {
+	cases := map[int32]string{0: SevSevere, 49: SevSevere, 50: SevModerate, 99: SevModerate, 100: SevMinor}
+	for c, want := range cases {
+		if got := fromWildfire(c); got != want {
+			t.Errorf("fromWildfire(%d) = %q, want %q", c, got, want)
+		}
+	}
+}
+
 func TestSafeURL(t *testing.T) {
 	if safeURL("https://protect.genasys.com/x") == "" {
 		t.Error("https URL should pass")

@@ -11,8 +11,10 @@ import (
 	"github.com/dpup/prefab/logging"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
+	"github.com/dpup/info.ersn.net/server/internal/clients/calfire"
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
 	"github.com/dpup/info.ersn.net/server/internal/clients/usgs"
+	"github.com/dpup/info.ersn.net/server/internal/clients/wfigs"
 	"github.com/dpup/info.ersn.net/server/internal/config"
 	"github.com/dpup/info.ersn.net/server/internal/services"
 )
@@ -36,10 +38,13 @@ type Service struct {
 	weather  weatherAPI
 	caltrans *caltrans.FeedParser
 	usgs     *usgs.Client
+	calfire  *calfire.Client
+	wfigs    *wfigs.Client
 }
 
 // NewService wires the hazard service to the existing services + clients. The
-// new-upstream clients (USGS, ...) are keyless and constructed here.
+// new-upstream clients (USGS, CAL FIRE, WFIGS, ...) are keyless and constructed
+// here.
 func NewService(cfg *config.Config, roads *services.RoadsService, weather *services.WeatherService, ct *caltrans.FeedParser) *Service {
 	return &Service{
 		cfg:      cfg,
@@ -47,6 +52,8 @@ func NewService(cfg *config.Config, roads *services.RoadsService, weather *servi
 		weather:  weather,
 		caltrans: ct,
 		usgs:     usgs.NewClient(),
+		calfire:  calfire.NewClient(),
+		wfigs:    wfigs.NewClient(),
 	}
 }
 
@@ -66,6 +73,7 @@ func (s *Service) builders() map[string]builder {
 		LayerWeatherAlert: s.weatherAlerts,
 		LayerFireWeather:  s.fireWeather,
 		LayerEarthquake:   s.earthquakes,
+		LayerWildfire:     s.wildfires,
 	}
 }
 
@@ -376,6 +384,100 @@ func (s *Service) earthquakes(ctx context.Context, area config.HazardArea) ([]Fe
 	return out, nil
 }
 
+func (s *Service) wildfires(ctx context.Context, area config.HazardArea) ([]Feature, error) {
+	bounds := wfigs.Bounds{
+		MinLatitude:  area.Bounds.MinLatitude,
+		MaxLatitude:  area.Bounds.MaxLatitude,
+		MinLongitude: area.Bounds.MinLongitude,
+		MaxLongitude: area.Bounds.MaxLongitude,
+	}
+	incidents, ierr := s.calfire.GetActiveIncidents(ctx)
+	perims, perr := s.wfigs.GetPerimeters(ctx, bounds)
+	if ierr != nil && perr != nil {
+		return nil, fmt.Errorf("both wildfire sources failed: calfire=%v wfigs=%v", ierr, perr)
+	}
+
+	// Index perimeters by normalized name so a CAL FIRE incident can adopt its
+	// polygon geometry (join on incident name).
+	byName := make(map[string]wfigs.Perimeter, len(perims))
+	for _, p := range perims {
+		byName[normFireName(p.Name)] = p
+	}
+	used := make(map[string]bool)
+
+	var out []Feature
+	for _, in := range incidents {
+		if in.Lat == 0 && in.Lng == 0 {
+			continue
+		}
+		if !area.Bounds.Contains(in.Lat, in.Lng) {
+			continue
+		}
+		wf := &WildfireProps{
+			Acres:       in.Acres,
+			Containment: in.PercentContained,
+			County:      in.County,
+		}
+		p := Properties{
+			ID:        "calfire:" + nonEmpty(in.UniqueID, normFireName(in.Name)),
+			Layer:     LayerWildfire,
+			Kind:      "Wildfire",
+			Category:  "wildfire",
+			Headline:  fmt.Sprintf("%s — %.0f ac, %d%% contained", in.Name, in.Acres, in.PercentContained),
+			AreaLabel: nonEmpty(in.Location, in.County),
+			Status:    "active",
+			Effective: tsOrEmpty(in.Started),
+			UpdatedAt: tsOrEmpty(in.Updated),
+			Source:    Source{ID: "calfire", Name: "CAL FIRE", URL: safeURL(in.URL), Attribution: "CAL FIRE / WFIGS"},
+			Wildfire:  wf,
+		}
+		p.setSeverity(fromWildfire(in.PercentContained))
+		// Adopt the matching perimeter polygon if we have one; else a point.
+		if perim, ok := byName[normFireName(in.Name)]; ok {
+			used[normFireName(in.Name)] = true
+			wf.HasPerimeter = true
+			out = append(out, Feature{Type: "Feature", Geometry: RawGeom(perim.GeometryType, perim.GeometryCoords), Properties: p})
+		} else {
+			out = append(out, Feature{Type: "Feature", Geometry: PointGeom(in.Lat, in.Lng), Properties: p})
+		}
+	}
+
+	// Emit perimeters that didn't match a CAL FIRE incident as standalone
+	// polygons (don't drop mapped fires CAL FIRE's curated list omits).
+	for _, perim := range perims {
+		if used[normFireName(perim.Name)] || perim.GeometryType == "" {
+			continue
+		}
+		p := Properties{
+			ID:       "wfigs:" + normFireName(perim.Name),
+			Layer:    LayerWildfire,
+			Kind:     "Wildfire",
+			Category: "wildfire",
+			Headline: fmt.Sprintf("%s — %.0f ac, %d%% contained", perim.Name, perim.Acres, perim.PercentContained),
+			Status:   "active",
+			Source:   Source{ID: "wfigs", Name: "NIFC WFIGS", Attribution: "NIFC / WFIGS"},
+			Wildfire: &WildfireProps{Acres: perim.Acres, Containment: perim.PercentContained, Cause: perim.Cause, HasPerimeter: true},
+		}
+		p.setSeverity(fromWildfire(perim.PercentContained))
+		out = append(out, Feature{Type: "Feature", Geometry: RawGeom(perim.GeometryType, perim.GeometryCoords), Properties: p})
+	}
+	return out, nil
+}
+
+// normFireName normalizes an incident/perimeter name for joining CAL FIRE and
+// WFIGS (e.g. "Salt Springs Fire" and "Salt Springs" → "saltsprings").
+func normFireName(s string) string {
+	s = strings.ToLower(s)
+	s = strings.TrimSuffix(strings.TrimSpace(s), " fire")
+	var b strings.Builder
+	for _, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
 // roadSeverity derives a unified severity from a road's status + congestion.
 func roadSeverity(rd *api.Road) string {
 	switch rd.GetStatus() {
@@ -404,6 +506,14 @@ func tsToRFC3339(ts interface{ GetSeconds() int64 }) string {
 		return ""
 	}
 	return time.Unix(secs, 0).UTC().Format(time.RFC3339)
+}
+
+// tsOrEmpty formats a time.Time as RFC3339, or "" if zero.
+func tsOrEmpty(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.UTC().Format(time.RFC3339)
 }
 
 func nonEmpty(vals ...string) string {

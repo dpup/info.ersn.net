@@ -5,7 +5,10 @@
 // open maps client (MapLibre GL, Leaflet, OpenLayers) can layer it directly.
 package hazards
 
-import "math"
+import (
+	"encoding/json"
+	"math"
+)
 
 // schemaVersion is surfaced in FeatureCollection metadata; bump on a breaking
 // change to the properties contract.
@@ -90,6 +93,16 @@ func LineStringGeom(points []LatLng) *Geometry {
 		coords[i] = lonLat(p.Lat, p.Lng)
 	}
 	return &Geometry{Type: "LineString", Coordinates: coords}
+}
+
+// RawGeom wraps an already-GeoJSON geometry (type + raw [lon,lat] coordinates
+// straight from an upstream feed, e.g. ArcGIS f=geojson) without re-encoding.
+// Returns nil if either part is empty.
+func RawGeom(geomType string, coords json.RawMessage) *Geometry {
+	if geomType == "" || len(coords) == 0 {
+		return nil
+	}
+	return &Geometry{Type: geomType, Coordinates: coords}
 }
 
 // PolygonGeom builds a single-ring Polygon from internal {lat,lng} points,
