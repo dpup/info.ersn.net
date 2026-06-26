@@ -50,8 +50,9 @@ type RoadsConfig struct {
 
 // CaltransConfig holds Caltrans KML feed settings
 type CaltransConfig struct {
-	LaneClosures CaltransFeedConfig `koanf:"laneClosures"`
-	CHPIncidents CaltransFeedConfig `koanf:"chpIncidents"`
+	LaneClosures   CaltransFeedConfig `koanf:"laneClosures"`
+	CHPIncidents   CaltransFeedConfig `koanf:"chpIncidents"`
+	RoadConditions CaltransFeedConfig `koanf:"roadConditions"`
 }
 
 // CaltransFeedConfig holds individual feed configuration
@@ -62,11 +63,12 @@ type CaltransFeedConfig struct {
 
 // MonitoredRoad represents a road to monitor
 type MonitoredRoad struct {
-	Name        string      `koanf:"name"`
-	Section     string      `koanf:"section"`
-	ID          string      `koanf:"id"`
-	Origin      Coordinates `koanf:"origin"`
-	Destination Coordinates `koanf:"destination"`
+	Name             string      `koanf:"name"`
+	Section          string      `koanf:"section"`
+	ID               string      `koanf:"id"`
+	Origin           Coordinates `koanf:"origin"`
+	Destination      Coordinates `koanf:"destination"`
+	LocationKeywords []string    `koanf:"locationKeywords"`
 }
 
 // WeatherConfig holds weather monitoring configuration

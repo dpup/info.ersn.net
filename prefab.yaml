@@ -48,7 +48,10 @@ roads:
     chpIncidents:
       refreshInterval: "5m"   # More frequent, incidents change quickly
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
-    
+    roadConditions:
+      refreshInterval: "10m"  # Caltrans road conditions page (closures, chain controls)
+      url: "https://roads.dot.ca.gov/roadscell.php?roadnumber=%s"
+
   monitoredRoads:
     - name: "Hwy 4"
       section: "Angels Camp to Murphys"
@@ -59,8 +62,9 @@ roads:
       destination:
         latitude: 38.139117
         longitude: -120.456111
+      locationKeywords: ["Vallecito", "Douglas Flat", "Copperopolis"]
     - name: "Hwy 4"
-      section: "Murphys to Arnold"  
+      section: "Murphys to Arnold"
       id: "hwy4-murphys-arnold"
       origin:
         latitude: 38.139117
@@ -68,6 +72,7 @@ roads:
       destination:
         latitude: 38.265006
         longitude: -120.333654
+      locationKeywords: ["Avery", "Hathaway Pines"]
     - name: "Hwy 4"
       section: "Arnold to Bear Valley"
       id: "hwy4-arnold-bearvalley"
@@ -77,6 +82,7 @@ roads:
       destination:
         latitude: 38.461045
         longitude: -120.042368
+      locationKeywords: ["Camp Connell", "Dorrington", "White Pines", "Big Trees", "Ganns", "Tamarack", "Lake Alpine", "Mt Reba", "Ebbetts"]
     # Useful for testing because it is always busy and often has incidents.
     # - name: "101"
     #   section: "SF to Oakland"
