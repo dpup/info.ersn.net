@@ -52,6 +52,18 @@ service RoadsService {
       get: "/api/v1/roads/metrics"
     };
   }
+
+  // ListIncidents returns region-wide CHP/Caltrans dispatch incidents.
+  // Unlike the alerts embedded in each Road, this is not scoped to a monitored
+  // route - it surfaces every incident within a configured area (e.g.
+  // ?area=mother-lode). Data comes from the same Caltrans/CHP KML feeds but is
+  // returned as a flat, structured list without per-route classification or AI
+  // enhancement (kept lightweight for a region-wide view).
+  rpc ListIncidents(ListIncidentsRequest) returns (ListIncidentsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/incidents"
+    };
+  }
 }
 
 // Request messages
@@ -63,6 +75,11 @@ message GetRoadRequest {
 
 message GetProcessingMetricsRequest {}
 
+// ListIncidentsRequest filters incidents to a configured area.
+message ListIncidentsRequest {
+  string area = 1;  // Area id (e.g. "mother-lode"). Empty defaults to the first configured area.
+}
+
 // Response messages
 message ListRoadsResponse {
   repeated Road roads = 1;
@@ -72,6 +89,28 @@ message ListRoadsResponse {
 message GetRoadResponse {
   Road road = 1;
   google.protobuf.Timestamp last_updated = 2;
+}
+
+message ListIncidentsResponse {
+  repeated Incident incidents = 1;
+  google.protobuf.Timestamp last_updated = 2;
+  string area = 3;  // Echoes the resolved area id
+}
+
+// Incident is a region-wide CHP/Caltrans dispatch incident, surfaced
+// independently of any monitored road.
+message Incident {
+  string id = 1;                          // Stable id (CHP log number when available)
+  AlertType type = 2;                     // INCIDENT, CLOSURE, CONSTRUCTION
+  AlertSeverity severity = 3;             // Heuristic severity from incident text
+  Coordinates location = 4;              // Point location
+  string location_description = 5;        // Human-readable location (e.g. "Sr132 Ofr / I580 E")
+  string description = 6;                 // Incident detail text from the feed
+  string status = 7;                      // "active" (feeds only list active incidents)
+  string log_number = 8;                  // CHP/CAD log number (e.g. "250916ST0066")
+  google.protobuf.Timestamp started = 9;  // When the incident was first reported
+  google.protobuf.Timestamp last_updated = 10; // Last update from the feed
+  string area = 11;                       // Area id this incident was matched to
 }
 
 message ProcessingMetrics {

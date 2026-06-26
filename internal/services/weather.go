@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/dpup/prefab/logging"
@@ -11,6 +12,7 @@ import (
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/cache"
+	"github.com/dpup/info.ersn.net/server/internal/clients/nws"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
 	"github.com/dpup/info.ersn.net/server/internal/config"
 	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
@@ -20,19 +22,21 @@ import (
 // Implementation per tasks.md T017 and data-model.md WeatherData entity
 type WeatherService struct {
 	api.UnimplementedWeatherServiceServer
-	weatherClient  *weather.Client
-	cache          *cache.Cache
-	config         *config.Config
-	alertEnhancer  alerts.WeatherAlertEnhancer
+	weatherClient *weather.Client
+	nwsClient     *nws.Client
+	cache         *cache.Cache
+	config        *config.Config
+	alertEnhancer alerts.WeatherAlertEnhancer
 }
 
 // NewWeatherService creates a new WeatherService
-func NewWeatherService(weatherClient *weather.Client, cache *cache.Cache, config *config.Config, alertEnhancer alerts.WeatherAlertEnhancer) *WeatherService {
+func NewWeatherService(weatherClient *weather.Client, nwsClient *nws.Client, cache *cache.Cache, config *config.Config, alertEnhancer alerts.WeatherAlertEnhancer) *WeatherService {
 	return &WeatherService{
-		weatherClient:  weatherClient,
-		cache:          cache,
-		config:         config,
-		alertEnhancer:  alertEnhancer,
+		weatherClient: weatherClient,
+		nwsClient:     nwsClient,
+		cache:         cache,
+		config:        config,
+		alertEnhancer: alertEnhancer,
 	}
 }
 
@@ -143,13 +147,13 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 		}
 
 		return &api.ListWeatherAlertsResponse{
-			Alerts:      cachedAlerts,
+			Alerts:      filterAlertsByZones(cachedAlerts, req.Zones),
 			LastUpdated: lastUpdated,
 		}, nil
 	}
 
 	// Cache miss or stale - refresh alerts from external API
-	logging.Info(ctx, "Refreshing weather alerts from OpenWeatherMap API")
+	logging.Info(ctx, "Refreshing weather alerts (NWS zone alerts + OpenWeatherMap)")
 	alerts, err := s.refreshWeatherAlerts(ctx)
 	if err != nil {
 		// If refresh fails but we have stale cached data, return it
@@ -162,7 +166,7 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 			}
 
 			return &api.ListWeatherAlertsResponse{
-				Alerts:      cachedAlerts,
+				Alerts:      filterAlertsByZones(cachedAlerts, req.Zones),
 				LastUpdated: lastUpdated,
 			}, nil
 		}
@@ -175,7 +179,7 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 	}
 
 	return &api.ListWeatherAlertsResponse{
-		Alerts:      alerts,
+		Alerts:      filterAlertsByZones(alerts, req.Zones),
 		LastUpdated: timestamppb.Now(),
 	}, nil
 }
@@ -196,6 +200,10 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 
 	logging.Infow(ctx, "Starting weather refresh", "location_count", len(s.config.Weather.Locations))
 
+	// Fetch NWS zone alerts once for fire-weather classification across all
+	// locations (issue #5).
+	nwsAlerts := s.getNWSAlerts(ctx)
+
 	// Process each configured location
 	for i, location := range s.config.Weather.Locations {
 		logging.Infow(ctx, "Processing weather location", "index", i, "location_id", location.ID, "location_name", location.Name)
@@ -213,8 +221,11 @@ func (s *WeatherService) refreshWeatherData(ctx context.Context) ([]*api.Weather
 			}
 			continue
 		}
+		weatherData.FireWeather = s.computeFireWeather(location, nwsAlerts)
 		weatherDataList = append(weatherDataList, weatherData)
-		logging.Infow(ctx, "Successfully processed weather location", "location_id", location.ID)
+		logging.Infow(ctx, "Successfully processed weather location",
+			"location_id", location.ID,
+			"fire_weather", weatherData.FireWeather.State)
 	}
 
 	logging.Infow(ctx, "Weather refresh complete",
@@ -267,11 +278,17 @@ func (s *WeatherService) processWeatherLocation(ctx context.Context, location co
 	return weatherData, nil
 }
 
-// refreshWeatherAlerts fetches fresh weather alerts from OpenWeatherMap for all configured locations
+// refreshWeatherAlerts builds the combined weather-alerts list. Authoritative
+// NWS zone alerts (issue #4) are listed first, followed by OpenWeatherMap
+// per-location alerts. Each alert is tagged with its source so consumers can
+// prefer NWS.
 func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.WeatherAlert, error) {
 	var allAlerts []*api.WeatherAlert
 
-	// Process each configured location
+	// Authoritative NWS zone alerts for the service area.
+	allAlerts = append(allAlerts, nwsAlertsToProto(s.getNWSAlerts(ctx))...)
+
+	// OpenWeatherMap per-location alerts (AI-enhanced, tagged as such).
 	for _, location := range s.config.Weather.Locations {
 		locationAlerts, err := s.weatherClient.GetWeatherAlerts(ctx, location.ToProto())
 		if err != nil {
@@ -283,6 +300,7 @@ func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.Weath
 		// Add location context to alert IDs and enhance each alert
 		for _, alert := range locationAlerts {
 			alert.Id = fmt.Sprintf("%s_%s", location.ID, alert.Id)
+			alert.Source = "OpenWeatherMap"
 
 			// Enhance the alert with AI if enhancer is available
 			if s.alertEnhancer != nil {
@@ -294,6 +312,35 @@ func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.Weath
 	}
 
 	return allAlerts, nil
+}
+
+// filterAlertsByZones returns only NWS alerts intersecting the requested zones.
+// When no zones are requested the input list is returned unchanged. Requested
+// zones may be comma-separated or repeated.
+func filterAlertsByZones(alerts []*api.WeatherAlert, zones []string) []*api.WeatherAlert {
+	zoneSet := make(map[string]bool)
+	for _, z := range zones {
+		for _, part := range strings.Split(z, ",") {
+			zc := strings.ToUpper(strings.TrimSpace(part))
+			if zc != "" {
+				zoneSet[zc] = true
+			}
+		}
+	}
+	if len(zoneSet) == 0 {
+		return alerts
+	}
+
+	var out []*api.WeatherAlert
+	for _, a := range alerts {
+		for _, z := range a.Zones {
+			if zoneSet[strings.ToUpper(strings.TrimSpace(z))] {
+				out = append(out, a)
+				break
+			}
+		}
+	}
+	return out
 }
 
 // enhanceWeatherAlert enhances a single weather alert with AI-generated content

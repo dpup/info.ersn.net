@@ -6,6 +6,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
+	_ "time/tzdata" // Embed the IANA tz database so America/Los_Angeles resolves in minimal containers
 
 	"github.com/dpup/prefab"
 	"github.com/dpup/prefab/logging"
@@ -14,6 +15,7 @@ import (
 	"github.com/dpup/info.ersn.net/server/internal/cache"
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
 	"github.com/dpup/info.ersn.net/server/internal/clients/google"
+	"github.com/dpup/info.ersn.net/server/internal/clients/nws"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
 	"github.com/dpup/info.ersn.net/server/internal/config"
 	"github.com/dpup/info.ersn.net/server/internal/lib/alerts"
@@ -37,6 +39,7 @@ func main() {
 	googleClient := google.NewClient(appConfig.GoogleRoutes.APIKey)
 	caltransClient := caltrans.NewFeedParser()
 	weatherClient := weather.NewClient(appConfig.OpenWeather.APIKey)
+	nwsClient := nws.NewClient(appConfig.Weather.NWS.UserAgent)
 
 	// Initialize OpenAI enhancer with caching (required for service)
 	if appConfig.OpenAI.APIKey == "" {
@@ -54,7 +57,7 @@ func main() {
 
 	// Initialize gRPC services
 	roadsService := services.NewRoadsService(googleClient, caltransClient, cacheInstance, appConfig, alertEnhancer)
-	weatherService := services.NewWeatherService(weatherClient, cacheInstance, appConfig, weatherAlertEnhancer)
+	weatherService := services.NewWeatherService(weatherClient, nwsClient, cacheInstance, appConfig, weatherAlertEnhancer)
 
 	logging.Infow(ctx, "Live Data API Server starting",
 		"roads_monitored", len(appConfig.Roads.MonitoredRoads),
@@ -154,10 +157,11 @@ for the Ebbett's Pass region.
   Roads API:
     <a href="/api/v1/roads">GET /api/v1/roads</a>               - List all monitored roads
     <a href="/api/v1/roads/hwy4-angels-murphys">GET /api/v1/roads/{road_id}</a>     - Get specific road details
+    <a href="/api/v1/incidents?area=mother-lode">GET /api/v1/incidents?area=...</a>  - Region-wide CHP/Caltrans incidents
 
   Weather API:
-    <a href="/api/v1/weather">GET /api/v1/weather</a>             - Current weather for all locations
-    <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>      - Active weather alerts
+    <a href="/api/v1/weather">GET /api/v1/weather</a>             - Current weather + fire-weather state
+    <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>      - NWS zone alerts + OpenWeatherMap alerts
 
 <span class="header">API Documentation:</span>
   <a href="/api/docs/roads.swagger.json">Roads API OpenAPI Spec</a>            - Machine-readable API docs (Roads)
@@ -167,6 +171,7 @@ for the Ebbett's Pass region.
   • Google Routes API               - Traffic conditions and travel times
   • Caltrans KML Feeds              - Lane closures and CHP incidents
   • OpenWeatherMap API              - Weather data and alerts
+  • National Weather Service        - Zone alerts and fire-weather products
 
 <span class="header">Example Usage:</span>
   curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>

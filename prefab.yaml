@@ -4,8 +4,13 @@ server:
     xFrameOptions: DENY  # X-Frame-Options header
 
     # CORS settings
+    # NOTE: Prefab only emits Access-Control-Allow-Origin when the request's
+    # Origin header exactly matches an entry below (see prefab security.go).
+    # Browser clients must be listed here explicitly to make cross-origin fetch work.
     corsOrigins:
       - https://ersn.net
+      - https://sierragridteam.org   # S.I.E.R.R.A site consuming /roads, /weather, /weather/alerts (issue #3)
+      - https://www.sierragridteam.org
       - http://localhost:8080
       - http://localhost:4321
       - http://localhost:4322
@@ -48,6 +53,20 @@ roads:
     chpIncidents:
       refreshInterval: "5m"   # More frequent, incidents change quickly
       url: "https://quickmap.dot.ca.gov/data/chp-only.kml"
+
+  # Named regions for the region-wide incidents feed (issue #7):
+  #   GET /api/v1/incidents?area=mother-lode
+  # The CHP/Caltrans KML feeds are statewide; bounds keep this scoped to the
+  # Gold Country foothills (Amador/Calaveras/Tuolumne/Mariposa/El Dorado),
+  # excluding the Central Valley floor (Stockton/Sacramento/Modesto).
+  incidentAreas:
+    - id: "mother-lode"
+      name: "Mother Lode"
+      bounds:
+        minLatitude: 37.3
+        maxLatitude: 39.0
+        minLongitude: -121.15
+        maxLongitude: -119.5
     
   monitoredRoads:
     - name: "Hwy 4"
@@ -77,6 +96,19 @@ roads:
       destination:
         latitude: 38.461045
         longitude: -120.042368
+    # Hwy 49 / Tuolumne corridor (issue #6). Angels Camp <-> Sonora links the
+    # Calaveras and Tuolumne service areas. Note: the upper Hwy 4 segment past
+    # Arnold (Dorrington) is already covered by "Arnold to Bear Valley" above,
+    # which Google routes through Dorrington.
+    - name: "Hwy 49"
+      section: "Angels Camp to Sonora"
+      id: "hwy49-angels-sonora"
+      origin:
+        latitude: 38.067400
+        longitude: -120.540200
+      destination:
+        latitude: 37.984100
+        longitude: -120.382700
     # Useful for testing because it is always busy and often has incidents.
     # - name: "101"
     #   section: "SF to Oakland"
@@ -91,6 +123,19 @@ roads:
 weather:
   refreshInterval: "5m"
   staleThreshold: "10m"
+
+  # National Weather Service zone alerts (issue #4) + fire-weather
+  # classification (issue #5). These foothill/mountain zones cover the
+  # Calaveras & Tuolumne service area. NWS requires a descriptive User-Agent
+  # (no API key). See https://www.weather.gov/documentation/services-web-api
+  nws:
+    userAgent: "info.ersn.net (https://info.ersn.net)"
+    zones:
+      - CAZ064   # Calaveras foothills
+      - CAZ065   # Calaveras mountains
+      - CAZ258   # Tuolumne foothills
+      - CAZ259   # Tuolumne mountains
+
   locations:
     - id: "murphys"
       name: "Murphys, CA"
@@ -107,3 +152,25 @@ weather:
       coordinates:
         latitude: 38.461045
         longitude: -120.042368
+    # Hwy 49 / Tuolumne corridor towns (issue #6). OpenWeather is well within
+    # its free-tier rate limit so adding locations here is cheap.
+    - id: "sonora"
+      name: "Sonora, CA"
+      coordinates:
+        latitude: 37.984100
+        longitude: -120.382700
+    - id: "columbia"
+      name: "Columbia, CA"
+      coordinates:
+        latitude: 38.034900
+        longitude: -120.401600
+    - id: "twainharte"
+      name: "Twain Harte, CA"
+      coordinates:
+        latitude: 38.038300
+        longitude: -120.229400
+    - id: "dorrington"
+      name: "Dorrington, CA"
+      coordinates:
+        latitude: 38.333800
+        longitude: -120.271300

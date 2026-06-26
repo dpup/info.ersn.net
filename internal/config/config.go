@@ -44,8 +44,32 @@ type OpenWeatherClient struct {
 type RoadsConfig struct {
 	CaltransFeeds   CaltransConfig  `koanf:"caltransFeeds"`
 	MonitoredRoads  []MonitoredRoad `koanf:"monitoredRoads"`
+	IncidentAreas   []IncidentArea  `koanf:"incidentAreas"`
 	RefreshInterval time.Duration   `koanf:"refreshInterval"`
 	StaleThreshold  time.Duration   `koanf:"staleThreshold"`
+}
+
+// IncidentArea defines a named geographic region for the region-wide incidents
+// feed (GET /api/v1/incidents?area=<id>). Incidents whose coordinates fall
+// inside Bounds are included.
+type IncidentArea struct {
+	ID     string    `koanf:"id"`
+	Name   string    `koanf:"name"`
+	Bounds GeoBounds `koanf:"bounds"`
+}
+
+// GeoBounds is an axis-aligned latitude/longitude bounding box.
+type GeoBounds struct {
+	MinLatitude  float64 `koanf:"minLatitude"`
+	MaxLatitude  float64 `koanf:"maxLatitude"`
+	MinLongitude float64 `koanf:"minLongitude"`
+	MaxLongitude float64 `koanf:"maxLongitude"`
+}
+
+// Contains reports whether the given coordinate falls within the bounds.
+func (b GeoBounds) Contains(lat, lon float64) bool {
+	return lat >= b.MinLatitude && lat <= b.MaxLatitude &&
+		lon >= b.MinLongitude && lon <= b.MaxLongitude
 }
 
 // CaltransConfig holds Caltrans KML feed settings
@@ -72,8 +96,19 @@ type MonitoredRoad struct {
 // WeatherConfig holds weather monitoring configuration
 type WeatherConfig struct {
 	Locations       []WeatherLocation `koanf:"locations"`
+	NWS             NWSConfig         `koanf:"nws"`
 	RefreshInterval time.Duration     `koanf:"refreshInterval"`
 	StaleThreshold  time.Duration     `koanf:"staleThreshold"`
+}
+
+// NWSConfig holds National Weather Service (api.weather.gov) settings used for
+// authoritative zone alerts (issue #4) and fire-weather classification (issue #5).
+type NWSConfig struct {
+	// UserAgent identifies the app to api.weather.gov (required by NWS).
+	UserAgent string `koanf:"userAgent"`
+	// Zones is the set of NWS forecast zones covering the service area
+	// (e.g. CAZ064, CAZ065, CAZ258, CAZ259).
+	Zones []string `koanf:"zones"`
 }
 
 // WeatherLocation represents a location to monitor for weather
@@ -81,6 +116,10 @@ type WeatherLocation struct {
 	ID          string      `koanf:"id"`
 	Name        string      `koanf:"name"`
 	Coordinates Coordinates `koanf:"coordinates"`
+	// NWSZones optionally restricts this location's fire-weather classification
+	// to specific NWS zones. When empty, the region-wide WeatherConfig.NWS.Zones
+	// are used (conservative: a region product applies to all locations).
+	NWSZones []string `koanf:"nwsZones"`
 }
 
 // Coordinates represents lat/lon coordinates - unified structure

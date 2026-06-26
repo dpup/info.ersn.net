@@ -60,7 +60,12 @@ message GetLocationWeatherRequest {
   string location_id = 1;
 }
 
-message ListWeatherAlertsRequest {}
+message ListWeatherAlertsRequest {
+  // Optional NWS forecast zone filter (e.g. "CAZ064"). When provided, only
+  // authoritative NWS alerts for these zones are returned. Repeat the param
+  // (?zones=CAZ064&zones=CAZ065) or pass a comma-separated value.
+  repeated string zones = 1;
+}
 
 // Response messages
 message ListWeatherResponse {
@@ -92,6 +97,20 @@ message WeatherData {
   int32 wind_direction_degrees = 10;         // Wind direction in degrees (0-360) 
   int32 visibility_km = 11;                  // Visibility distance in kilometers
   repeated WeatherAlert alerts = 12;         // Active weather alerts
+  FireWeather fire_weather = 13;             // Fire-weather classification (NWS-derived)
+}
+
+// FireWeather classifies fire-weather risk derived from authoritative NWS
+// fire-weather products. It escalates Normal -> Elevated -> Red Flag. Red Flag
+// is only reported when an NWS Red Flag Warning is actually in effect.
+message FireWeather {
+  string state = 1;          // "normal" | "elevated" | "red-flag"
+  string source_event = 2;   // Driving NWS product (e.g. "Red Flag Warning"); empty when normal
+  string headline = 3;       // Headline of the governing alert
+  string sender_name = 4;    // Issuing NWS office
+  string effective = 5;      // ISO 8601 start of the governing product
+  string expires = 6;        // ISO 8601 end of the governing product
+  repeated string zones = 7; // NWS zones the classification is based on
 }
 
 
@@ -110,6 +129,11 @@ message WeatherAlert {
   string headline = 8;                       // Single sentence summary, <100 chars
   string summary = 9;                        // 2-3 sentences, plain text, traveler-focused
   string details = 10;                       // Full description with minimal markdown formatting
+
+  // Provenance / NWS fields
+  string source = 11;                        // "NWS" or "OpenWeatherMap"
+  string severity = 12;                      // NWS severity: Extreme/Severe/Moderate/Minor/Unknown
+  repeated string zones = 13;                // NWS forecast zones this alert applies to (e.g. "CAZ064")
 }
 
 // Enumerations

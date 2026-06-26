@@ -25,6 +25,38 @@
     "application/json"
   ],
   "paths": {
+    "/api/v1/incidents": {
+      "get": {
+        "summary": "ListIncidents returns region-wide CHP/Caltrans dispatch incidents.\nUnlike the alerts embedded in each Road, this is not scoped to a monitored\nroute - it surfaces every incident within a configured area (e.g.\n?area=mother-lode). Data comes from the same Caltrans/CHP KML feeds but is\nreturned as a flat, structured list without per-route classification or AI\nenhancement (kept lightweight for a region-wide view).",
+        "operationId": "RoadsService_ListIncidents",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListIncidentsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "area",
+            "description": "Area id (e.g. \"mother-lode\"). Empty defaults to the first configured area.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RoadsService"
+        ]
+      }
+    },
     "/api/v1/roads": {
       "get": {
         "summary": "ListRoads returns current conditions for all configured roads",
@@ -261,6 +293,78 @@
         "lastUpdated": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "v1Incident": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Stable id (CHP log number when available)"
+        },
+        "type": {
+          "$ref": "#/definitions/v1AlertType",
+          "title": "INCIDENT, CLOSURE, CONSTRUCTION"
+        },
+        "severity": {
+          "$ref": "#/definitions/v1AlertSeverity",
+          "title": "Heuristic severity from incident text"
+        },
+        "location": {
+          "$ref": "#/definitions/v1Coordinates",
+          "title": "Point location"
+        },
+        "locationDescription": {
+          "type": "string",
+          "title": "Human-readable location (e.g. \"Sr132 Ofr / I580 E\")"
+        },
+        "description": {
+          "type": "string",
+          "title": "Incident detail text from the feed"
+        },
+        "status": {
+          "type": "string",
+          "title": "\"active\" (feeds only list active incidents)"
+        },
+        "logNumber": {
+          "type": "string",
+          "title": "CHP/CAD log number (e.g. \"250916ST0066\")"
+        },
+        "started": {
+          "type": "string",
+          "format": "date-time",
+          "title": "When the incident was first reported"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Last update from the feed"
+        },
+        "area": {
+          "type": "string",
+          "title": "Area id this incident was matched to"
+        }
+      },
+      "description": "Incident is a region-wide CHP/Caltrans dispatch incident, surfaced\nindependently of any monitored road."
+    },
+    "v1ListIncidentsResponse": {
+      "type": "object",
+      "properties": {
+        "incidents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Incident"
+          }
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "area": {
+          "type": "string",
+          "title": "Echoes the resolved area id"
         }
       }
     },

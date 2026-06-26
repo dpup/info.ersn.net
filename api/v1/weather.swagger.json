@@ -66,6 +66,19 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "zones",
+            "description": "Optional NWS forecast zone filter (e.g. \"CAZ064\"). When provided, only\nauthoritative NWS alerts for these zones are returned. Repeat the param\n(?zones=CAZ064\u0026zones=CAZ065) or pass a comma-separated value.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
         "tags": [
           "WeatherService"
         ]
@@ -131,6 +144,43 @@
           }
         }
       }
+    },
+    "v1FireWeather": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "title": "\"normal\" | \"elevated\" | \"red-flag\""
+        },
+        "sourceEvent": {
+          "type": "string",
+          "title": "Driving NWS product (e.g. \"Red Flag Warning\"); empty when normal"
+        },
+        "headline": {
+          "type": "string",
+          "title": "Headline of the governing alert"
+        },
+        "senderName": {
+          "type": "string",
+          "title": "Issuing NWS office"
+        },
+        "effective": {
+          "type": "string",
+          "title": "ISO 8601 start of the governing product"
+        },
+        "expires": {
+          "type": "string",
+          "title": "ISO 8601 end of the governing product"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "NWS zones the classification is based on"
+        }
+      },
+      "description": "FireWeather classifies fire-weather risk derived from authoritative NWS\nfire-weather products. It escalates Normal -\u003e Elevated -\u003e Red Flag. Red Flag\nis only reported when an NWS Red Flag Warning is actually in effect."
     },
     "v1GetLocationWeatherResponse": {
       "type": "object",
@@ -225,6 +275,22 @@
         "details": {
           "type": "string",
           "title": "Full description with minimal markdown formatting"
+        },
+        "source": {
+          "type": "string",
+          "description": "\"NWS\" or \"OpenWeatherMap\"",
+          "title": "Provenance / NWS fields"
+        },
+        "severity": {
+          "type": "string",
+          "title": "NWS severity: Extreme/Severe/Moderate/Minor/Unknown"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "NWS forecast zones this alert applies to (e.g. \"CAZ064\")"
         }
       }
     },
@@ -286,6 +352,10 @@
             "$ref": "#/definitions/v1WeatherAlert"
           },
           "title": "Active weather alerts"
+        },
+        "fireWeather": {
+          "$ref": "#/definitions/v1FireWeather",
+          "title": "Fire-weather classification (NWS-derived)"
         }
       },
       "title": "Data models"

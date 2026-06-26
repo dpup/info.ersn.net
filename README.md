@@ -182,7 +182,47 @@ The Roads API provides intelligent alerts that combine data from multiple source
 - **Google Routes API**: Real-time traffic conditions and route geometry for spatial matching
 - **OpenAI Enhancement**: Automatic conversion of technical alerts into clear, actionable information
 
-*Note: Chain control status is currently disabled until winter when actual chain requirement data becomes available in Caltrans feeds. All roads will show no chain requirements.*
+**Chain Control:** Roads include a `chainControlInfo` object (level R1/R2/R3,
+location, direction, effective time) sourced from the Caltrans chain-control KML
+feed. Outside winter the feed is typically empty and roads report no chain
+requirements.
+
+### Incidents API
+
+Region-wide CHP/Caltrans dispatch incidents, surfaced independently of the
+monitored roads (issue #7). Unlike road `alerts[]`, this is a flat list scoped by
+a configured geographic area rather than per-route, and is not AI-enhanced.
+
+```http
+GET /api/v1/incidents?area=mother-lode
+```
+
+**Response Example:**
+```json
+{
+  "incidents": [
+    {
+      "id": "260625SA0982",
+      "type": "INCIDENT",
+      "severity": "WARNING",
+      "location": { "latitude": 38.07, "longitude": -120.54 },
+      "locationDescription": "Sr49 / Monitor Rd",
+      "description": "1125-Traffic Hazard",
+      "status": "active",
+      "logNumber": "260625SA0982",
+      "started": "2026-06-25T17:46:00-07:00",
+      "lastUpdated": "2026-06-25T18:34:00-07:00",
+      "area": "mother-lode"
+    }
+  ],
+  "lastUpdated": "2026-06-26T01:33:38Z",
+  "area": "mother-lode"
+}
+```
+
+Areas are defined in `prefab.yaml` under `roads.incidentAreas` as bounding boxes.
+The default `mother-lode` area covers the Gold Country foothills while excluding
+the Central Valley floor.
 
 ### Weather API
 
@@ -217,26 +257,55 @@ GET /api/v1/weather
 #### Get Weather Alerts
 ```http
 GET /api/v1/weather/alerts
+GET /api/v1/weather/alerts?zones=CAZ064,CAZ065   # filter to NWS zones
 ```
+
+Returns authoritative **NWS** zone alerts first (`source: "NWS"`), followed by
+OpenWeatherMap per-location alerts (`source: "OpenWeatherMap"`). NWS alerts carry
+`severity` and `zones`; the optional `?zones=` filter restricts results to NWS
+alerts in the given forecast zones (issue #4).
 
 **Response Example:**
 ```json
 {
   "alerts": [
     {
-      "id": "alert-123",
-      "type": "WEATHER",
-      "severity": "WARNING",
-      "title": "Winter Weather Advisory",
-      "description": "Snow expected above 7000 feet",
-      "startTime": "2025-09-11T06:00:00Z",
-      "endTime": "2025-09-11T18:00:00Z",
-      "affectedAreas": ["Sierra Nevada Mountains"]
+      "id": "urn:oid:2.49.0.1.840.0.abc",
+      "source": "NWS",
+      "event": "Red Flag Warning",
+      "severity": "Severe",
+      "zones": ["CAZ064", "CAZ065"],
+      "senderName": "NWS Sacramento CA",
+      "headline": "Red Flag Warning in effect until 8 PM PDT",
+      "summary": "Gusty winds and low humidity.",
+      "startTimestamp": 1782400000,
+      "endTimestamp": 1782490000
     }
   ],
-  "lastUpdated": "2025-09-11T01:52:05.646618Z"
+  "lastUpdated": "2026-06-26T01:52:05.646618Z"
 }
 ```
+
+#### Fire-Weather Classification (issue #5)
+
+Each entry in `GET /api/v1/weather` includes a `fireWeather` object derived from
+authoritative NWS fire-weather products:
+
+```json
+"fireWeather": {
+  "state": "red-flag",            // normal | elevated | red-flag
+  "sourceEvent": "Red Flag Warning",
+  "headline": "Red Flag Warning in effect until 8 PM PDT",
+  "senderName": "NWS Sacramento CA",
+  "effective": "2026-06-26T10:00:00-07:00",
+  "expires": "2026-06-26T20:00:00-07:00",
+  "zones": ["CAZ064", "CAZ065"]
+}
+```
+
+`state` escalates `normal` → `elevated` (Fire Weather Watch) → `red-flag` (Red
+Flag Warning). It is only ever `red-flag` when NWS has an active Red Flag Warning
+for the relevant zone — never a value the feed can't confirm.
 
 ## Quick Start
 

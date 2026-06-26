@@ -38,6 +38,13 @@ Last updated: 2025-09-13
 Whenever possible you MUST use a command provided by the makefile. If you need additional functionality
 discuss with the operator improvements to the makefile commands.
 
+**Toolchain note**: The sandbox does not ship Go or protoc preinstalled. To build
+or run tests you need Go 1.24+ on `PATH`. `make proto` additionally requires
+`protoc` plus the plugins `protoc-gen-go`, `protoc-gen-go-grpc`,
+`protoc-gen-grpc-gateway`, and `protoc-gen-openapiv2` (install the plugins with
+`go install`). Proto generation is deterministic — regenerating unchanged protos
+produces no diff.
+
 ### Build & Development
 ```bash
 # Generate protobuf code
@@ -156,6 +163,15 @@ export PORT=8080
 - Chain control status, lane closures, CHP incidents
 - XML parsing with geographic filtering
 - Refresh intervals: 5-15 minutes based on data type
+- NOTE: As of 2026 these feeds use a new `iw-*` HTML layout with blank `<name>`
+  elements and Pacific-time stamps. See `internal/clients/CLAUDE.md` before
+  touching KML parsing.
+
+**National Weather Service** (`api.weather.gov`):
+- Authoritative zone alerts (watches/warnings) and fire-weather products
+- No API key; requires a descriptive `User-Agent` (`weather.nws.userAgent`)
+- Zones for the service area: CAZ064/065 (Calaveras), CAZ258/259 (Tuolumne)
+- Powers `/weather/alerts` zone alerts and the `fire_weather` classification
 
 **OpenAI API** (Optional):
 - **AI-Enhanced Road Status Determination**: Intelligently analyzes traffic incidents to determine accurate road status (open/restricted/closed)
@@ -171,6 +187,7 @@ export PORT=8080
 - `GET /api/v1/roads` - List all configured roads with current conditions
 - `GET /api/v1/roads/{road_id}` - Get specific road details
 - `GET /api/v1/roads/metrics` - Get alert processing metrics
+- `GET /api/v1/incidents?area=mother-lode` - Region-wide CHP/Caltrans incident feed (flat, not route-scoped; see `roads.incidentAreas` in `prefab.yaml`)
 - Returns: Road status, status explanations, traffic conditions, chain controls, AI-enhanced alerts
 
 **Key API Response Fields**:
@@ -182,10 +199,15 @@ export PORT=8080
 - `alerts[].metadata`: Structured additional information from AI analysis
 
 **Weather Service** (`/api/v1/weather`):
-- `GET /api/v1/weather` - Current weather for all configured locations
+- `GET /api/v1/weather` - Current weather for all configured locations (each includes a `fire_weather` classification)
 - `GET /api/v1/weather/{location_id}` - Get specific location weather
-- `GET /api/v1/weather/alerts` - Active weather alerts
-- Returns: Temperature, conditions, visibility, wind, alerts
+- `GET /api/v1/weather/alerts` - Active weather alerts (authoritative NWS zone alerts + OpenWeatherMap, each tagged with `source`)
+- `GET /api/v1/weather/alerts?zones=CAZ064,CAZ065` - Filter to NWS alerts in specific forecast zones
+- Returns: Temperature, conditions, visibility, wind, alerts, fire-weather state
+
+**Fire-weather** (`weather_data[].fire_weather`): `state` escalates `normal` →
+`elevated` (Fire Weather Watch) → `red-flag` (Red Flag Warning), derived only
+from authoritative NWS products — never a Red Flag NWS hasn't issued.
 
 ## Performance & Monitoring
 

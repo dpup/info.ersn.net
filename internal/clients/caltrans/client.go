@@ -433,9 +433,17 @@ func (p *FeedParser) processPlacemark(placemark *Placemark, feedType CaltransFee
 	parsedStatus := extractStatus(descriptionText)
 	parsedDates := extractDates(descriptionText)
 
+	// As of 2026 the quickmap feeds ship a blank <name> and carry the incident
+	// label inside the description's iw-* markup. Backfill a meaningful name so
+	// downstream consumers (road alert titles, the incidents feed) keep working.
+	name := strings.TrimSpace(placemark.Name)
+	if name == "" {
+		name = deriveNameFromDescription(descriptionHtml, feedType)
+	}
+
 	return &CaltransIncident{
 		FeedType:        feedType,
-		Name:            placemark.Name,
+		Name:            name,
 		DescriptionHtml: descriptionHtml,
 		DescriptionText: descriptionText,
 		StyleUrl:        placemark.StyleURL,
@@ -596,6 +604,36 @@ func (p *FeedParser) parseCoordinateList(coordString string) []*api.Coordinates 
 	}
 
 	return coordinates
+}
+
+// Regexes for the 2026 quickmap "infowindow" (iw-*) description markup.
+var (
+	iwTitlePattern    = regexp.MustCompile(`(?is)<h2[^>]*class="iw-title"[^>]*>(.*?)</h2>`)
+	chpIncidentLabel  = regexp.MustCompile(`(?i)CHP Incident\s+([A-Za-z0-9]+)`)
+	iwHeaderLeftMatch = regexp.MustCompile(`(?is)<div[^>]*class="iw-header-left"[^>]*>(.*?)</div>`)
+)
+
+// deriveNameFromDescription builds a human-readable incident name from the
+// description markup when the KML <name> is blank. CHP incidents are labelled
+// by their log header ("CHP Incident 260625SA1034"); other feeds use the
+// info-window title (e.g. "Route 1 One-way Traffic Operation").
+func deriveNameFromDescription(descHTML string, feedType CaltransFeedType) string {
+	if feedType == CHP_INCIDENT {
+		if m := chpIncidentLabel.FindString(descHTML); m != "" {
+			return strings.Join(strings.Fields(m), " ")
+		}
+	}
+	if m := iwTitlePattern.FindStringSubmatch(descHTML); len(m) > 1 {
+		if title := strings.TrimSpace(extractTextFromHTML(m[1])); title != "" {
+			return title
+		}
+	}
+	if m := iwHeaderLeftMatch.FindStringSubmatch(descHTML); len(m) > 1 {
+		if header := strings.TrimSpace(extractTextFromHTML(m[1])); header != "" {
+			return header
+		}
+	}
+	return ""
 }
 
 // extractTextFromHTML removes HTML tags and decodes HTML entities
