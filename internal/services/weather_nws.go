@@ -44,9 +44,10 @@ func (s *WeatherService) getNWSAlerts(ctx context.Context) []nws.Alert {
 }
 
 // nwsAlertsToProto converts NWS alerts into API WeatherAlerts tagged with the
-// "NWS" source. NWS provides authoritative headline/description text, so these
-// are surfaced as-is rather than AI-enhanced (keeps the official wording and
-// avoids per-alert OpenAI cost).
+// NWS source. NWS provides its own authoritative headline + description, so we
+// surface those two distinct fields as-is and leave the AI-enhancement slots
+// (summary/details) empty rather than copying the same text four times. This
+// keeps the official wording and avoids per-alert OpenAI cost.
 func nwsAlertsToProto(alerts []nws.Alert) []*api.WeatherAlert {
 	var out []*api.WeatherAlert
 	for _, a := range alerts {
@@ -54,10 +55,8 @@ func nwsAlertsToProto(alerts []nws.Alert) []*api.WeatherAlert {
 			Id:          nwsAlertID(a),
 			SenderName:  a.SenderName,
 			Event:       a.Event,
-			Description: a.Description,
-			Headline:    a.Headline,
-			Summary:     a.Headline,
-			Details:     a.Description,
+			Headline:    a.Headline,    // short, authoritative one-liner
+			Description: a.Description, // full, authoritative text
 			Source:      api.AlertSource_NWS,
 			Severity:    mapNWSSeverity(a.Severity),
 			Zones:       a.Zones,
