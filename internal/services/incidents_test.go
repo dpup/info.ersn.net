@@ -55,8 +55,8 @@ func TestBuildIncident_CHPParsing(t *testing.T) {
 	if inc.LocationDescription != "Hwy 49 / Parrotts Ferry Rd" {
 		t.Errorf("location = %q, want 'Hwy 49 / Parrotts Ferry Rd'", inc.LocationDescription)
 	}
-	if inc.Description != "1182-Trfc Collision-No Inj" {
-		t.Errorf("description = %q", inc.Description)
+	if inc.Description != "Traffic Collision-No Injury" {
+		t.Errorf("description = %q (want humanized)", inc.Description)
 	}
 	if inc.Severity != api.AlertSeverity_WARNING {
 		t.Errorf("severity = %v, want WARNING (collision)", inc.Severity)
@@ -153,6 +153,23 @@ func TestNormalizeIncidents_DedupAndSkipGeometry(t *testing.T) {
 	}
 }
 
+func TestHumanizeIncidentType(t *testing.T) {
+	cases := map[string]string{
+		"1182-Trfc Collision-No Inj":        "Traffic Collision-No Injury",
+		"1183-Trfc Collision-Unkn Inj":      "Traffic Collision-Unknown Injury",
+		"1125-Traffic Hazard":               "Traffic Hazard",
+		"CFIRE-Car Fire":                    "Car Fire",
+		"CZP-Assist with Construction":      "Assist with Construction",
+		"Route 4 One-way Traffic Operation": "Route 4 One-way Traffic Operation",
+		"":                                  "",
+	}
+	for in, want := range cases {
+		if got := humanizeIncidentType(in); got != want {
+			t.Errorf("humanizeIncidentType(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
 func TestExtractLogNumber(t *testing.T) {
 	cases := map[string]string{
 		"CHP Incident 250916ST0066": "250916ST0066",
@@ -198,8 +215,8 @@ func TestBuildIncident_CHP2026Format(t *testing.T) {
 	if inc.LogNumber != "260625SA1034" {
 		t.Errorf("log = %q, want 260625SA1034", inc.LogNumber)
 	}
-	if inc.Description != "1183-Trfc Collision-Injury" {
-		t.Errorf("description = %q", inc.Description)
+	if inc.Description != "Traffic Collision-Injury" {
+		t.Errorf("description = %q (want humanized)", inc.Description)
 	}
 	if inc.LocationDescription != "Hwy 49 / Parrotts Ferry Rd" {
 		t.Errorf("location = %q", inc.LocationDescription)

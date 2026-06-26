@@ -156,7 +156,7 @@ func (s *RoadsService) buildIncident(in caltrans.CaltransIncident, area config.I
 
 	d := parseIncidentDetail(in)
 
-	description := d.title
+	description := humanizeIncidentType(d.title)
 	if description == "" {
 		description = in.DescriptionText
 	}
@@ -196,6 +196,41 @@ func incidentID(in caltrans.CaltransIncident, logNumber string) string {
 	slug := strings.ToLower(strings.TrimSpace(in.Name))
 	slug = regexp.MustCompile(`[^a-z0-9]+`).ReplaceAllString(slug, "-")
 	return strings.Trim(slug, "-")
+}
+
+// chpCodePrefixRe matches a leading CHP dispatch code (numeric like "1182" or
+// all-caps like "CZP"/"CFIRE") followed by a hyphen.
+var chpCodePrefixRe = regexp.MustCompile(`^(?:[0-9]+|[A-Z]{2,})-`)
+
+// chpAbbreviations expands the abbreviations CHP uses in incident type text.
+// Applied with word boundaries so street names aren't mangled.
+var chpAbbreviations = []struct {
+	re   *regexp.Regexp
+	full string
+}{
+	{regexp.MustCompile(`(?i)\bTrfc\b`), "Traffic"},
+	{regexp.MustCompile(`(?i)\bUnkn\b`), "Unknown"},
+	{regexp.MustCompile(`(?i)\bInj\b`), "Injury"},
+	{regexp.MustCompile(`(?i)\bVehs\b`), "Vehicles"},
+	{regexp.MustCompile(`(?i)\bVeh\b`), "Vehicle"},
+}
+
+// humanizeIncidentType turns raw CHP type text into something readable, e.g.
+// "1182-Trfc Collision-No Inj" -> "Traffic Collision - No Injury",
+// "CFIRE-Car Fire" -> "Car Fire". Lane-closure titles (no code prefix) pass
+// through largely untouched.
+func humanizeIncidentType(s string) string {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return ""
+	}
+	// Drop a leading dispatch code ("1182-", "CZP-").
+	s = chpCodePrefixRe.ReplaceAllString(s, "")
+	// Expand known abbreviations.
+	for _, ab := range chpAbbreviations {
+		s = ab.re.ReplaceAllString(s, ab.full)
+	}
+	return strings.TrimSpace(s)
 }
 
 func incidentType(in caltrans.CaltransIncident) api.AlertType {
