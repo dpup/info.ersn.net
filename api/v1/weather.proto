@@ -62,9 +62,10 @@ message GetLocationWeatherRequest {
 }
 
 message ListWeatherAlertsRequest {
-  // Optional NWS forecast zone filter (e.g. "CAZ064"). When provided, only
-  // authoritative NWS alerts for these zones are returned. Repeat the param
-  // (?zones=CAZ064&zones=CAZ065) or pass a comma-separated value.
+  // Optional NWS forecast zone filter (e.g. "CAZ064"). When provided, NWS alerts
+  // are narrowed to these zones; non-NWS alerts (OpenWeatherMap) are not
+  // zone-scoped and are unaffected. Repeat the param (?zones=CAZ064&zones=CAZ065)
+  // or pass a comma-separated value.
   repeated string zones = 1;
 }
 

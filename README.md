@@ -261,9 +261,10 @@ GET /api/v1/weather/alerts?zones=CAZ064,CAZ065   # filter to NWS zones
 ```
 
 Returns authoritative **NWS** zone alerts first (`source: "NWS"`), followed by
-OpenWeatherMap per-location alerts (`source: "OpenWeatherMap"`). NWS alerts carry
-`severity` and `zones`; the optional `?zones=` filter restricts results to NWS
-alerts in the given forecast zones (issue #4).
+OpenWeatherMap alerts (`source: "OPENWEATHERMAP"`). NWS alerts carry `severity`
+and `zones`. The optional `?zones=` filter narrows the **NWS** alerts to the
+given forecast zones; OpenWeatherMap alerts are not zone-scoped and always pass
+through (issue #4).
 
 **Response Example:**
 ```json

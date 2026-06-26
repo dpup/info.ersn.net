@@ -313,7 +313,10 @@ func (s *WeatherService) refreshWeatherAlerts(ctx context.Context) ([]*api.Weath
 	return allAlerts, nil
 }
 
-// filterAlertsByZones returns only NWS alerts intersecting the requested zones.
+// filterAlertsByZones constrains zone-scoped (NWS) alerts to the requested
+// forecast zones. Non-NWS alerts (e.g. OpenWeatherMap, which are location-based
+// rather than zone-based) are NOT zone-scoped and always pass through, so the
+// filter narrows NWS coverage without silently dropping the other source.
 // When no zones are requested the input list is returned unchanged. Requested
 // zones may be comma-separated or repeated.
 func filterAlertsByZones(alerts []*api.WeatherAlert, zones []string) []*api.WeatherAlert {
@@ -332,6 +335,11 @@ func filterAlertsByZones(alerts []*api.WeatherAlert, zones []string) []*api.Weat
 
 	var out []*api.WeatherAlert
 	for _, a := range alerts {
+		// Only NWS alerts are zone-scoped; everything else is unaffected.
+		if a.Source != api.AlertSource_NWS {
+			out = append(out, a)
+			continue
+		}
 		for _, z := range a.Zones {
 			if zoneSet[strings.ToUpper(strings.TrimSpace(z))] {
 				out = append(out, a)

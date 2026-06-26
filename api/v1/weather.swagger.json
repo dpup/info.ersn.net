@@ -69,7 +69,7 @@
         "parameters": [
           {
             "name": "zones",
-            "description": "Optional NWS forecast zone filter (e.g. \"CAZ064\"). When provided, only\nauthoritative NWS alerts for these zones are returned. Repeat the param\n(?zones=CAZ064\u0026zones=CAZ065) or pass a comma-separated value.",
+            "description": "Optional NWS forecast zone filter (e.g. \"CAZ064\"). When provided, NWS alerts\nare narrowed to these zones; non-NWS alerts (OpenWeatherMap) are not\nzone-scoped and are unaffected. Repeat the param (?zones=CAZ064\u0026zones=CAZ065)\nor pass a comma-separated value.",
             "in": "query",
             "required": false,
             "type": "array",
