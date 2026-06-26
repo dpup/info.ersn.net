@@ -9,7 +9,9 @@ const (
 	LayerChainControl = "chain_control"
 	LayerWeatherAlert = "weather_alert"
 	LayerFireWeather  = "fire_weather"
-	// Layers added in later milestones: wildfire, evacuation, earthquake.
+	LayerEarthquake   = "earthquake"
+	LayerWildfire     = "wildfire"
+	LayerEvacuation   = "evacuation"
 )
 
 // Properties is the common envelope shared by every hazard feature, plus a
@@ -36,6 +38,9 @@ type Properties struct {
 	ChainControl *ChainControlProps `json:"chain_control,omitempty"`
 	Weather      *WeatherProps      `json:"weather,omitempty"`
 	FireWeather  *FireWeatherProps  `json:"fire_weather,omitempty"`
+	Earthquake   *EarthquakeProps   `json:"earthquake,omitempty"`
+	Wildfire     *WildfireProps     `json:"wildfire,omitempty"`
+	Evacuation   *EvacuationProps   `json:"evacuation,omitempty"`
 }
 
 // Source identifies the upstream feed a feature came from.
@@ -80,6 +85,30 @@ type FireWeatherProps struct {
 	State       string   `json:"state"` // normal | elevated | red-flag
 	SourceEvent string   `json:"source_event,omitempty"`
 	Zones       []string `json:"zones,omitempty"`
+}
+
+// EarthquakeProps is the earthquake kind block.
+type EarthquakeProps struct {
+	Magnitude float64 `json:"magnitude"`
+	DepthKm   float64 `json:"depth_km"`
+	Felt      int32   `json:"felt,omitempty"`
+}
+
+// WildfireProps is the wildfire kind block.
+type WildfireProps struct {
+	Acres        float64 `json:"acres,omitempty"`
+	Containment  int32   `json:"containment"` // 0-100
+	County       string  `json:"county,omitempty"`
+	Cause        string  `json:"cause,omitempty"`
+	HasPerimeter bool    `json:"has_perimeter"`
+}
+
+// EvacuationProps is the evacuation kind block.
+type EvacuationProps struct {
+	ZoneID    string `json:"zone_id,omitempty"`
+	Level     string `json:"level"` // ORDER | WARNING | ADVISORY | SHELTER_IN_PLACE
+	EventType string `json:"event_type,omitempty"`
+	County    string `json:"county,omitempty"`
 }
 
 // setSeverity sets both Severity and the derived SeverityRank.

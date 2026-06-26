@@ -204,3 +204,9 @@ hazards:
         minLongitude: -120.9
         maxLongitude: -120.0
       incidentArea: "mother-lode"   # reuse the roads incidents region filter
+      evacCounties: ["Calaveras", "Tuolumne", "Amador"]
+      scannerFeeds:
+        - { feedId: "13524", channelLabel: "Sheriff / CAL FIRE Dispatch", agency: "Calaveras SO / CAL FIRE" }
+        - { feedId: "28469", channelLabel: "Fire / USFS", agency: "CAL FIRE / USFS" }
+        - { feedId: "41042", channelLabel: "CAL FIRE TCU / USFS", agency: "CAL FIRE TCU" }
+        - { feedId: "45443", channelLabel: "CHP — Stockton", agency: "CHP" }

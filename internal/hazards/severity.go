@@ -92,6 +92,20 @@ func fromFireWeatherState(state string) string {
 	}
 }
 
+// fromMagnitude maps an earthquake magnitude onto the unified scale.
+func fromMagnitude(m float64) string {
+	switch {
+	case m >= 5:
+		return SevSevere
+	case m >= 4:
+		return SevModerate
+	case m >= 2.5:
+		return SevMinor
+	default:
+		return SevInfo
+	}
+}
+
 // fromChainLevelStr maps a Caltrans chain-control level string ("R1"|"R2"|"R3")
 // onto the unified scale.
 func fromChainLevelStr(level string) string {

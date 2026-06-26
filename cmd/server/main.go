@@ -80,6 +80,7 @@ func main() {
 		prefab.WithGRPCReflection(),
 		prefab.WithGRPCInterceptor(cacheHeadersInterceptor),
 		prefab.WithHTTPHandler(hazards.HandlerPrefix, hazardsService),
+		prefab.WithHTTPHandlerFunc(hazards.ScannersPrefix, hazardsService.ServeScanners),
 		prefab.WithHTTPHandlerFunc("/", homepageHandler),
 		prefab.WithHTTPHandlerFunc("/api/docs/roads.swagger.json", openAPIHandler("api/v1/roads.swagger.json")),
 		prefab.WithHTTPHandlerFunc("/api/docs/weather.swagger.json", openAPIHandler("api/v1/weather.swagger.json")),

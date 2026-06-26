@@ -34,6 +34,17 @@ type HazardArea struct {
 	// IncidentArea is the roads.incidentAreas id reused for the road_incident
 	// layer (so we don't re-implement region filtering).
 	IncidentArea string `koanf:"incidentArea"`
+	// EvacCounties are the Cal OES county names for the evacuation layer.
+	EvacCounties []string `koanf:"evacCounties"`
+	// ScannerFeeds is operator-authored Broadcastify config (no upstream fetch).
+	ScannerFeeds []ScannerFeed `koanf:"scannerFeeds"`
+}
+
+// ScannerFeed is one Broadcastify dispatch feed (operator-authored).
+type ScannerFeed struct {
+	FeedID       string `koanf:"feedId"`
+	ChannelLabel string `koanf:"channelLabel"`
+	Agency       string `koanf:"agency"`
 }
 
 // RefreshConfig holds common refresh timing settings

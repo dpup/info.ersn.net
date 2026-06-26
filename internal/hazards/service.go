@@ -12,6 +12,7 @@ import (
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/caltrans"
+	"github.com/dpup/info.ersn.net/server/internal/clients/usgs"
 	"github.com/dpup/info.ersn.net/server/internal/config"
 	"github.com/dpup/info.ersn.net/server/internal/services"
 )
@@ -34,11 +35,19 @@ type Service struct {
 	roads    roadsAPI
 	weather  weatherAPI
 	caltrans *caltrans.FeedParser
+	usgs     *usgs.Client
 }
 
-// NewService wires the hazard service to the existing services + clients.
+// NewService wires the hazard service to the existing services + clients. The
+// new-upstream clients (USGS, ...) are keyless and constructed here.
 func NewService(cfg *config.Config, roads *services.RoadsService, weather *services.WeatherService, ct *caltrans.FeedParser) *Service {
-	return &Service{cfg: cfg, roads: roads, weather: weather, caltrans: ct}
+	return &Service{
+		cfg:      cfg,
+		roads:    roads,
+		weather:  weather,
+		caltrans: ct,
+		usgs:     usgs.NewClient(),
+	}
 }
 
 // HandlerPrefix is where the layer endpoints mount.
@@ -56,6 +65,7 @@ func (s *Service) builders() map[string]builder {
 		LayerRoadSegment:  s.roadSegments,
 		LayerWeatherAlert: s.weatherAlerts,
 		LayerFireWeather:  s.fireWeather,
+		LayerEarthquake:   s.earthquakes,
 	}
 }
 
@@ -108,6 +118,45 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(fc); err != nil {
 		logging.Errorw(ctx, "Failed to encode hazard GeoJSON", "error", err)
 	}
+}
+
+// ScannersPrefix is where the scanner-config endpoint mounts.
+const ScannersPrefix = "/api/v1/scanners/"
+
+// scannerOut is the response shape for GET /api/v1/scanners/{area}. Note: no
+// raw HTML `embed` field (the client builds the official Broadcastify iframe
+// from feed_id) — see the security review.
+type scannerOut struct {
+	FeedID          string `json:"feed_id"`
+	ChannelLabel    string `json:"channel_label"`
+	Agency          string `json:"agency,omitempty"`
+	BroadcastifyURL string `json:"broadcastify_url"`
+}
+
+// ServeScanners handles GET /api/v1/scanners/{area} from operator config.
+func (s *Service) ServeScanners(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	areaID := strings.Trim(strings.TrimPrefix(r.URL.Path, ScannersPrefix), "/")
+	area, ok := s.resolveArea(areaID)
+	if !ok {
+		http.Error(w, fmt.Sprintf("unknown hazard area: %q", areaID), http.StatusNotFound)
+		return
+	}
+	out := make([]scannerOut, 0, len(area.ScannerFeeds))
+	for _, f := range area.ScannerFeeds {
+		out = append(out, scannerOut{
+			FeedID:          f.FeedID,
+			ChannelLabel:    f.ChannelLabel,
+			Agency:          f.Agency,
+			BroadcastifyURL: "https://www.broadcastify.com/listen/feed/" + f.FeedID,
+		})
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "public, max-age=3600")
+	_ = json.NewEncoder(w).Encode(out)
 }
 
 func (s *Service) resolveArea(id string) (config.HazardArea, bool) {
@@ -287,6 +336,44 @@ func (s *Service) fireWeather(ctx context.Context, _ config.HazardArea) ([]Featu
 	p.setSeverity(fromFireWeatherState(state))
 	// Region-wide, so null geometry (banner).
 	return []Feature{{Type: "Feature", Geometry: nil, Properties: p}}, nil
+}
+
+func (s *Service) earthquakes(ctx context.Context, area config.HazardArea) ([]Feature, error) {
+	quakes, err := s.usgs.GetEarthquakes(ctx, usgs.Bounds{
+		MinLatitude:  area.Bounds.MinLatitude,
+		MaxLatitude:  area.Bounds.MaxLatitude,
+		MinLongitude: area.Bounds.MinLongitude,
+		MaxLongitude: area.Bounds.MaxLongitude,
+	}, 2.5, 7*24*time.Hour)
+	if err != nil {
+		return nil, err
+	}
+	var out []Feature
+	for _, q := range quakes {
+		p := Properties{
+			ID:        "usgs:" + q.ID,
+			Layer:     LayerEarthquake,
+			Kind:      "Earthquake",
+			Category:  "earthquake",
+			Headline:  fmt.Sprintf("M%.1f — %s", q.Magnitude, q.Place),
+			AreaLabel: q.Place,
+			Source:    Source{ID: "usgs", Name: "USGS", URL: safeURL(q.URL), Attribution: "U.S. Geological Survey"},
+			Earthquake: &EarthquakeProps{
+				Magnitude: q.Magnitude,
+				DepthKm:   q.DepthKm,
+				Felt:      q.Felt,
+			},
+		}
+		if !q.Time.IsZero() {
+			p.Effective = q.Time.Format(time.RFC3339)
+		}
+		if !q.Updated.IsZero() {
+			p.UpdatedAt = q.Updated.Format(time.RFC3339)
+		}
+		p.setSeverity(fromMagnitude(q.Magnitude))
+		out = append(out, Feature{Type: "Feature", Geometry: PointGeom(q.Lat, q.Lng), Properties: p})
+	}
+	return out, nil
 }
 
 // roadSeverity derives a unified severity from a road's status + congestion.
