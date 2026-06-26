@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8181  # Local dev port. Production (Docker/ECS) overrides via PF__SERVER__PORT=8080.
   security:
     xFrameOptions: DENY  # X-Frame-Options header
 
@@ -11,7 +11,7 @@ server:
       - https://ersn.net
       - https://sierragridteam.org   # S.I.E.R.R.A site consuming /roads, /weather, /weather/alerts (issue #3)
       - https://www.sierragridteam.org
-      - http://localhost:8080
+      - http://localhost:8181
       - http://localhost:4321
       - http://localhost:4322
     corsAllowedMethods:

@@ -339,8 +339,8 @@ for the relevant zone — never a value the feed can't confirm.
 4. Test the API:
    ```bash
    # Test locally
-   curl http://localhost:8080/api/v1/roads
-   curl http://localhost:8080/api/v1/weather
+   curl http://localhost:8181/api/v1/roads
+   curl http://localhost:8181/api/v1/weather
    
    # Or test the live API
    curl https://info.ersn.net/api/v1/roads

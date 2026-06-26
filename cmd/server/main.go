@@ -162,6 +162,11 @@ for the Ebbett's Pass region.
   Weather API:
     <a href="/api/v1/weather">GET /api/v1/weather</a>             - Current weather + fire-weather state
     <a href="/api/v1/weather/alerts">GET /api/v1/weather/alerts</a>      - NWS zone alerts + OpenWeatherMap alerts
+    <a href="/api/v1/weather/alerts?zones=CAZ064,CAZ065,CAZ258,CAZ259">GET /api/v1/weather/alerts?zones=...</a> - Filter to NWS forecast zones
+
+<span class="header">Coverage:</span>
+  Hwy 4  - Angels Camp, Murphys, Arnold, Bear Valley (Calaveras)
+  Hwy 49 - Angels Camp to Sonora; Columbia, Twain Harte, Dorrington (Tuolumne)
 
 <span class="header">API Documentation:</span>
   <a href="/api/docs/roads.swagger.json">Roads API OpenAPI Spec</a>            - Machine-readable API docs (Roads)
@@ -176,6 +181,8 @@ for the Ebbett's Pass region.
 <span class="header">Example Usage:</span>
   curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>
   curl <a href="/api/v1/weather">https://info.ersn.net/api/v1/weather</a>
+  curl <a href="/api/v1/incidents?area=mother-lode">https://info.ersn.net/api/v1/incidents?area=mother-lode</a>
+  curl <a href="/api/v1/weather/alerts?zones=CAZ064,CAZ065,CAZ258,CAZ259">https://info.ersn.net/api/v1/weather/alerts?zones=CAZ064,CAZ065</a>
 </pre>
 </body>
 </html>`

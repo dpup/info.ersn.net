@@ -219,9 +219,9 @@ stop:
 		fi; \
 		rm -f server.pid; \
 	fi; \
-	PORT_PID=$$(lsof -ti :8080 2>/dev/null); \
+	PORT_PID=$$(lsof -ti :8181 2>/dev/null); \
 	if [ -n "$$PORT_PID" ]; then \
-		kill $$PORT_PID 2>/dev/null && echo "Stopped process on port 8080 (PID: $$PORT_PID)"; \
+		kill $$PORT_PID 2>/dev/null && echo "Stopped process on port 8181 (PID: $$PORT_PID)"; \
 		STOPPED=true; \
 	fi; \
 	if [ "$$STOPPED" = "false" ]; then \

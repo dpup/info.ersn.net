@@ -90,12 +90,12 @@ make test-unit
 
 ### API Testing
 ```bash
-# Test live endpoints
-curl http://localhost:8080/api/v1/roads
-curl http://localhost:8080/api/v1/weather
+# Test live endpoints (local dev defaults to port 8181)
+curl http://localhost:8181/api/v1/roads
+curl http://localhost:8181/api/v1/weather
 
 # Format JSON responses
-curl -s http://localhost:8080/api/v1/roads | jq .
+curl -s http://localhost:8181/api/v1/roads | jq .
 ```
 
 ## Code Style
@@ -138,8 +138,8 @@ export PF__GOOGLE_ROUTES__API_KEY="your-google-routes-api-key"
 export PF__OPENWEATHER__API_KEY="your-openweather-api-key"
 export PF__OPENAI__API_KEY="your-openai-api-key"  # For AI-enhanced alerts
 
-# Optional Configuration
-export PORT=8080
+# Optional Configuration (local dev defaults to 8181 via prefab.yaml)
+export PORT=8181
 ```
 
 **Configuration Files**:
