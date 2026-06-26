@@ -24,7 +24,10 @@ server:
       - content-type
       - x-requested-with
       - x-csrf-protection
-    corsAllowCredentials: true
+    # This API requires no authentication and uses no cookies, so credentialed
+    # CORS is unnecessary. Keeping it false also leaves the door open to a
+    # wildcard origin later if desired.
+    corsAllowCredentials: false
     corsMaxAge: 72h
 
     # HSTS settings
