@@ -3,10 +3,11 @@
 All notable **API-facing** changes to the ERSN Info Server. This is the document
 to read before updating a consuming site (e.g. ersn.net, sierragridteam.org).
 
-Format loosely follows [Keep a Changelog](https://keepachangelog.com/). The API
-is JSON over HTTP (`/api/v1/...`); field names are camelCase.
+There are no formal releases — the service deploys from `main`. Each entry below
+is timestamped; add a new dated section at the top when the API surface changes.
+The API is JSON over HTTP (`/api/v1/...`); field names are camelCase.
 
-## [Unreleased] — 2026-06-26
+## 2026-06-26 16:47 UTC
 
 A large API cleanup pass. Several responses changed shape — see **Breaking
 changes** first.

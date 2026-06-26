@@ -184,8 +184,9 @@ export PORT=8181
 ## API Endpoints
 
 **When you change the API surface** (add/rename/retype a JSON field, change a
-status code or URL, add an endpoint), record it in `CHANGELOG.md` under
-`[Unreleased]` — that's how consuming sites (ersn.net, sierragridteam.org) learn
+status code or URL, add an endpoint), record it in `CHANGELOG.md` as a new dated
+section at the top (no formal releases — we deploy from `main`, so entries are
+timestamped). That's how consuming sites (ersn.net, sierragridteam.org) learn
 what to update. Flag anything that changes an existing response shape as a
 breaking change with a migration note.
 
