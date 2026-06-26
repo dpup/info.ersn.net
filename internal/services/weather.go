@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/dpup/prefab/logging"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
@@ -121,7 +123,7 @@ func (s *WeatherService) GetLocationWeather(ctx context.Context, req *api.GetLoc
 		}
 	}
 
-	return nil, fmt.Errorf("location not found: %s", req.LocationId)
+	return nil, status.Errorf(codes.NotFound, "location not found: %s", req.LocationId)
 }
 
 // ListWeatherAlerts implements the gRPC method for retrieving weather alerts

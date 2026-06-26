@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/dpup/prefab/logging"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
@@ -148,7 +150,7 @@ func (s *RoadsService) GetRoad(ctx context.Context, req *api.GetRoadRequest) (*a
 		}
 	}
 
-	return nil, fmt.Errorf("road not found: %s", req.RoadId)
+	return nil, status.Errorf(codes.NotFound, "road not found: %s", req.RoadId)
 }
 
 // GetProcessingMetrics implements the gRPC method for processing metrics

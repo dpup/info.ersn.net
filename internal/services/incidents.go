@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/dpup/prefab/logging"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
@@ -25,7 +27,7 @@ func (s *RoadsService) ListIncidents(ctx context.Context, req *api.ListIncidents
 
 	area, ok := s.resolveIncidentArea(req.Area)
 	if !ok {
-		return nil, fmt.Errorf("unknown incident area: %q", req.Area)
+		return nil, status.Errorf(codes.InvalidArgument, "unknown incident area: %q", req.Area)
 	}
 
 	cacheKey := fmt.Sprintf("incidents:%s", area.ID)
