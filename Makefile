@@ -56,12 +56,16 @@ $(TEST_WEATHER_BINARY): proto
 	$(GOBUILD) -o $(TEST_WEATHER_BINARY) ./$(CMD_DIR)/test-weather
 
 # Generate protobuf code
-# Note: googleapis is a proto-only module (no Go code), so we download it explicitly with @latest
+# Note: googleapis is a proto-only module (no Go code), so we download it explicitly with @latest.
+# Both googleapis and grpc-gateway are resolved via `go mod download -json` (not `go list -m`)
+# because that guarantees the module source is extracted on disk before we point protoc at it.
+# `go list -m` returns an empty .Dir for a module that hasn't been downloaded yet, which makes
+# protoc fail with "Import protoc-gen-openapiv2/options/annotations.proto was not found".
 proto:
 	@echo "Generating protobuf code..."
 	@mkdir -p $(BUILD_DIR) $(PROTO_DIR)
 	$(eval GOOGLEAPIS_DIR := $(shell go mod download -json github.com/googleapis/googleapis@latest | grep '"Dir"' | head -1 | sed 's/.*"Dir": "//;s/".*//'))
-	$(eval GRPC_GATEWAY_DIR := $(shell go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway/v2))
+	$(eval GRPC_GATEWAY_DIR := $(shell go mod download -json github.com/grpc-ecosystem/grpc-gateway/v2 | grep '"Dir"' | head -1 | sed 's/.*"Dir": "//;s/".*//'))
 	@PATH="$(shell go env GOPATH)/bin:$(PATH)" protoc --proto_path=$(PROTO_DIR) \
 		--proto_path=$(GOOGLEAPIS_DIR) \
 		--proto_path=$(GRPC_GATEWAY_DIR) \
