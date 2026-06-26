@@ -57,13 +57,15 @@ type IncidentProps struct {
 	LogNumber string `json:"log_number,omitempty"`
 }
 
-// RoadProps is the road_segment kind block.
+// RoadProps is the road_segment kind block. The numeric fields are pointers so a
+// segment with no live data yet (the source hasn't reported) omits them entirely,
+// distinct from a genuine 0 (e.g. zero delay on a clear road).
 type RoadProps struct {
 	RoadID          string `json:"road_id"`
 	Congestion      string `json:"congestion,omitempty"`
-	DelayMinutes    int32  `json:"delay_minutes"`
-	DurationMinutes int32  `json:"duration_minutes,omitempty"`
-	DistanceKm      int32  `json:"distance_km,omitempty"`
+	DelayMinutes    *int32 `json:"delay_minutes,omitempty"`
+	DurationMinutes *int32 `json:"duration_minutes,omitempty"`
+	DistanceKm      *int32 `json:"distance_km,omitempty"`
 }
 
 // ChainControlProps is the chain_control kind block.

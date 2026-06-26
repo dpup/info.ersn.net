@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -54,14 +53,17 @@ type Headline struct {
 	Source       string `json:"source,omitempty"`
 }
 
-// LayerStatus is one layer's contribution to the situation rollup.
+// LayerStatus is one layer's contribution to the situation rollup. SourceStatus
+// is OK | STALE | UNAVAILABLE; LastSourceUpdate is set only when STALE (the time
+// of the last good fetch being served).
 type LayerStatus struct {
-	Layer           string `json:"layer"`
-	SourceStatus    string `json:"source_status"`
-	FeatureCount    int    `json:"feature_count"`
-	HighestSeverity string `json:"highest_severity,omitempty"`
-	Attribution     string `json:"attribution,omitempty"`
-	SourceURL       string `json:"source_url,omitempty"`
+	Layer            string `json:"layer"`
+	SourceStatus     string `json:"source_status"`
+	FeatureCount     int    `json:"feature_count"`
+	HighestSeverity  string `json:"highest_severity,omitempty"`
+	LastSourceUpdate string `json:"last_source_update,omitempty"`
+	Attribution      string `json:"attribution,omitempty"`
+	SourceURL        string `json:"source_url,omitempty"`
 }
 
 // ServeSituation handles GET /api/v1/situation/{area} — a concurrent fan-out
@@ -72,7 +74,7 @@ func (s *Service) ServeSituation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	areaID := strings.Trim(strings.TrimPrefix(r.URL.Path, SituationPrefix), "/")
+	areaID := parseAreaID(r.URL.Path, SituationPrefix)
 	area, ok := s.resolveArea(areaID)
 	if !ok {
 		http.Error(w, "unknown hazard area: "+areaID, http.StatusNotFound)
@@ -84,14 +86,13 @@ func (s *Service) ServeSituation(w http.ResponseWriter, r *http.Request) {
 	// the sum of those timeouts.
 	ctx, cancel := context.WithTimeout(r.Context(), 25*time.Second)
 	defer cancel()
-	builders := s.builders()
 
 	// Fan out: every layer builds concurrently. A slow/broken source becomes
-	// UNAVAILABLE for its layer without stalling or failing the whole rollup.
-	results := make([]namedResult, len(layerOrder))
+	// UNAVAILABLE (or STALE) for its layer without stalling or failing the rollup.
+	results := make([]namedResult, len(s.layerOrder))
 	var wg sync.WaitGroup
-	for i, layer := range layerOrder {
-		b, ok := builders[layer]
+	for i, layer := range s.layerOrder {
+		b, ok := s.layerBuilders[layer]
 		if !ok {
 			continue
 		}
@@ -140,11 +141,12 @@ func summarize(results []namedResult) (SituationSummary, []LayerStatus) {
 			continue
 		}
 		ls := LayerStatus{
-			Layer:        r.layer,
-			SourceStatus: r.res.status,
-			FeatureCount: len(r.res.features),
-			Attribution:  r.res.meta.attribution,
-			SourceURL:    r.res.meta.sourceURL,
+			Layer:            r.layer,
+			SourceStatus:     r.res.status,
+			FeatureCount:     len(r.res.features),
+			LastSourceUpdate: tsOrEmpty(r.res.lastSourceUpdate),
+			Attribution:      r.res.meta.attribution,
+			SourceURL:        r.res.meta.sourceURL,
 		}
 		layerTop := -1
 		for _, f := range r.res.features {
@@ -168,11 +170,13 @@ func summarize(results []namedResult) (SituationSummary, []LayerStatus) {
 				Source:       f.Properties.Source.Name,
 			})
 		}
-		// Evacuation posture is unknown-aware: only report a real count when Cal
-		// OES answered. While UNAVAILABLE, ActiveEvacuations stays nil ("unknown").
+		// Evacuation posture is unknown-aware: report a real count only when we
+		// have evac data (fresh OK, or STALE served from the last good fetch —
+		// evacuation_status conveys which). While UNAVAILABLE it stays nil
+		// ("unknown"), never an implied all-clear.
 		if r.layer == LayerEvacuation {
 			summary.EvacuationStatus = r.res.status
-			if r.res.status == "OK" {
+			if r.res.status == "OK" || r.res.status == "STALE" {
 				n := len(r.res.features)
 				summary.ActiveEvacuations = &n
 			}
@@ -209,17 +213,4 @@ func topHeadlines(h []Headline, n int) []Headline {
 		h = h[:n]
 	}
 	return h
-}
-
-// layerOrder fixes the layer iteration order for the rollup (deterministic
-// output; map iteration is random). Mirrors builders().
-var layerOrder = []string{
-	LayerEvacuation,
-	LayerWildfire,
-	LayerRoadIncident,
-	LayerChainControl,
-	LayerWeatherAlert,
-	LayerFireWeather,
-	LayerEarthquake,
-	LayerRoadSegment,
 }

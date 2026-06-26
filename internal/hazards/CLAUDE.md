@@ -40,12 +40,34 @@ UNAVAILABLE` with empty features — never a fabricated clear state. The evac la
 (M4) extends this: any empty active-evac result is `UNAVAILABLE`/`unknown`, never
 "all clear".
 
-## Adding a layer (M2–M5)
+`buildLayer` is the one place all this is enforced (both the single-layer and
+`/situation` paths go through it). Status resolution:
+
+- fresh cache hit → `OK` (no upstream call)
+- builder OK → `OK` (non-empty result cached for `layerTTL`)
+- builder returns `partialData(err)` → `STALE`, features kept (a multi-source
+  layer like wildfire lost one source — don't present partial data as complete)
+- builder hard error **with** a cached value → `STALE`, last-good features served
+  (`last_source_update` = fetch time); transient upstream blips don't go dark
+- builder hard error, nothing cached → `UNAVAILABLE`, empty
+- empty active-events source (evac) → `UNAVAILABLE` (the fail-loud flip)
+
+Caching uses the shared `internal/cache` (passed to `NewService`); `layerTTL`
+returns 0 for the road/weather layers that are already cached by their underlying
+services (no double-caching), and a short TTL for the new upstreams + the live
+Caltrans chain-control fetch. Empty results are **never** cached (so an empty
+all-clear can't be replayed as STALE).
+
+## Adding a layer
 
 1. Add the `layer` const in `properties.go` and a per-kind block struct.
 2. Add the severity mapping in `severity.go` (cover every enum value).
 3. Write a `builder` method `func (s *Service) <layer>(ctx, area) ([]Feature, error)`
-   and register it in `builders()`.
+   and add it to `layerRegistry()` (the single source of truth — it feeds BOTH
+   the dispatch map and the `/situation` iteration order; there is no separate
+   `layerOrder` to keep in sync). Give it a `layerTTL` if it hits a new upstream.
+   A builder with multiple independent sources should return `partialData(err)`
+   when one fails so the layer degrades to STALE, not a silent OK.
 4. New upstreams get a client under `internal/clients/`, mirroring `nws`
    (HTTPDoer, no key where possible) and a `LimitReader` body cap.
 5. M1 re-projects existing feeds only (road_incident, chain_control,

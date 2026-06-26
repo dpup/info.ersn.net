@@ -7,6 +7,34 @@ There are no formal releases — the service deploys from `main`. Each entry bel
 is timestamped; add a new dated section at the top when the API surface changes.
 The API is JSON over HTTP (`/api/v1/...`); field names are camelCase.
 
+## 2026-06-27 00:30 UTC
+
+### Changed — hazard layer resilience + contract polish (code-review follow-up)
+
+Hardening pass on the M1–M5 hazard endpoints. All additive/clarifying — no
+consumer of the (still-unreleased) hazard API needs to change, but new fields and
+states are now observable:
+
+- **`source_status: STALE` is now emitted** (previously only OK/UNAVAILABLE). A
+  layer reports `STALE` when it is serving the last good fetch after a transient
+  upstream failure, or when one of a layer's multiple sources failed (e.g. CAL
+  FIRE up but WFIGS down). `metadata.last_source_update` (and, in `/situation`,
+  `layers[].last_source_update`) carries the RFC3339 time of that last good fetch.
+- **`/situation` `active_evacuations` now also reports a count when evacuation
+  data is `STALE`** (served from cache), with `evacuation_status: "STALE"`. It
+  remains `null` only when truly `UNAVAILABLE`. Still never `0`.
+- **`road_segment` numeric fields (`delay_minutes`, `duration_minutes`,
+  `distance_km`) are now omitted when a segment has no live data yet**, instead of
+  serializing `0`. A present `0` now unambiguously means a real zero (e.g. no
+  delay). `congestion`/`status` were already omitted when absent.
+- Evacuation zones are now selected by the area's geographic bounds (ArcGIS
+  spatial query) rather than a county-name list, so an in-area zone tagged to a
+  neighboring county is no longer dropped. No response-shape change.
+- Internal: the new upstreams (USGS, CAL FIRE, WFIGS, Cal OES) and the live
+  Caltrans chain-control fetch are now server-side cached (2–5 min TTL) with
+  stale-on-error fallback; a burst of map clients no longer fans out to every
+  source on every request.
+
 ## 2026-06-26 23:55 UTC
 
 ### Added — hazard layers M2–M5 (earthquake, wildfire, evacuation, situation rollup)

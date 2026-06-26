@@ -41,7 +41,9 @@ func TestGetActiveEvacuations(t *testing.T) {
 	doer := &fakeDoer{resp: sample}
 	c := NewClientWithHTTPDoer("https://caloes.test/query", doer)
 
-	zones, err := c.GetActiveEvacuations(context.Background(), []string{"Calaveras", "Tuolumne"})
+	zones, err := c.GetActiveEvacuations(context.Background(), Bounds{
+		MinLatitude: 37.8, MaxLatitude: 38.55, MinLongitude: -120.9, MaxLongitude: -120.0,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,9 +60,10 @@ func TestGetActiveEvacuations(t *testing.T) {
 	if z.GeometryType != "Polygon" || len(z.GeometryCoords) == 0 {
 		t.Errorf("geometry = %s / %s", z.GeometryType, z.GeometryCoords)
 	}
-	// County filter is applied in the WHERE clause (quoted, comma-joined).
-	if !strings.Contains(doer.lastURL, "COUNTY+IN") {
-		t.Errorf("query missing county filter: %s", doer.lastURL)
+	// Filtering is spatial (envelope intersect), so any in-area zone is caught
+	// regardless of its COUNTY tag.
+	if !strings.Contains(doer.lastURL, "esriGeometryEnvelope") || !strings.Contains(doer.lastURL, "esriSpatialRelIntersects") {
+		t.Errorf("query missing spatial envelope filter: %s", doer.lastURL)
 	}
 }
 
@@ -70,7 +73,7 @@ func TestGetActiveEvacuations(t *testing.T) {
 func TestArcGISErrorEnvelope(t *testing.T) {
 	doer := &fakeDoer{resp: `{"error":{"code":499,"message":"Token Required"}}`}
 	c := NewClientWithHTTPDoer("https://caloes.test/query", doer)
-	_, err := c.GetActiveEvacuations(context.Background(), []string{"Calaveras"})
+	_, err := c.GetActiveEvacuations(context.Background(), Bounds{})
 	if err == nil {
 		t.Fatal("expected an error for an ArcGIS 200-with-error-envelope response, got nil")
 	}
@@ -79,11 +82,12 @@ func TestArcGISErrorEnvelope(t *testing.T) {
 	}
 }
 
-func TestCountyWhere(t *testing.T) {
-	if got := countyWhere([]string{"Calaveras", "O'Brien"}); got != "COUNTY IN ('Calaveras','O''Brien')" {
-		t.Errorf("countyWhere = %q", got)
-	}
-	if got := countyWhere(nil); got != "1=1" {
-		t.Errorf("empty countyWhere = %q", got)
+func TestArcGISErrorEnvelopeAttacker(t *testing.T) {
+	// The error-envelope check also covers the case where the upstream returns an
+	// error AND a (stale/garbage) features array — error must win.
+	doer := &fakeDoer{resp: `{"error":{"code":403,"message":"forbidden"},"features":[]}`}
+	c := NewClientWithHTTPDoer("https://caloes.test/query", doer)
+	if _, err := c.GetActiveEvacuations(context.Background(), Bounds{}); err == nil {
+		t.Fatal("error envelope must surface even when a features array is present")
 	}
 }

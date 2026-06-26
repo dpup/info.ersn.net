@@ -12,7 +12,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
+	"strconv"
 	"time"
 )
 
@@ -59,13 +59,29 @@ type EvacZone struct {
 // SourceURL is the authoritative public viewer, always surfaced to users.
 const SourceURL = "https://protect.genasys.com/"
 
-// GetActiveEvacuations returns active evacuation zones for the given counties.
-// An empty (non-error) result is ambiguous — the caller must treat it as
-// "unknown", not "no evacuations".
-func (c *Client) GetActiveEvacuations(ctx context.Context, counties []string) ([]EvacZone, error) {
+// Bounds is a lat/lng bounding box for the spatial query.
+type Bounds struct {
+	MinLatitude  float64
+	MaxLatitude  float64
+	MinLongitude float64
+	MaxLongitude float64
+}
+
+// GetActiveEvacuations returns active evacuation zones intersecting the given
+// bounding box. Filtering geographically (rather than by COUNTY string) catches
+// in-area zones tagged to a neighboring county and avoids county-name casing
+// mismatches. An empty (non-error) result is ambiguous — the caller must treat
+// it as "unknown", not "no evacuations".
+func (c *Client) GetActiveEvacuations(ctx context.Context, b Bounds) ([]EvacZone, error) {
+	envelope := fmt.Sprintf(`{"xmin":%s,"ymin":%s,"xmax":%s,"ymax":%s,"spatialReference":{"wkid":4326}}`,
+		ftoa(b.MinLongitude), ftoa(b.MinLatitude), ftoa(b.MaxLongitude), ftoa(b.MaxLatitude))
 	params := url.Values{}
 	params.Set("f", "geojson")
-	params.Set("where", countyWhere(counties))
+	params.Set("where", "1=1")
+	params.Set("geometry", envelope)
+	params.Set("geometryType", "esriGeometryEnvelope")
+	params.Set("inSR", "4326")
+	params.Set("spatialRel", "esriSpatialRelIntersects")
 	params.Set("outFields", "ZONE_ID,ZONE_NAME,COUNTY,STATUS,EVENT_TYPE,PUBLIC_INFO,STATEWIDE_LAST_UPDATED")
 	params.Set("returnGeometry", "true")
 	params.Set("outSR", "4326")
@@ -113,17 +129,7 @@ func (c *Client) GetActiveEvacuations(ctx context.Context, counties []string) ([
 	return out, nil
 }
 
-func countyWhere(counties []string) string {
-	if len(counties) == 0 {
-		return "1=1"
-	}
-	quoted := make([]string, 0, len(counties))
-	for _, c := range counties {
-		// ArcGIS SQL: escape single quotes.
-		quoted = append(quoted, "'"+strings.ReplaceAll(c, "'", "''")+"'")
-	}
-	return "COUNTY IN (" + strings.Join(quoted, ",") + ")"
-}
+func ftoa(f float64) string { return strconv.FormatFloat(f, 'f', -1, 64) }
 
 func msToTime(ms int64) time.Time {
 	if ms <= 0 {

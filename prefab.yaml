@@ -204,7 +204,8 @@ hazards:
         minLongitude: -120.9
         maxLongitude: -120.0
       incidentArea: "mother-lode"   # reuse the roads incidents region filter
-      evacCounties: ["Calaveras", "Tuolumne", "Amador"]
+      # Evacuation zones are filtered by the bounds above (spatial query), so any
+      # in-area zone is caught regardless of which county Cal OES tags it to.
       scannerFeeds:
         - { feedId: "13524", channelLabel: "Sheriff / CAL FIRE Dispatch", agency: "Calaveras SO / CAL FIRE" }
         - { feedId: "28469", channelLabel: "Fire / USFS", agency: "CAL FIRE / USFS" }

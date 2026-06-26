@@ -61,7 +61,7 @@ func main() {
 	weatherService := services.NewWeatherService(weatherClient, nwsClient, cacheInstance, appConfig, weatherAlertEnhancer)
 
 	// Unified hazard/situation GeoJSON feed (re-projects the feeds above).
-	hazardsService := hazards.NewService(appConfig, roadsService, weatherService, caltransClient)
+	hazardsService := hazards.NewService(appConfig, roadsService, weatherService, caltransClient, cacheInstance)
 
 	logging.Infow(ctx, "Live Data API Server starting",
 		"roads_monitored", len(appConfig.Roads.MonitoredRoads),
