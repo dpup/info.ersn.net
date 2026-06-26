@@ -66,8 +66,11 @@ dashboard's single status fetch.
 **Unknown-aware evacuation posture (don't regress):** `summary.active_evacuations`
 is `null` whenever the evac layer is `UNAVAILABLE`, and `evacuation_status` says
 which. A client MUST treat `null` as "unknown — check Genasys", never as zero.
-A real `0` only appears when Cal OES answered OK with no active zones. The rollup
-math lives in the pure `summarize()` (unit-tested in `situation_test.go`).
+Because the evac layer is `emptyUnavailable` (an empty active-events feed flips to
+`UNAVAILABLE` in `buildLayer`), the production count is `null`-or-positive and
+never `0`. The rollup math lives in the pure `summarize()` (unit-tested in
+`situation_test.go`); its OK-with-zero branch returns `0` for completeness but is
+unreachable for the evac layer through `buildLayer`.
 
 Status: **M0–M5 shipped.** All eight layers + `/situation/{area}` +
 `/scanners/{area}` are live. See the design doc's milestone table.

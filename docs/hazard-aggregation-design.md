@@ -279,9 +279,12 @@ render its banner from one fetch.
 `0`) whenever evacuation data is unavailable, and `summary.evacuation_status`
 (`OK` | `UNAVAILABLE`) says which. A client MUST render `null` as an explicit
 warn state ("evacuation status unavailable — check [Genasys]"), never as "no
-active evacuations." A real `0` appears only when Cal OES answered `OK` with no
-active zones. (Do not treat `active_evacuations` as a string — an earlier draft
-of this doc showed `"yes|no|unknown"`; the shipped field is `int|null`.)
+active evacuations." Because Cal OES is an active-events-only source, an empty
+result is treated as `UNAVAILABLE` (we can't distinguish "no evacuations" from
+"feed empty/broken"), so in practice `active_evacuations` is either `null` or a
+**positive** integer — it is never `0`. (Do not treat `active_evacuations` as a
+string — an earlier draft of this doc showed `"yes|no|unknown"`; the shipped
+field is `int|null`.)
 
 Each `layers[]` entry is a status summary (`source_status`, `feature_count`,
 `highest_severity`), not a FeatureCollection — pull the geometry from the
