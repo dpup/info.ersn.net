@@ -10,11 +10,18 @@ WORKDIR /app
 # Install required system dependencies for building
 RUN apk add --no-cache git protobuf protobuf-dev make
 
-# Install protoc-gen-go and protoc-gen-go-grpc
-RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && \
-    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest && \
-    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+# Don't let `go install` silently pull a newer Go toolchain than this image
+# provides; fail fast instead.
+ENV GOTOOLCHAIN=local
+
+# Install the protoc plugins at versions compatible with this image's Go.
+# Pinned (not @latest) because @latest moves: protoc-gen-go-grpc@latest now
+# requires Go >= 1.25 and would break this Go 1.24 build. Keep these in sync
+# with the versions in go.mod (protobuf, grpc-gateway).
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.8 && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1 && \
+    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.27.2 && \
+    go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.27.2
 
 # Cache Go modules by copying go.mod and go.sum first
 COPY go.mod go.sum ./
