@@ -90,6 +90,12 @@ func (c *Client) GetActiveEvacuations(ctx context.Context, counties []string) ([
 	if err := json.NewDecoder(io.LimitReader(resp.Body, maxBody)).Decode(&parsed); err != nil {
 		return nil, fmt.Errorf("failed to decode Cal OES response: %w", err)
 	}
+	// ArcGIS signals quota/throttle/token errors with HTTP 200 + an error
+	// envelope. For this life-safety feed that must surface as an error (caller
+	// treats it as UNAVAILABLE/unknown), never as an empty all-clear.
+	if parsed.Error != nil {
+		return nil, fmt.Errorf("Cal OES ArcGIS error %d: %s", parsed.Error.Code, parsed.Error.Message)
+	}
 	out := make([]EvacZone, 0, len(parsed.Features))
 	for _, f := range parsed.Features {
 		out = append(out, EvacZone{
@@ -128,6 +134,13 @@ func msToTime(ms int64) time.Time {
 
 type evacResponse struct {
 	Features []evacFeature `json:"features"`
+	Error    *arcgisError  `json:"error"`
+}
+
+// arcgisError is the error envelope ArcGIS returns with an HTTP 200 status.
+type arcgisError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 type evacFeature struct {

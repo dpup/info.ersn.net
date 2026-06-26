@@ -92,6 +92,11 @@ func (c *Client) GetPerimeters(ctx context.Context, b Bounds) ([]Perimeter, erro
 	if err := json.NewDecoder(io.LimitReader(resp.Body, maxBody)).Decode(&parsed); err != nil {
 		return nil, fmt.Errorf("failed to decode WFIGS response: %w", err)
 	}
+	// ArcGIS signals quota/throttle/token errors with HTTP 200 + an error
+	// envelope; without this check that decodes to empty features (a false clear).
+	if parsed.Error != nil {
+		return nil, fmt.Errorf("WFIGS ArcGIS error %d: %s", parsed.Error.Code, parsed.Error.Message)
+	}
 	out := make([]Perimeter, 0, len(parsed.Features))
 	for _, f := range parsed.Features {
 		out = append(out, Perimeter{
@@ -110,6 +115,13 @@ func ftoa(f float64) string { return strconv.FormatFloat(f, 'f', -1, 64) }
 
 type perimeterResponse struct {
 	Features []perimeterFeature `json:"features"`
+	Error    *arcgisError       `json:"error"`
+}
+
+// arcgisError is the error envelope ArcGIS returns with an HTTP 200 status.
+type arcgisError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 type perimeterFeature struct {

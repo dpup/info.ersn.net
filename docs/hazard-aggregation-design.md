@@ -245,32 +245,48 @@ points at. Each layer is independently cached and independently statused.
 ```
 GET /api/v1/situation/{area}
 ```
+As implemented, `/situation` is a lightweight rollup (status + summary), **not**
+a bundle of FeatureCollections — the map still fetches the per-layer `.geojson`
+endpoints in §5.1. This keeps the situation payload small and lets a dashboard
+render its banner from one fetch.
+
 ```jsonc
 {
   "area": "calaveras",
+  "area_name": "Calaveras County",
   "generated_at": "2026-06-26T15:42:11Z",
   "summary": {
     "highest_severity": "SEVERE",
-    "active_evacuations": "yes|no|unknown",   // "unknown" when evac feed unhealthy
-    "headline": "Salt Springs Fire active; Red Flag Warning until 8 PM"
+    "highest_severity_rank": 3,
+    "severity_counts": { "INFO": 5, "MODERATE": 13 },
+    "total_features": 19,
+    "active_evacuations": 2,                 // integer count, OR null when unknown
+    "evacuation_status": "OK",               // OK | UNAVAILABLE — disambiguates null
+    "top_headlines": [ { "layer": "wildfire", "severity": "SEVERE",
+                         "severity_rank": 3, "headline": "...", "source": "CAL FIRE" } ]
   },
-  "layers": {                                   // one key per §4.4 layer
-    "wildfire":     { /* FeatureCollection + metadata */ },
-    "evacuation":   { /* FeatureCollection + metadata (source_status) */ },
-    "weather_alert":{ ... }, "fire_weather": { ... },
-    "road_incident":{ ... }, "road_segment": { ... },
-    "chain_control":{ ... }, "earthquake":   { ... }
-  },
+  "layers": [                                 // array, one entry per §4.4 layer
+    { "layer": "wildfire", "source_status": "OK", "feature_count": 1,
+      "highest_severity": "SEVERE", "attribution": "...", "source_url": "..." },
+    { "layer": "evacuation", "source_status": "UNAVAILABLE", "feature_count": 0,
+      "attribution": "Cal OES ... reference only", "source_url": "https://protect.genasys.com/" }
+    /* ... road_incident, chain_control, weather_alert, fire_weather, earthquake, road_segment */
+  ],
   "scanners": [ /* §5.4 */ ]
 }
 ```
-`summary.active_evacuations: "unknown"` (evac feed unhealthy) MUST render as an
-explicit warn state ("evacuation status unavailable — check [Genasys]"), never as
-"no active evacuations."
+**Life-safety contract:** `summary.active_evacuations` is a JSON **`null`** (not
+`0`) whenever evacuation data is unavailable, and `summary.evacuation_status`
+(`OK` | `UNAVAILABLE`) says which. A client MUST render `null` as an explicit
+warn state ("evacuation status unavailable — check [Genasys]"), never as "no
+active evacuations." A real `0` appears only when Cal OES answered `OK` with no
+active zones. (Do not treat `active_evacuations` as a string — an earlier draft
+of this doc showed `"yes|no|unknown"`; the shipped field is `int|null`.)
 
-Each `layers.*` is a complete FeatureCollection, so a client can either render the
-whole situation or pull `layers.wildfire` straight onto the map. One failing
-source degrades its own card (its `metadata.source_status`), never the page.
+Each `layers[]` entry is a status summary (`source_status`, `feature_count`,
+`highest_severity`), not a FeatureCollection — pull the geometry from the
+matching `/hazards/{area}/{layer}.geojson` endpoint. One failing source degrades
+its own entry (`source_status: UNAVAILABLE`), never the rollup.
 
 **Why aggregate server-side** (vs. a client fetching the per-layer feeds in §5.1
 and merging itself): `summary` requires cross-layer logic — `highest_severity`,

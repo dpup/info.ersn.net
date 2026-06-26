@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dpup/prefab/logging"
@@ -84,6 +85,7 @@ func (s *Service) builders() map[string]builder {
 // ServeHTTP handles GET /api/v1/hazards/{area}/{layer}.geojson.
 func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", "GET")
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -143,6 +145,7 @@ type scannerOut struct {
 // ServeScanners handles GET /api/v1/scanners/{area} from operator config.
 func (s *Service) ServeScanners(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", "GET")
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -231,7 +234,7 @@ func (s *Service) roadIncidents(ctx context.Context, area config.HazardArea) ([]
 			ID:        "chp:" + in.GetId(),
 			Layer:     LayerRoadIncident,
 			Kind:      "Road incident",
-			Category:  strings.ToLower(in.GetType().String()),
+			Category:  strings.ToLower(strings.TrimPrefix(in.GetType().String(), "ALERT_TYPE_")),
 			Headline:  in.GetDescription(),
 			Status:    strings.ToLower(strings.TrimPrefix(in.GetStatus().String(), "INCIDENT_STATUS_")),
 			AreaLabel: in.GetLocationDescription(),
@@ -306,7 +309,7 @@ func (s *Service) roadSegments(ctx context.Context, area config.HazardArea) ([]F
 		}
 		sev := SevInfo
 		if rd := byID[mr.ID]; rd != nil {
-			p.Status = strings.ToLower(rd.GetStatus().String())
+			p.Status = strings.ToLower(strings.TrimPrefix(rd.GetStatus().String(), "ROAD_STATUS_"))
 			p.Road.Congestion = strings.TrimPrefix(rd.GetCongestionLevel().String(), "CONGESTION_LEVEL_")
 			p.Road.DelayMinutes = rd.GetDelayMinutes()
 			p.Road.DurationMinutes = rd.GetDurationMinutes()
@@ -429,10 +432,29 @@ func (s *Service) wildfires(ctx context.Context, area config.HazardArea) ([]Feat
 		MinLongitude: area.Bounds.MinLongitude,
 		MaxLongitude: area.Bounds.MaxLongitude,
 	}
-	incidents, ierr := s.calfire.GetActiveIncidents(ctx)
-	perims, perr := s.wfigs.GetPerimeters(ctx, bounds)
+	// Fetch the two independent sources concurrently — sequential fetches stack
+	// their timeouts (up to ~45s) inside the /situation fan-out.
+	var (
+		incidents  []calfire.Incident
+		perims     []wfigs.Perimeter
+		ierr, perr error
+		wg         sync.WaitGroup
+	)
+	wg.Add(2)
+	go func() { defer wg.Done(); incidents, ierr = s.calfire.GetActiveIncidents(ctx) }()
+	go func() { defer wg.Done(); perims, perr = s.wfigs.GetPerimeters(ctx, bounds) }()
+	wg.Wait()
+
 	if ierr != nil && perr != nil {
 		return nil, fmt.Errorf("both wildfire sources failed: calfire=%v wfigs=%v", ierr, perr)
+	}
+	// Single-source failure still returns partial data as OK, but log it — a
+	// silent drop of one source during a fire would otherwise be invisible.
+	if ierr != nil {
+		logging.Warnw(ctx, "CAL FIRE incident source failed; wildfire layer is partial (WFIGS perimeters only)", "error", ierr)
+	}
+	if perr != nil {
+		logging.Warnw(ctx, "WFIGS perimeter source failed; wildfire layer is partial (CAL FIRE incidents only)", "error", perr)
 	}
 
 	// Index perimeters by normalized name so a CAL FIRE incident can adopt its
@@ -513,7 +535,13 @@ func (s *Service) evacuations(ctx context.Context, area config.HazardArea) ([]Fe
 		if level == "" {
 			continue // only surface active Order/Warning/Advisory/SIP zones
 		}
-		human := strings.Title(strings.ToLower(strings.ReplaceAll(level, "_", " ")))
+		if !evacStatusRecognized(z.Status) {
+			// Conservatively classified as WARNING by the fail-loud default. Log so
+			// the phrasing can be added to normalizeEvacLevel explicitly.
+			logging.Warnw(ctx, "Unrecognized Cal OES evacuation STATUS; defaulted to WARNING",
+				"status", z.Status, "zone", nonEmpty(z.ZoneID, z.ZoneName), "county", z.County)
+		}
+		human := titleCase(strings.ToLower(strings.ReplaceAll(level, "_", " ")))
 		p := Properties{
 			ID:          "evac:" + nonEmpty(z.ZoneID, z.ZoneName),
 			Layer:       LayerEvacuation,
@@ -583,6 +611,16 @@ func tsOrEmpty(t time.Time) string {
 		return ""
 	}
 	return t.UTC().Format(time.RFC3339)
+}
+
+// titleCase upper-cases the first letter of each space-separated word (ASCII).
+// Replaces the deprecated strings.Title; inputs are known evac-level words.
+func titleCase(s string) string {
+	words := strings.Fields(s)
+	for i, w := range words {
+		words[i] = strings.ToUpper(w[:1]) + w[1:]
+	}
+	return strings.Join(words, " ")
 }
 
 func nonEmpty(vals ...string) string {

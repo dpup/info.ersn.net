@@ -128,15 +128,30 @@ func (r incidentJSON) normalize() Incident {
 	return in
 }
 
-// parseTime accepts the CAL FIRE timestamp formats seen in the wild.
+// pacific is the zone for CAL FIRE's zoneless timestamps. Like the Caltrans/CHP
+// feeds (see internal/clients/CLAUDE.md), no-offset California timestamps are
+// Pacific, not UTC; cmd/server blank-imports time/tzdata so this resolves.
+var pacific, _ = time.LoadLocation("America/Los_Angeles")
+
+// parseTime accepts the CAL FIRE timestamp formats seen in the wild. Zone-aware
+// layouts are honored as-is; a zoneless timestamp is interpreted as Pacific.
 func parseTime(s string) time.Time {
 	if s == "" {
 		return time.Time{}
 	}
-	for _, layout := range []string{time.RFC3339, "2006-01-02T15:04:05", "2006-01-02T15:04:05Z07:00"} {
+	// Zone-aware formats first.
+	for _, layout := range []string{time.RFC3339, "2006-01-02T15:04:05Z07:00"} {
 		if t, err := time.Parse(layout, s); err == nil {
 			return t.UTC()
 		}
+	}
+	// Zoneless: interpret as Pacific (falling back to UTC if tzdata is missing).
+	loc := pacific
+	if loc == nil {
+		loc = time.UTC
+	}
+	if t, err := time.ParseInLocation("2006-01-02T15:04:05", s, loc); err == nil {
+		return t.UTC()
 	}
 	return time.Time{}
 }

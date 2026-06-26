@@ -1,6 +1,7 @@
 package hazards
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"sort"
@@ -67,6 +68,7 @@ type LayerStatus struct {
 // over every layer.
 func (s *Service) ServeSituation(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", "GET")
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -77,7 +79,11 @@ func (s *Service) ServeSituation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := r.Context()
+	// Bound the whole fan-out: each upstream client has its own timeout, but
+	// without an aggregate deadline a single slow source holds the handler for
+	// the sum of those timeouts.
+	ctx, cancel := context.WithTimeout(r.Context(), 25*time.Second)
+	defer cancel()
 	builders := s.builders()
 
 	// Fan out: every layer builds concurrently. A slow/broken source becomes

@@ -49,20 +49,6 @@ func fromAlertSeverity(s api.AlertSeverity) string {
 	}
 }
 
-// fromChainLevel maps a chain-control level onto the unified scale.
-func fromChainLevel(l api.ChainControlLevel) string {
-	switch l {
-	case api.ChainControlLevel_CHAIN_CONTROL_LEVEL_R3:
-		return SevSevere
-	case api.ChainControlLevel_CHAIN_CONTROL_LEVEL_R2:
-		return SevModerate
-	case api.ChainControlLevel_CHAIN_CONTROL_LEVEL_R1:
-		return SevMinor
-	default:
-		return SevInfo
-	}
-}
-
 // fromNWSSeverity maps an NWS severity string onto the unified scale.
 func fromNWSSeverity(s string) string {
 	switch s {
@@ -93,23 +79,50 @@ func fromFireWeatherState(state string) string {
 }
 
 // normalizeEvacLevel maps Cal OES free-text STATUS to a coded level. Returns ""
-// for non-active statuses (lifted/normal) so the caller drops them.
+// only for explicitly-inactive statuses (lifted/normal/all-clear) so the caller
+// drops them.
+//
+// Life-safety bias: an unrecognized, non-inactive status must NOT be silently
+// dropped — that would under-report active evacuations, the exact all-clear
+// failure the fail-loud design forbids. So the default is a conservative active
+// WARNING, and the evacuations builder logs the unrecognized phrasing so it can
+// be classified explicitly. The inactive checks run first, so "Evacuation Order
+// Lifted" resolves to "" (not ORDER).
 func normalizeEvacLevel(status string) string {
 	s := strings.ToLower(strings.TrimSpace(status))
 	switch {
-	case strings.Contains(s, "lifted"), strings.Contains(s, "normal"), s == "":
+	case s == "",
+		strings.Contains(s, "lifted"),
+		strings.Contains(s, "normal"),
+		strings.Contains(s, "all clear"),
+		strings.Contains(s, "all-clear"),
+		strings.Contains(s, "repopulat"),
+		strings.Contains(s, "no evac"):
 		return ""
-	case strings.Contains(s, "order"):
+	case strings.Contains(s, "order"), strings.Contains(s, "mandatory"):
 		return "ORDER"
 	case strings.Contains(s, "shelter"):
 		return "SHELTER_IN_PLACE"
 	case strings.Contains(s, "warning"):
 		return "WARNING"
-	case strings.Contains(s, "advisory"):
+	case strings.Contains(s, "advisory"), strings.Contains(s, "voluntary"):
 		return "ADVISORY"
 	default:
-		return ""
+		return "WARNING"
 	}
+}
+
+// evacStatusRecognized reports whether a (non-inactive) Cal OES STATUS matched a
+// known keyword. The evacuations builder uses it to log unrecognized phrasings
+// that fell through to the conservative WARNING default.
+func evacStatusRecognized(status string) bool {
+	s := strings.ToLower(strings.TrimSpace(status))
+	for _, kw := range []string{"order", "mandatory", "shelter", "warning", "advisory", "voluntary"} {
+		if strings.Contains(s, kw) {
+			return true
+		}
+	}
+	return false
 }
 
 // fromEvacLevel maps a coded evacuation level onto the unified scale.

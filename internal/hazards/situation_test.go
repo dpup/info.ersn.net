@@ -2,6 +2,22 @@ package hazards
 
 import "testing"
 
+// TestLayerOrderMatchesBuilders guards the situation rollup: a layer registered
+// in builders() but missing from layerOrder silently disappears from
+// /situation/{area}. Keep the two in sync.
+func TestLayerOrderMatchesBuilders(t *testing.T) {
+	s := &Service{}
+	builders := s.builders()
+	if len(layerOrder) != len(builders) {
+		t.Fatalf("layerOrder has %d layers, builders() has %d — they must match", len(layerOrder), len(builders))
+	}
+	for _, l := range layerOrder {
+		if _, ok := builders[l]; !ok {
+			t.Errorf("layerOrder lists %q but builders() has no such layer", l)
+		}
+	}
+}
+
 func feat(sev string, headline string) Feature {
 	p := Properties{Headline: headline, Source: Source{Name: "Test"}}
 	p.setSeverity(sev)

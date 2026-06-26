@@ -101,6 +101,12 @@ func TestEvacLevelAndSeverity(t *testing.T) {
 		{"Advisory", "ADVISORY", SevModerate},
 		{"Evacuation Order Lifted", "", SevInfo},
 		{"Normal", "", SevInfo},
+		{"All Clear", "", SevInfo},
+		{"Mandatory Evacuation", "ORDER", SevExtreme},
+		{"Voluntary Evacuation", "ADVISORY", SevModerate},
+		// Life-safety: an unrecognized but non-inactive status must NOT vanish —
+		// it defaults to a conservative active WARNING, not "".
+		{"Évacuation immédiate", "WARNING", SevSevere},
 	}
 	for _, c := range cases {
 		if got := normalizeEvacLevel(c.status); got != c.level {
@@ -109,6 +115,13 @@ func TestEvacLevelAndSeverity(t *testing.T) {
 		if got := fromEvacLevel(c.level); got != c.sev {
 			t.Errorf("fromEvacLevel(%q) = %q, want %q", c.level, got, c.sev)
 		}
+	}
+	// evacStatusRecognized distinguishes a keyword hit from the conservative default.
+	if evacStatusRecognized("Évacuation immédiate") {
+		t.Error("unrecognized status should report not-recognized (so the builder logs it)")
+	}
+	if !evacStatusRecognized("Evacuation Order") {
+		t.Error("known status should report recognized")
 	}
 }
 

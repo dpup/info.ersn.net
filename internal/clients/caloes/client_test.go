@@ -64,6 +64,21 @@ func TestGetActiveEvacuations(t *testing.T) {
 	}
 }
 
+// TestArcGISErrorEnvelope: ArcGIS returns HTTP 200 with an error envelope on
+// quota/throttle failures. For this life-safety feed that MUST surface as an
+// error (→ UNAVAILABLE/unknown), never as an empty all-clear.
+func TestArcGISErrorEnvelope(t *testing.T) {
+	doer := &fakeDoer{resp: `{"error":{"code":499,"message":"Token Required"}}`}
+	c := NewClientWithHTTPDoer("https://caloes.test/query", doer)
+	_, err := c.GetActiveEvacuations(context.Background(), []string{"Calaveras"})
+	if err == nil {
+		t.Fatal("expected an error for an ArcGIS 200-with-error-envelope response, got nil")
+	}
+	if !strings.Contains(err.Error(), "499") {
+		t.Errorf("error should carry the ArcGIS code: %v", err)
+	}
+}
+
 func TestCountyWhere(t *testing.T) {
 	if got := countyWhere([]string{"Calaveras", "O'Brien"}); got != "COUNTY IN ('Calaveras','O''Brien')" {
 		t.Errorf("countyWhere = %q", got)
