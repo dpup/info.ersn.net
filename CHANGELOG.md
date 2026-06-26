@@ -1,0 +1,81 @@
+# Changelog
+
+All notable **API-facing** changes to the ERSN Info Server. This is the document
+to read before updating a consuming site (e.g. ersn.net, sierragridteam.org).
+
+Format loosely follows [Keep a Changelog](https://keepachangelog.com/). The API
+is JSON over HTTP (`/api/v1/...`); field names are camelCase.
+
+## [Unreleased] — 2026-06-26
+
+A large API cleanup pass. Several responses changed shape — see **Breaking
+changes** first.
+
+### ⚠ Breaking changes (consumers must update)
+
+| Area | Before | After | Migration |
+|------|--------|-------|-----------|
+| **Weather alert times** | `startTimestamp` / `endTimestamp` (unix seconds, as a quoted string) | `startTime` / `endTime` (RFC3339 string, e.g. `"2026-06-26T02:33:00Z"`) | Parse RFC3339 instead of `parseInt(...)*1000`. |
+| **Enum values** | lowercase / mixed strings | UPPER_SNAKE enum names | See enum table below. |
+| **Fire weather location** | `weatherData[].fireWeather` (one per location, all identical) | top-level `fireWeather` on the `/weather` and `/weather/{id}` responses | Read `response.fireWeather` once instead of per location. |
+| **Empty timestamps** | `""` (empty string) | `null` / omitted | Treat missing time as null. Affects `fireWeather.effective/expires`, `chainControlInfo.effectiveTime`. |
+| **Incidents URL** | _new this session, no migration_ | `GET /api/v1/incidents/{area}` (area is a path param) | n/a (endpoint is brand new). |
+| **Metrics URL** | `GET /api/v1/roads/metrics` (returned all-zeros) | `GET /api/v1/metrics` (returns `501 Unimplemented` until real metrics exist) | Stop relying on it; it was never real data. |
+| **Client errors** | `500` for unknown road/location/area | `404` (unknown id) / `400` (bad input) | Handle 4xx as "not found / bad request", not server error. |
+
+**Enum value changes** (JSON string values):
+
+| Field | Before | After |
+|-------|--------|-------|
+| `roads[].alerts[].impact` | `"none"`,`"light"`,`"moderate"`,`"severe"` | `"IMPACT_NONE"`,`"IMPACT_LIGHT"`,`"IMPACT_MODERATE"`,`"IMPACT_SEVERE"` |
+| `roads[].alerts[].duration` | `"unknown"`,`"< 1 hour"`,`"several hours"`,`"ongoing"` | `"DURATION_UNKNOWN"`,`"DURATION_UNDER_ONE_HOUR"`,`"DURATION_SEVERAL_HOURS"`,`"DURATION_ONGOING"` |
+| `incidents[].status` | `"active"` | `"ACTIVE"` |
+| `fireWeather.state` | `"normal"`,`"elevated"`,`"red-flag"` | `"NORMAL"`,`"ELEVATED"`,`"RED_FLAG"` |
+| weather `alerts[].source` | `"NWS"`, `"OpenWeatherMap"` | `"NWS"`, `"OPENWEATHERMAP"` |
+| weather `alerts[].severity` | NWS text (`"Severe"`,`"Moderate"`,`"Minor"`) | `"CRITICAL"`,`"WARNING"`,`"INFO"` (shared scale) |
+
+(Existing road `status`, `congestionLevel`, alert `type`/`severity`/`classification`
+were already UPPER_SNAKE enums and are unchanged.)
+
+### Added
+
+- **Region-wide incidents feed**: `GET /api/v1/incidents/{area}` (e.g.
+  `/api/v1/incidents/mother-lode`) — a flat list of CHP/Caltrans dispatch
+  incidents in an area, independent of the monitored roads. Each incident has
+  `id`, `type`, `severity`, `location`, `locationDescription`, `description`,
+  `status`, `logNumber`, `started`, `lastUpdated`, `area`.
+- **Authoritative NWS weather alerts**: `/weather/alerts` now returns NWS zone
+  alerts (`source: "NWS"`, with `severity` and `zones`) alongside OpenWeatherMap
+  alerts (`source: "OPENWEATHERMAP"`). New `?zones=CAZ064,CAZ065` filter narrows
+  the NWS alerts (OpenWeatherMap alerts are not zone-scoped and always pass).
+- **Fire-weather classification**: top-level `fireWeather` on `/weather` and
+  `/weather/{id}` — `state` is `NORMAL` → `ELEVATED` (Fire Weather Watch) →
+  `RED_FLAG` (Red Flag Warning), only ever `RED_FLAG` when NWS confirms it.
+- **Road alert id**: `roads[].alerts[].id` (CHP log / closure number) — matches
+  `incidents[].id` for the same event, so per-road alerts and the region feed can
+  be correlated.
+- **Chain control**: `roads[].chainControlInfo` (level R1/R2/R3, location,
+  direction, `effectiveTime`) from the Caltrans chain-control feed.
+- **Coverage**: Hwy 49 (Angels Camp ↔ Sonora) road; weather for Sonora, Columbia,
+  Twain Harte, Dorrington.
+- **HTTP caching**: read endpoints now send `Cache-Control: public, max-age=60`
+  and `Last-Modified`.
+- **CORS**: `https://www.ersn.net`, `https://ersn.net`, `https://sierragridteam.org`
+  (and `www.`) are allowlisted; browser `fetch()` now receives
+  `Access-Control-Allow-Origin`.
+
+### Changed
+
+- Incident `description` is humanized (`"1182-Trfc Collision-No Inj"` →
+  `"Traffic Collision-No Injury"`).
+- Incidents are de-duplicated and geometry-only placemarks dropped, so the feed
+  is one clean entry per incident.
+- All timestamps across the API are RFC3339 (`google.protobuf.Timestamp`).
+
+### Fixed
+
+- CORS: `Access-Control-Allow-Origin` is now emitted for allowlisted origins;
+  `Access-Control-Allow-Methods` is correctly restricted to `GET`; the needless
+  `Access-Control-Allow-Credentials` header was removed.
+- Unknown road / location / area now return `404`, and bad input `400`, instead
+  of `500`.

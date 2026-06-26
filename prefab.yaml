@@ -9,6 +9,7 @@ server:
     # Browser clients must be listed here explicitly to make cross-origin fetch work.
     corsOrigins:
       - https://ersn.net
+      - https://www.ersn.net         # ersn.net site (www host is a distinct origin)
       - https://sierragridteam.org   # S.I.E.R.R.A site consuming /roads, /weather, /weather/alerts (issue #3)
       - https://www.sierragridteam.org
       - http://localhost:8181

@@ -183,6 +183,12 @@ export PORT=8181
 
 ## API Endpoints
 
+**When you change the API surface** (add/rename/retype a JSON field, change a
+status code or URL, add an endpoint), record it in `CHANGELOG.md` under
+`[Unreleased]` — that's how consuming sites (ersn.net, sierragridteam.org) learn
+what to update. Flag anything that changes an existing response shape as a
+breaking change with a migration note.
+
 **Roads Service** (`/api/v1/roads`):
 - `GET /api/v1/roads` - List all configured roads with current conditions
 - `GET /api/v1/roads/{road_id}` - Get specific road details
