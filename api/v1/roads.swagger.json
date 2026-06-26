@@ -219,7 +219,8 @@
         },
         "effectiveTime": {
           "type": "string",
-          "title": "When chain control went into effect (ISO 8601)"
+          "format": "date-time",
+          "title": "When chain control went into effect"
         },
         "direction": {
           "type": "string",

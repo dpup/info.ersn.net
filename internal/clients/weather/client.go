@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"time"
 
+	"google.golang.org/protobuf/types/known/timestamppb"
+
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 )
 
@@ -142,18 +144,18 @@ func (c *Client) processCurrentWeatherResponse(response OpenWeatherCurrentRespon
 	}
 
 	return &api.WeatherData{
-		LocationId:            "", // Will be set by calling service
-		LocationName:          response.Name,
-		WeatherMain:           weatherMain,
-		WeatherDescription:    weatherDescription,
-		WeatherIcon:           weatherIcon,
-		TemperatureCelsius:    int32(response.Main.Temp),     // Round to int
-		FeelsLikeCelsius:      int32(response.Main.FeelsLike), // Round to int
-		HumidityPercent:       response.Main.Humidity,
-		WindSpeedKmh:          int32(response.Wind.Speed * 3.6), // Convert m/s to km/h
-		WindDirectionDegrees:  response.Wind.Deg,
-		VisibilityKm:          int32(response.Visibility / 1000), // Convert meters to km
-		Alerts:                nil, // Alerts fetched separately
+		LocationId:           "", // Will be set by calling service
+		LocationName:         response.Name,
+		WeatherMain:          weatherMain,
+		WeatherDescription:   weatherDescription,
+		WeatherIcon:          weatherIcon,
+		TemperatureCelsius:   int32(response.Main.Temp),      // Round to int
+		FeelsLikeCelsius:     int32(response.Main.FeelsLike), // Round to int
+		HumidityPercent:      response.Main.Humidity,
+		WindSpeedKmh:         int32(response.Wind.Speed * 3.6), // Convert m/s to km/h
+		WindDirectionDegrees: response.Wind.Deg,
+		VisibilityKm:         int32(response.Visibility / 1000), // Convert meters to km
+		Alerts:               nil,                               // Alerts fetched separately
 	}, nil
 }
 
@@ -167,13 +169,17 @@ func (c *Client) processWeatherAlerts(alerts []OpenWeatherAlert) ([]*api.Weather
 		id := fmt.Sprintf("%s_%s_%d", alert.SenderName, alert.Event, alert.Start)
 
 		processedAlert := &api.WeatherAlert{
-			Id:             id,
-			SenderName:     alert.SenderName,
-			Event:          alert.Event,
-			StartTimestamp: alert.Start,
-			EndTimestamp:   alert.End,
-			Description:    alert.Description,
-			Tags:           alert.Tags,
+			Id:          id,
+			SenderName:  alert.SenderName,
+			Event:       alert.Event,
+			Description: alert.Description,
+			Tags:        alert.Tags,
+		}
+		if alert.Start > 0 {
+			processedAlert.StartTime = timestamppb.New(time.Unix(alert.Start, 0).UTC())
+		}
+		if alert.End > 0 {
+			processedAlert.EndTime = timestamppb.New(time.Unix(alert.End, 0).UTC())
 		}
 
 		processedAlerts = append(processedAlerts, processedAlert)
@@ -184,21 +190,21 @@ func (c *Client) processWeatherAlerts(alerts []OpenWeatherAlert) ([]*api.Weather
 
 // OpenWeatherCurrentResponse represents the current weather API response
 type OpenWeatherCurrentResponse struct {
-	Coord   OpenWeatherCoord     `json:"coord"`
-	Weather []OpenWeatherWeather `json:"weather"`
-	Main    OpenWeatherMain      `json:"main"`
-	Wind    OpenWeatherWind      `json:"wind"`
-	Clouds  OpenWeatherClouds    `json:"clouds"`
-	Visibility int32             `json:"visibility"`
-	Name    string               `json:"name"`
-	Dt      int64                `json:"dt"`
+	Coord      OpenWeatherCoord     `json:"coord"`
+	Weather    []OpenWeatherWeather `json:"weather"`
+	Main       OpenWeatherMain      `json:"main"`
+	Wind       OpenWeatherWind      `json:"wind"`
+	Clouds     OpenWeatherClouds    `json:"clouds"`
+	Visibility int32                `json:"visibility"`
+	Name       string               `json:"name"`
+	Dt         int64                `json:"dt"`
 }
 
 // OpenWeatherOneCallResponse represents One Call API response with alerts
 type OpenWeatherOneCallResponse struct {
-	Lat    float64             `json:"lat"`
-	Lon    float64             `json:"lon"`
-	Alerts []OpenWeatherAlert  `json:"alerts,omitempty"`
+	Lat    float64            `json:"lat"`
+	Lon    float64            `json:"lon"`
+	Alerts []OpenWeatherAlert `json:"alerts,omitempty"`
 }
 
 // OpenWeatherCoord represents coordinates in response

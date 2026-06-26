@@ -22,13 +22,13 @@ const (
 
 // FireWeather is a derived fire-weather classification for a set of zones.
 type FireWeather struct {
-	State       string   // normal | elevated | red-flag
-	SourceEvent string   // The NWS product driving the state (empty when normal)
-	Headline    string   // Headline of the governing alert
-	SenderName  string   // Issuing office
-	Effective   string   // RFC3339 (empty when normal)
-	Expires     string   // RFC3339 (empty when normal)
-	Zones       []string // Zones the governing alert applies to
+	State       string    // normal | elevated | red-flag
+	SourceEvent string    // The NWS product driving the state (empty when normal)
+	Headline    string    // Headline of the governing alert
+	SenderName  string    // Issuing office
+	Effective   time.Time // Zero when normal
+	Expires     time.Time // Zero when normal
+	Zones       []string  // Zones the governing alert applies to
 }
 
 // ClassifyFireWeather derives the fire-weather state from active alerts. If
@@ -78,18 +78,13 @@ func alertIntersectsZones(a *Alert, zoneSet map[string]bool) bool {
 }
 
 func fireWeatherFromAlert(state string, a *Alert) FireWeather {
-	fw := FireWeather{
+	return FireWeather{
 		State:       state,
 		SourceEvent: a.Event,
 		Headline:    a.Headline,
 		SenderName:  a.SenderName,
+		Effective:   a.Effective,
+		Expires:     a.Expires,
 		Zones:       a.Zones,
 	}
-	if !a.Effective.IsZero() {
-		fw.Effective = a.Effective.Format(time.RFC3339)
-	}
-	if !a.Expires.IsZero() {
-		fw.Expires = a.Expires.Format(time.RFC3339)
-	}
-	return fw
 }

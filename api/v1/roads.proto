@@ -143,7 +143,7 @@ message ChainControlInfo {
   string location_name = 2;              // Where chain control starts (e.g., "Twin Bridges")
   double latitude = 3;                   // Latitude of chain control checkpoint
   double longitude = 4;                  // Longitude of chain control checkpoint
-  string effective_time = 5;             // When chain control went into effect (ISO 8601)
+  google.protobuf.Timestamp effective_time = 5; // When chain control went into effect
   string direction = 6;                  // Direction of travel (e.g., "Eastbound")
   string description = 7;                // Human-readable requirements description
 }

@@ -278,8 +278,8 @@ alerts in the given forecast zones (issue #4).
       "senderName": "NWS Sacramento CA",
       "headline": "Red Flag Warning in effect until 8 PM PDT",
       "summary": "Gusty winds and low humidity.",
-      "startTimestamp": 1782400000,
-      "endTimestamp": 1782490000
+      "startTime": "2026-06-25T19:33:00-07:00",
+      "endTime": "2026-06-28T17:00:00-07:00"
     }
   ],
   "lastUpdated": "2026-06-26T01:52:05.646618Z"

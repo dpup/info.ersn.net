@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/dpup/prefab/logging"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/nws"
@@ -62,10 +63,10 @@ func nwsAlertsToProto(alerts []nws.Alert) []*api.WeatherAlert {
 			Zones:       a.Zones,
 		}
 		if !a.Effective.IsZero() {
-			wa.StartTimestamp = a.Effective.Unix()
+			wa.StartTime = timestamppb.New(a.Effective)
 		}
 		if !a.Expires.IsZero() {
-			wa.EndTimestamp = a.Expires.Unix()
+			wa.EndTime = timestamppb.New(a.Expires)
 		}
 		out = append(out, wa)
 	}
@@ -89,13 +90,18 @@ func (s *WeatherService) computeFireWeather(location config.WeatherLocation, ale
 	}
 
 	fw := nws.ClassifyFireWeather(alerts, zones)
-	return &api.FireWeather{
+	out := &api.FireWeather{
 		State:       fw.State,
 		SourceEvent: fw.SourceEvent,
 		Headline:    fw.Headline,
 		SenderName:  fw.SenderName,
-		Effective:   fw.Effective,
-		Expires:     fw.Expires,
 		Zones:       fw.Zones,
 	}
+	if !fw.Effective.IsZero() {
+		out.Effective = timestamppb.New(fw.Effective)
+	}
+	if !fw.Expires.IsZero() {
+		out.Expires = timestamppb.New(fw.Expires)
+	}
+	return out
 }

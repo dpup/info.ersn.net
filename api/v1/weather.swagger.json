@@ -166,11 +166,13 @@
         },
         "effective": {
           "type": "string",
-          "title": "ISO 8601 start of the governing product"
+          "format": "date-time",
+          "title": "Start of the governing product"
         },
         "expires": {
           "type": "string",
-          "title": "ISO 8601 end of the governing product"
+          "format": "date-time",
+          "title": "End of the governing product"
         },
         "zones": {
           "type": "array",
@@ -242,16 +244,6 @@
           "type": "string",
           "title": "Alert event type (\"Heat Advisory\", \"Winter Storm Warning\")"
         },
-        "startTimestamp": {
-          "type": "string",
-          "format": "int64",
-          "title": "Unix timestamp when effective"
-        },
-        "endTimestamp": {
-          "type": "string",
-          "format": "int64",
-          "title": "Unix timestamp when expires"
-        },
         "description": {
           "type": "string",
           "title": "Original NWS alert description (preserved for reference)"
@@ -291,6 +283,16 @@
             "type": "string"
           },
           "title": "NWS forecast zones this alert applies to (e.g. \"CAZ064\")"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time",
+          "title": "When the alert becomes effective"
+        },
+        "endTime": {
+          "type": "string",
+          "format": "date-time",
+          "title": "When the alert expires"
         }
       }
     },

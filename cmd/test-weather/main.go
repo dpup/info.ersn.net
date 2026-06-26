@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	api "github.com/dpup/info.ersn.net/server/api/v1"
 	"github.com/dpup/info.ersn.net/server/internal/clients/weather"
@@ -40,7 +39,7 @@ func main() {
 
 	// Get API key from flag, config file, or environment
 	key := *apiKey
-	
+
 	// If config file is provided, load configuration using shared LoadConfig
 	if *configFile != "" {
 		fmt.Printf("Loading configuration from shared config system\n")
@@ -50,7 +49,7 @@ func main() {
 			fmt.Printf("Using API key from configuration\n")
 		}
 	}
-	
+
 	// Fall back to environment variables
 	if key == "" {
 		key = os.Getenv("PF__OPENWEATHER__API_KEY")
@@ -58,7 +57,7 @@ func main() {
 			key = os.Getenv("OPENWEATHER_API_KEY") // fallback for backward compatibility
 		}
 	}
-	
+
 	if key == "" {
 		log.Fatal("OpenWeatherMap API key required. Use -api-key flag, --config flag, or PF__OPENWEATHER__API_KEY env var")
 	}
@@ -88,7 +87,7 @@ func main() {
 	}
 
 	fmt.Printf("✅ GetCurrentWeather successful!\n")
-	fmt.Printf("Temperature: %d°C (feels like %d°C)\n", 
+	fmt.Printf("Temperature: %d°C (feels like %d°C)\n",
 		current.TemperatureCelsius, current.FeelsLikeCelsius)
 	fmt.Printf("Condition: %s\n", current.WeatherMain)
 	fmt.Printf("Description: %s\n", current.WeatherDescription)
@@ -116,13 +115,11 @@ func main() {
 			fmt.Printf("  Event: %s\n", alert.Event)
 			fmt.Printf("  Description: %s\n", truncateString(alert.Description, 100))
 			fmt.Printf("  Sender: %s\n", alert.SenderName)
-			if alert.StartTimestamp > 0 {
-				startTime := time.Unix(alert.StartTimestamp, 0)
-				fmt.Printf("  Start: %s\n", startTime.Format("2006-01-02 15:04:05"))
+			if alert.GetStartTime() != nil {
+				fmt.Printf("  Start: %s\n", alert.GetStartTime().AsTime().Format("2006-01-02 15:04:05"))
 			}
-			if alert.EndTimestamp > 0 {
-				endTime := time.Unix(alert.EndTimestamp, 0)
-				fmt.Printf("  End: %s\n", endTime.Format("2006-01-02 15:04:05"))
+			if alert.GetEndTime() != nil {
+				fmt.Printf("  End: %s\n", alert.GetEndTime().AsTime().Format("2006-01-02 15:04:05"))
 			}
 			if len(alert.Tags) > 0 {
 				fmt.Printf("  Tags: %v\n", alert.Tags)
@@ -154,7 +151,7 @@ func main() {
 			fmt.Printf("  ❌ Error: %v\n", err)
 			continue
 		}
-		fmt.Printf("  ✅ %s: %d°C, %s\n", 
+		fmt.Printf("  ✅ %s: %d°C, %s\n",
 			loc.Name, weather.TemperatureCelsius, weather.WeatherMain)
 	}
 

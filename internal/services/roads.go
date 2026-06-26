@@ -890,10 +890,24 @@ func (s *RoadsService) findChainControlForRoute(ctx context.Context, route routi
 		LocationName:  bestMatch.LocationName,
 		Latitude:      bestMatch.Coordinates.Latitude,
 		Longitude:     bestMatch.Coordinates.Longitude,
-		EffectiveTime: bestMatch.EffectiveTime,
+		EffectiveTime: parseRFC3339Timestamp(bestMatch.EffectiveTime),
 		Direction:     bestMatch.Direction,
 		Description:   bestMatch.Description,
 	}
+}
+
+// parseRFC3339Timestamp converts an RFC3339 string to a protobuf Timestamp,
+// returning nil if the string is empty or unparseable (Caltrans feeds are not
+// always well-formed).
+func parseRFC3339Timestamp(s string) *timestamppb.Timestamp {
+	if s == "" {
+		return nil
+	}
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return nil
+	}
+	return timestamppb.New(t)
 }
 
 // extractHighwayNumber extracts the highway number from various formats

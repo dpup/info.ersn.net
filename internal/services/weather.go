@@ -49,7 +49,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 	// Try to get cached weather data first
 	var cachedWeatherData []*api.WeatherData
 	cacheKey := "weather:all"
-	
+
 	found, err := s.cache.Get(cacheKey, &cachedWeatherData)
 	if err != nil {
 		logging.Errorw(ctx, "Cache error", "error", err, "cache_key", cacheKey)
@@ -57,7 +57,7 @@ func (s *WeatherService) ListWeather(ctx context.Context, req *api.ListWeatherRe
 
 	if found && !s.cache.IsStale(cacheKey) {
 		logging.Infow(ctx, "Returning cached weather data", "location_count", len(cachedWeatherData))
-		
+
 		// Get cache metadata for last_updated timestamp
 		entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
 		var lastUpdated *timestamppb.Timestamp
@@ -133,7 +133,7 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 	// Try to get cached alerts first
 	var cachedAlerts []*api.WeatherAlert
 	cacheKey := "weather:alerts"
-	
+
 	found, err := s.cache.Get(cacheKey, &cachedAlerts)
 	if err != nil {
 		logging.Errorw(ctx, "Cache error", "error", err, "cache_key", cacheKey)
@@ -141,7 +141,7 @@ func (s *WeatherService) ListWeatherAlerts(ctx context.Context, req *api.ListWea
 
 	if found && !s.cache.IsStale(cacheKey) {
 		logging.Infow(ctx, "Returning cached weather alerts", "alert_count", len(cachedAlerts))
-		
+
 		entry, _, _ := s.cache.GetWithMetadata(cacheKey, nil)
 		var lastUpdated *timestamppb.Timestamp
 		if entry != nil {
@@ -371,8 +371,8 @@ func (s *WeatherService) enhanceWeatherAlert(ctx context.Context, alert *api.Wea
 		SenderName:  alert.SenderName,
 		Description: alert.Description,
 		Tags:        alert.Tags,
-		Start:       alert.StartTimestamp,
-		End:         alert.EndTimestamp,
+		Start:       unixOrZero(alert.StartTime),
+		End:         unixOrZero(alert.EndTime),
 	}
 
 	enhanced, err := s.alertEnhancer.EnhanceWeatherAlert(ctx, rawAlert)
@@ -407,6 +407,15 @@ func (s *WeatherService) hashWeatherAlertContent(alert *api.WeatherAlert) string
 	)
 	hash := sha256.Sum256([]byte(contentSignature))
 	return fmt.Sprintf("%x", hash)
+}
+
+// unixOrZero returns the unix seconds for a timestamp, or 0 if nil. Used to
+// bridge to the AI enhancer's raw-alert struct (which still uses unix seconds).
+func unixOrZero(ts *timestamppb.Timestamp) int64 {
+	if ts == nil {
+		return 0
+	}
+	return ts.AsTime().Unix()
 }
 
 // truncateText truncates text to a maximum length with ellipsis
