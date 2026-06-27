@@ -1,6 +1,6 @@
 # ERSN Info Server
 
-A real-time API server providing road conditions and weather information for the Ebbett's Pass region, combining data from Google Routes API, Caltrans feeds, and OpenWeatherMap.
+A real-time API server providing road, weather, and hazard information for the Ebbett's Pass region, combining data from Google Routes API, Caltrans feeds, OpenWeatherMap, USGS, CAL FIRE, and Cal OES.
 
 ## Overview
 
@@ -19,6 +19,7 @@ The architecture is modular and location-agnostic, allowing easy adaptation to o
 - **Smart Alert Classification**: Route-aware filtering (ON_ROUTE/NEARBY/DISTANT) based on spatial analysis
 - **AI-Enhanced Descriptions**: Automatic OpenAI conversion of technical alerts into clear, human-readable summaries
 - **Weather Information**: Current conditions and alerts for multiple locations from OpenWeatherMap
+- **Unified Hazard Layer**: Map-ready GeoJSON aggregating wildfires, earthquakes, evacuations, weather alerts, and road incidents into one standardized interface, with a fail-loud `source_status` and a life-safety evacuation contract
 - **Stale-while-revalidate Caching**: Sub-100ms responses by serving cached data while refreshing in background
 - **REST API**: Clean HTTP endpoints with comprehensive JSON responses
 - **gRPC Support**: Native gRPC services with automatic HTTP gateway
@@ -313,6 +314,88 @@ point, so the classification is regional):
 `state` escalates `NORMAL` → `ELEVATED` (Fire Weather Watch) → `RED_FLAG` (Red
 Flag Warning). It is only ever `RED_FLAG` when NWS has an active Red Flag Warning
 for the relevant zone — never a value the feed can't confirm.
+
+### Hazards API
+
+A unified, **map-ready** aggregation layer that re-projects every hazard source
+into one standardized interface a maps client (MapLibre GL, Leaflet, OpenLayers)
+can layer directly. Unlike the rest of the API, these endpoints are hand-built
+GeoJSON/JSON, so field names are `snake_case`. Full design:
+[`docs/hazard-aggregation-design.md`](docs/hazard-aggregation-design.md).
+
+#### Per-Layer GeoJSON
+
+```
+GET /api/v1/hazards/{area}/{layer}.geojson
+```
+
+Returns one [RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946)
+`FeatureCollection` (`Content-Type: application/geo+json`) plus a `metadata`
+member. Layers: `road_incident`, `chain_control`, `road_segment`,
+`weather_alert`, `fire_weather`, `earthquake`, `wildfire`, `evacuation`.
+Coordinates are `[longitude, latitude]`.
+
+Every feature shares a common `properties` envelope plus a namespaced per-kind
+block, on a single severity scale `INFO | MINOR | MODERATE | SEVERE | EXTREME`
+(with an integer `severity_rank` 0–4 for sort/color):
+
+```json
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "layer": "wildfire", "area": "calaveras",
+    "source_status": "OK",                 // OK | STALE | UNAVAILABLE
+    "last_source_update": "",              // RFC3339 time of last good fetch (STALE only)
+    "attribution": "CAL FIRE / WFIGS", "schema_version": 1
+  },
+  "features": [{
+    "type": "Feature",
+    "geometry": { "type": "Polygon", "coordinates": [ /* [lng,lat] rings */ ] },
+    "properties": {
+      "id": "calfire:...", "layer": "wildfire", "kind": "Wildfire",
+      "severity": "SEVERE", "severity_rank": 3,
+      "headline": "Salt Springs Fire — 1,200 ac, 20% contained",
+      "wildfire": { "acres": 1200, "containment": 20, "county": "Calaveras", "has_perimeter": true },
+      "source": { "id": "calfire", "name": "CAL FIRE", "url": "..." }
+    }
+  }]
+}
+```
+
+`metadata.source_status` is the honesty mechanism. Each layer is **fail-loud**:
+on a source error it returns `UNAVAILABLE` with empty features (or `STALE` with a
+`last_source_update` when serving the last good cached fetch) — never a fabricated
+clear state.
+
+#### Situation Rollup (one fetch for a dashboard)
+
+```
+GET /api/v1/situation/{area}
+```
+
+A lightweight `application/json` rollup (not a bundle of FeatureCollections — the
+map still fetches the per-layer `.geojson` above): per-layer `source_status` +
+`feature_count`, and a cross-layer `summary` (`highest_severity`,
+`severity_counts`, `top_headlines`) plus a `scanners` sidecar.
+
+**Life-safety contract:** `summary.active_evacuations` is `null` whenever
+evacuation data is unavailable (`summary.evacuation_status` says which) — a client
+must render `null` as "unknown — check the official source", **never** as zero.
+Because Cal OES is active-events-only, the count is `null`-or-positive and never
+`0`. The evacuation layer always carries the authoritative
+[Genasys](https://protect.genasys.com/) viewer link in its `source_url`.
+
+#### Scanner Feeds
+
+```
+GET /api/v1/scanners/{area}
+```
+
+Operator-configured Broadcastify public-safety scanner feeds for the area
+(`feed_id`, `channel_label`, `agency`, `broadcastify_url`) — link-out only.
+
+Areas (bounds, scanner feeds, incident region) are configured under
+`hazards.areas` in `prefab.yaml`.
 
 ## Quick Start
 

@@ -222,6 +222,30 @@ breaking change with a migration note.
 `elevated` (Fire Weather Watch) → `red-flag` (Red Flag Warning), derived only
 from authoritative NWS products — never a Red Flag NWS hasn't issued.
 
+**Hazards Service** (`/api/v1/hazards`, `/api/v1/situation`, `/api/v1/scanners`):
+a unified, map-ready aggregation layer. See `docs/hazard-aggregation-design.md`
+and `internal/hazards/CLAUDE.md` for the full model; these endpoints are
+hand-built GeoJSON/JSON (not grpc-gateway), so field names are `snake_case`.
+- `GET /api/v1/hazards/{area}/{layer}.geojson` - one RFC 7946 `FeatureCollection`
+  per layer for a maps client (MapLibre/Leaflet). Layers: `road_incident`,
+  `chain_control`, `road_segment`, `weather_alert`, `fire_weather`, `earthquake`,
+  `wildfire`, `evacuation`. Every feature shares a `properties` envelope
+  (`id, layer, kind, severity, severity_rank, headline, source, …`) on the unified
+  severity scale `INFO..EXTREME` (rank 0–4). Coordinates are `[lng, lat]`.
+- `GET /api/v1/situation/{area}` - one-call rollup: per-layer status +
+  cross-layer `summary` (`highest_severity`, `severity_counts`, `top_headlines`,
+  `active_evacuations`) + a `scanners` sidecar.
+- `GET /api/v1/scanners/{area}` - Broadcastify scanner feeds (link-out only).
+- **`metadata.source_status`** is `OK | STALE | UNAVAILABLE` — the honesty
+  mechanism. A layer is fail-loud: on source error it returns `UNAVAILABLE` with
+  empty features (or `STALE` + `last_source_update` when serving a cached last-good
+  fetch), never a fabricated clear state.
+- **Evacuation is life-safety / fail-loud**: an empty active-events result is
+  `UNAVAILABLE`/unknown (never "all clear"); `situation.active_evacuations` is
+  `null` when unavailable (never `0`), and `metadata.source_url` always links the
+  authoritative Genasys viewer. Areas are configured under `hazards.areas` in
+  `prefab.yaml`.
+
 ## Performance & Monitoring
 
 **Response Time Targets**:

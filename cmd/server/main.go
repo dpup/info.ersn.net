@@ -151,8 +151,8 @@ func homepageHandler(w http.ResponseWriter, r *http.Request) {
 
 <span class="header">info.ersn.net</span>
 
-Real-time API server providing road conditions and weather information 
-for the Ebbett's Pass region.
+Real-time API server providing road, weather, and hazard information
+for the Ebbett's Pass / Highway 4 corridor.
 
 <span class="header">Repository:</span>
 <a href="https://github.com/dpup/info.ersn.net">https://github.com/dpup/info.ersn.net</a>
@@ -187,12 +187,17 @@ for the Ebbett's Pass region.
   • Caltrans KML Feeds              - Lane closures, CHP incidents, chain control
   • OpenWeatherMap API              - Weather conditions and alerts
   • National Weather Service        - Zone alerts and fire-weather products
+  • USGS (FDSN)                     - Earthquakes
+  • CAL FIRE + NIFC WFIGS           - Active wildfires and perimeters
+  • Cal OES (Genasys)               - Evacuation zones (reference only)
+  • Broadcastify                    - Public-safety scanner feeds
   • OpenAI                          - AI enhancement of road alerts
 
 <span class="header">Example Usage:</span>
   curl <a href="/api/v1/roads">https://info.ersn.net/api/v1/roads</a>
   curl <a href="/api/v1/weather">https://info.ersn.net/api/v1/weather</a>
-  curl <a href="/api/v1/incidents/mother-lode">https://info.ersn.net/api/v1/incidents/mother-lode</a>
+  curl <a href="/api/v1/situation/calaveras">https://info.ersn.net/api/v1/situation/calaveras</a>
+  curl <a href="/api/v1/hazards/calaveras/wildfire.geojson">https://info.ersn.net/api/v1/hazards/calaveras/wildfire.geojson</a>
   curl <a href="/api/v1/weather/alerts?zones=CAZ064,CAZ065,CAZ258,CAZ259">https://info.ersn.net/api/v1/weather/alerts?zones=CAZ064,CAZ065</a>
 </pre>
 </body>
