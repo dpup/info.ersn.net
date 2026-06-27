@@ -1224,27 +1224,23 @@ func (s *RoadsService) applyRoadConditions(ctx context.Context, monitoredRoad co
 	}
 
 	for _, condition := range conditions {
-		isOnRoute := caltrans.MatchConditionToSegment(condition, monitoredRoad.Section, monitoredRoad.LocationKeywords)
-
-		classification := api.AlertClassification_NEARBY
-		if isOnRoute {
-			classification = api.AlertClassification_ON_ROUTE
-		}
-
-		logging.Infow(ctx, "Processing road condition",
-			"road_id", monitoredRoad.ID,
-			"type", condition.Type,
-			"on_route", isOnRoute,
-			"description", condition.Description)
-
-		// Create alert from condition
-		alert := s.buildRoadConditionAlert(condition, classification)
-		*alerts = append(*alerts, alert)
-
-		// Only update road status for ON_ROUTE conditions
-		if !isOnRoute {
+		// Road conditions from roads.dot.ca.gov are route-wide text advisories with
+		// no geometry — the feed returns every condition on the highway statewide.
+		// Attach one to a segment only when its text actually matches that segment's
+		// section/keywords; otherwise the same SR-X condition (e.g. a closure at the
+		// Delta) is duplicated onto every monitored segment of that highway. The
+		// geolocated KML incident feed still provides spatially-accurate alerts.
+		if !caltrans.MatchConditionToSegment(condition, monitoredRoad.Section, monitoredRoad.LocationKeywords) {
 			continue
 		}
+
+		logging.Infow(ctx, "Processing on-route road condition",
+			"road_id", monitoredRoad.ID,
+			"type", condition.Type,
+			"description", condition.Description)
+
+		alert := s.buildRoadConditionAlert(condition, api.AlertClassification_ON_ROUTE)
+		*alerts = append(*alerts, alert)
 
 		switch condition.Type {
 		case caltrans.CONDITION_CLOSURE:

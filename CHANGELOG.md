@@ -7,6 +7,22 @@ There are no formal releases — the service deploys from `main`. Each entry bel
 is timestamped; add a new dated section at the top when the API surface changes.
 The API is JSON over HTTP (`/api/v1/...`); field names are camelCase.
 
+## 2026-06-27 01:15 UTC
+
+### Changed — road-condition alerts are now localized to the matching segment
+
+`GET /api/v1/roads` no longer duplicates a route-wide Caltrans road condition
+(`roads.dot.ca.gov`, `alerts[].title = "SR N Road Condition"`) onto every
+monitored segment of that highway. These advisories have no coordinates, so the
+feed returns every condition on the route statewide; a segment now shows one only
+when the condition text matches that segment's section/`locationKeywords`.
+
+Effect for consumers: fewer, correctly-placed condition alerts. An out-of-area
+advisory (e.g. an SR-4 closure at the Delta) no longer appears on the Calaveras
+SR-4 segments, and the "No traffic restrictions are reported" filler no longer
+shows. Geolocated CHP/lane-closure incidents (which have real coordinates) are
+unaffected. No response-shape change.
+
 ## 2026-06-27 00:30 UTC
 
 ### Changed — hazard layer resilience + contract polish (code-review follow-up)
