@@ -421,13 +421,18 @@ func (s *Service) roadSegments(ctx context.Context, area config.HazardArea) ([]F
 	return out, nil
 }
 
-func (s *Service) weatherAlerts(ctx context.Context, _ config.HazardArea) ([]Feature, error) {
+func (s *Service) weatherAlerts(ctx context.Context, area config.HazardArea) ([]Feature, error) {
 	resp, err := s.weather.ListWeatherAlerts(ctx, &api.ListWeatherAlertsRequest{})
 	if err != nil {
 		return nil, err
 	}
 	var out []Feature
 	for _, a := range resp.GetAlerts() {
+		// Scope to this area's NWS zones (alerts carry zones, not geometry). A
+		// zoneless alert (e.g. OpenWeatherMap) can't be scoped, so it's kept.
+		if !zonesMatch(area.Zones, a.GetZones()) {
+			continue
+		}
 		// M1: NWS zone polygons aren't fetched yet, so these are null-geometry
 		// banner features (valid per the model).
 		p := Properties{
@@ -452,13 +457,18 @@ func (s *Service) weatherAlerts(ctx context.Context, _ config.HazardArea) ([]Fea
 	return out, nil
 }
 
-func (s *Service) fireWeather(ctx context.Context, _ config.HazardArea) ([]Feature, error) {
+func (s *Service) fireWeather(ctx context.Context, area config.HazardArea) ([]Feature, error) {
 	resp, err := s.weather.ListWeather(ctx, &api.ListWeatherRequest{})
 	if err != nil {
 		return nil, err
 	}
 	fw := resp.GetFireWeather()
 	if fw == nil {
+		return nil, nil
+	}
+	// Fire-weather products are issued per NWS zone; only surface it for areas
+	// whose zones the product covers.
+	if !zonesMatch(area.Zones, fw.GetZones()) {
 		return nil, nil
 	}
 	state := strings.ToLower(strings.TrimPrefix(fw.GetState().String(), "FIRE_WEATHER_STATE_"))
@@ -734,6 +744,26 @@ func tsOrEmpty(t time.Time) string {
 
 // i32ptr returns a pointer to v (for optional JSON numerics).
 func i32ptr(v int32) *int32 { return &v }
+
+// zonesMatch reports whether an alert belongs to an area, by NWS forecast zone:
+//   - area has no configured zones    -> matches (unscoped single-area deployment)
+//   - alert has no zones (e.g. OWM)   -> matches (can't be scoped; keep it)
+//   - otherwise                       -> the zone sets intersect
+func zonesMatch(areaZones, alertZones []string) bool {
+	if len(areaZones) == 0 || len(alertZones) == 0 {
+		return true
+	}
+	set := make(map[string]bool, len(areaZones))
+	for _, z := range areaZones {
+		set[z] = true
+	}
+	for _, z := range alertZones {
+		if set[z] {
+			return true
+		}
+	}
+	return false
+}
 
 // parseAreaID extracts the {area} segment from a single-segment endpoint path
 // (the /scanners/ and /situation/ handlers; /hazards/ is two-segment).

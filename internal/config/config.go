@@ -34,6 +34,11 @@ type HazardArea struct {
 	// IncidentArea is the roads.incidentAreas id reused for the road_incident
 	// layer (so we don't re-implement region filtering).
 	IncidentArea string `koanf:"incidentArea"`
+	// Zones are the NWS forecast zones (e.g. "CAZ064") this area covers. The
+	// weather_alert and fire_weather layers — which carry zones, not coordinates —
+	// are scoped to these. Empty means unscoped (every alert matches), which is
+	// only correct for a single-area deployment.
+	Zones []string `koanf:"zones"`
 	// ScannerFeeds is operator-authored Broadcastify config (no upstream fetch).
 	ScannerFeeds []ScannerFeed `koanf:"scannerFeeds"`
 }

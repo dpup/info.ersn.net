@@ -204,6 +204,10 @@ hazards:
         minLongitude: -120.9
         maxLongitude: -120.0
       incidentArea: "mother-lode"   # reuse the roads incidents region filter
+      # NWS forecast zones this area covers — scopes the weather_alert and
+      # fire_weather layers (which carry zones, not coordinates). The Hwy 4 + Hwy
+      # 49 corridor spans Calaveras and Tuolumne, so all four service zones apply.
+      zones: ["CAZ064", "CAZ065", "CAZ258", "CAZ259"]
       # Evacuation zones are filtered by the bounds above (spatial query), so any
       # in-area zone is caught regardless of which county Cal OES tags it to.
       scannerFeeds:

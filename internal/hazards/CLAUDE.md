@@ -68,6 +68,13 @@ all-clear can't be replayed as STALE).
    `layerOrder` to keep in sync). Give it a `layerTTL` if it hits a new upstream.
    A builder with multiple independent sources should return `partialData(err)`
    when one fails so the layer degrades to STALE, not a silent OK.
+   **Scope to the area.** A builder MUST filter to the requested `area`, or a
+   second configured area inherits the first's data. Use `area.Bounds.Contains`
+   for geocoded sources (chain_control, earthquake, wildfire), the area's
+   `incidentArea`/spatial query for incidents/evac, and `zonesMatch(area.Zones,
+   …)` for the zone-based weather_alert / fire_weather layers (their data carries
+   NWS zones, not coordinates). Returning everything regardless of `area` is the
+   bug to avoid.
 4. New upstreams get a client under `internal/clients/`, mirroring `nws`
    (HTTPDoer, no key where possible) and a `LimitReader` body cap.
 5. M1 re-projects existing feeds only (road_incident, chain_control,
