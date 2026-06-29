@@ -226,8 +226,11 @@ differently and must not be collapsed:
 | `STALE` | last-good served | render with a "data ~N min old" indicator (N from `generated_at − last_source_update`) |
 | `UNAVAILABLE` | none | suppress the map layer; show an empty-state banner linking `source_url` |
 
-For the evac layer, STALE follows the fail-loud rule (§6.4): show "check official
-source," never imply all-clear, even when last-good features exist.
+For the evac layer (§6.4): `UNAVAILABLE`/`null` means the feed errored — render
+"unknown, check official source," never imply all-clear. `OK` with **zero**
+features is distinct: Cal OES is healthy and reports no active zones — render "no
+active evacuations reported," still linking `source_url` and never as a guarantee.
+The safety property is that an error never collapses into a `0`.
 
 ## 5. API surface
 
@@ -275,16 +278,24 @@ render its banner from one fetch.
   "scanners": [ /* §5.4 */ ]
 }
 ```
-**Life-safety contract:** `summary.active_evacuations` is a JSON **`null`** (not
-`0`) whenever evacuation data is unavailable, and `summary.evacuation_status`
-(`OK` | `UNAVAILABLE`) says which. A client MUST render `null` as an explicit
-warn state ("evacuation status unavailable — check [Genasys]"), never as "no
-active evacuations." Because Cal OES is an active-events-only source, an empty
-result is treated as `UNAVAILABLE` (we can't distinguish "no evacuations" from
-"feed empty/broken"), so in practice `active_evacuations` is either `null` or a
-**positive** integer — it is never `0`. (Do not treat `active_evacuations` as a
-string — an earlier draft of this doc showed `"yes|no|unknown"`; the shipped
-field is `int|null`.)
+**Life-safety contract:** `summary.active_evacuations` separates *feed health*
+from *content*, and `summary.evacuation_status` (`OK` | `STALE` | `UNAVAILABLE`)
+disambiguates:
+
+- `UNAVAILABLE` → `active_evacuations: null`. Cal OES errored/unreachable. A
+  client MUST render `null` as an explicit warn state ("evacuation status
+  unavailable — check [Genasys]"), never as "no active evacuations."
+- `OK` → `active_evacuations: 0`. Cal OES is healthy and reports no active zones.
+  Render "no active evacuations reported by Cal OES" — still linking Genasys and
+  framed as reference-only, **never** a guaranteed all-clear.
+- `OK`/`STALE` → `active_evacuations: N>0`. Active zones (STALE = served from the
+  last good fetch; see `last_source_update`).
+
+The invariant is **an error never collapses into a `0`** — a confirmed-empty
+(`OK`/`0`) and a failure (`UNAVAILABLE`/`null`) are deliberately distinguishable,
+because a perpetual "unavailable" on quiet days is itself misleading. (Do not
+treat `active_evacuations` as a string — an earlier draft showed
+`"yes|no|unknown"`; the shipped field is `int|null`.)
 
 Each `layers[]` entry is a status summary (`source_status`, `feature_count`,
 `highest_severity`), not a FeatureCollection — pull the geometry from the
@@ -398,15 +409,17 @@ handling we already configured — no second CORS policy. Set the same
 - On adapter error or stale upstream: that layer's `metadata.source_status` =
   `UNAVAILABLE`/`STALE`, serve last-good features if any, and **never fabricate**
   a clear state.
-- **Evac fail-loud (hard rule):** an empty Cal OES result is ambiguous
-  (no-evacuations vs feed-broken), and an HTTP 200 with an empty/short
-  FeatureCollection is *neither* an error *nor* stale by the usual signals — so
-  the evac adapter treats **any** empty active-evac result as `UNAVAILABLE`
-  (→ `active_evacuations: unknown`) unless it has a positive health signal (e.g.
-  a recent non-empty fetch or a healthcheck), so a silently-degraded feed never
-  produces an all-clear. The evac adapter only ever emits *active*
-  Order/Warning/Advisory features; the page must show "check official source,"
-  never "all clear." The Genasys link is always present regardless of feed health.
+- **Evac fail-loud (hard rule):** the load-bearing invariant is **an error never
+  becomes a `0`**. A *failed* fetch (transport error, non-2xx, or an ArcGIS
+  HTTP-200 error-envelope) is `UNAVAILABLE` (→ `active_evacuations: null`,
+  "unknown"); a *clean* fetch that returns no active zones is `OK`/`0` ("no active
+  evacuations reported"). Both are caveated and always carry the Genasys
+  `source_url` — a confirmed-empty is "no active zones per Cal OES," never a
+  guaranteed all-clear. We do NOT collapse confirmed-empty into `UNAVAILABLE`: a
+  perpetual "unavailable" on quiet days is itself misleading and trains users to
+  ignore the signal. To preserve the invariant, empty results are never cached
+  (so a later fetch error falls through to `UNAVAILABLE`, not a replayed stale
+  `0`), and the adapter only ever emits *active* Order/Warning/Advisory features.
 
 ### 6.5 Config / area model
 

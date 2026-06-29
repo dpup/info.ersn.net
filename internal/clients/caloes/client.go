@@ -1,8 +1,12 @@
 // Package caloes provides a client for the Cal OES California Evacuation
 // Aggregation Layer (ArcGIS, public, keyless). It is an ACTIVE-EVENTS-ONLY layer:
-// it holds only zones currently in Order/Warning/Advisory, so an empty result is
-// ambiguous (no-evacuations vs feed-broken). Callers MUST treat empty as
-// "unknown", never as "all clear" (see docs/hazard-aggregation-design.md §6.4).
+// it holds only zones currently in Order/Warning/Advisory. The client separates a
+// failed fetch from a clean-but-empty one: a transport error, non-2xx, or an
+// ArcGIS HTTP-200 error-envelope returns an error (the caller surfaces
+// UNAVAILABLE/"unknown"), while a clean fetch with no zones returns an empty
+// slice and nil error (the caller surfaces a caveated "no active zones"). The
+// safety invariant upstream is that an error never becomes a "0" — see
+// docs/hazard-aggregation-design.md §6.4.
 package caloes
 
 import (

@@ -189,20 +189,21 @@ func (s *Service) ServeScanners(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(out)
 }
 
-// layerMetadata carries per-layer collection metadata + the fail-loud flag.
+// layerMetadata carries per-layer collection metadata.
 type layerMetadata struct {
-	attribution      string
-	sourceURL        string
-	emptyUnavailable bool // empty result => UNAVAILABLE (active-events-only sources)
+	attribution string
+	sourceURL   string
 }
 
 func layerMeta(layer string) layerMetadata {
 	switch layer {
 	case LayerEvacuation:
+		// Always carry the authoritative Genasys link + "reference only" framing,
+		// in every state (OK/STALE/UNAVAILABLE) — a confirmed-empty is "no active
+		// zones per Cal OES", never a guarantee.
 		return layerMetadata{
-			attribution:      "Cal OES / California County Governments — reference only",
-			sourceURL:        caloes.SourceURL,
-			emptyUnavailable: true,
+			attribution: "Cal OES / California County Governments — reference only",
+			sourceURL:   caloes.SourceURL,
 		}
 	default:
 		return layerMetadata{}
@@ -254,7 +255,13 @@ func layerTTL(layer string) time.Duration {
 //   - builder partialData(err)   -> STALE, features kept (one source degraded)
 //   - builder hard error + cache -> STALE, last good features served
 //   - builder hard error, none   -> UNAVAILABLE, empty
-//   - empty active-events source -> UNAVAILABLE (never an implied all-clear)
+//
+// A clean empty success is OK with zero features — NOT UNAVAILABLE. The
+// life-safety property is "an error never becomes a 0": UNAVAILABLE means the
+// source genuinely failed (so a consumer shows "unknown / check the official
+// source"), while OK + 0 means the source is healthy and currently reports
+// nothing (e.g. no active evacuation zones — still caveated via attribution +
+// source_url, never a guarantee). The two are deliberately distinguishable.
 func (s *Service) buildLayer(ctx context.Context, area config.HazardArea, layer string, build builder) layerResult {
 	meta := layerMeta(layer)
 	ttl := layerTTL(layer)
@@ -289,18 +296,16 @@ func (s *Service) buildLayer(ctx context.Context, area config.HazardArea, layer 
 	}
 
 	// Success. Cache non-empty results so stale-on-error has something to serve;
-	// never cache an empty result (it would let an empty all-clear be replayed).
+	// never cache an empty result — that keeps the safety property that a later
+	// fetch error falls through to UNAVAILABLE, never replaying a stale "0".
 	if ttl > 0 && s.cache != nil && len(features) > 0 {
 		_ = s.cache.Set(key, features, ttl, "hazard:"+layer)
 	}
 	return finalize(meta, features, "OK", time.Time{})
 }
 
-// finalize applies the empty-active-events fail-loud flip and packages the result.
+// finalize packages a built layer's result.
 func finalize(meta layerMetadata, features []Feature, status string, lastUpdate time.Time) layerResult {
-	if meta.emptyUnavailable && status == "OK" && len(features) == 0 {
-		status = "UNAVAILABLE"
-	}
 	return layerResult{features: features, status: status, meta: meta, lastSourceUpdate: lastUpdate}
 }
 

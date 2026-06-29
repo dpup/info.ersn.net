@@ -85,17 +85,35 @@ func TestBuildLayer_PartialIsStale(t *testing.T) {
 	}
 }
 
-// TestBuildLayer_EvacEmptyUnavailable: an empty active-events evac result stays
-// fail-loud (UNAVAILABLE) and is NOT cached as an all-clear.
-func TestBuildLayer_EvacEmptyUnavailable(t *testing.T) {
+// TestBuildLayer_EvacEmptyIsOK: a clean empty Cal OES result is OK with zero
+// features (confirmed "no active zones" — not UNAVAILABLE). It must still not be
+// cached, so a later fetch error falls through to UNAVAILABLE rather than
+// replaying a stale "0".
+func TestBuildLayer_EvacEmptyIsOK(t *testing.T) {
 	s := &Service{cache: cache.NewCache()}
 	r := s.buildLayer(testCtx(), config.HazardArea{ID: "x"}, LayerEvacuation, okBuild())
-	if r.status != "UNAVAILABLE" {
-		t.Fatalf("empty evac status = %q, want UNAVAILABLE", r.status)
+	if r.status != "OK" {
+		t.Fatalf("clean-empty evac status = %q, want OK", r.status)
 	}
-	// The empty result must not have been cached (no all-clear replay).
+	if len(r.features) != 0 {
+		t.Fatalf("clean-empty evac features = %d, want 0", len(r.features))
+	}
+	if r.meta.sourceURL == "" {
+		t.Error("evac must carry the Genasys source URL even when empty")
+	}
 	var anything []Feature
 	if ok, _ := s.cache.Get("hazard:x:"+LayerEvacuation, &anything); ok {
 		t.Error("empty evac result must not be cached")
+	}
+}
+
+// TestBuildLayer_EvacErrorUnavailable: a Cal OES error (NOT a clean empty) is
+// UNAVAILABLE — the consumer-visible difference that lets "no zones" be told
+// apart from "feed broken".
+func TestBuildLayer_EvacErrorUnavailable(t *testing.T) {
+	s := &Service{cache: cache.NewCache()}
+	r := s.buildLayer(testCtx(), config.HazardArea{ID: "x"}, LayerEvacuation, errBuild(errors.New("cal oes down")))
+	if r.status != "UNAVAILABLE" {
+		t.Fatalf("evac error status = %q, want UNAVAILABLE", r.status)
 	}
 }

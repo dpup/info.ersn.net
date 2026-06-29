@@ -125,17 +125,18 @@ func TestEvacLevelAndSeverity(t *testing.T) {
 	}
 }
 
-// TestEvacFailLoud documents the load-bearing rule: an empty result is
-// UNAVAILABLE, never an implied all-clear.
-func TestEvacFailLoud(t *testing.T) {
-	if !layerMeta(LayerEvacuation).emptyUnavailable {
-		t.Error("evacuation layer must be empty-unavailable (fail-loud)")
-	}
-	if layerMeta(LayerEvacuation).sourceURL == "" {
+// TestEvacAlwaysLinksSource documents the load-bearing safety rule: the
+// evacuation layer always carries the authoritative Genasys link + "reference
+// only" framing, in every state — a confirmed-empty is "no active zones per Cal
+// OES", never a guarantee. (The error-vs-empty distinction is exercised in
+// buildlayer_test.go.)
+func TestEvacAlwaysLinksSource(t *testing.T) {
+	m := layerMeta(LayerEvacuation)
+	if m.sourceURL == "" {
 		t.Error("evacuation layer must always carry the authoritative source URL")
 	}
-	if layerMeta(LayerRoadIncident).emptyUnavailable {
-		t.Error("non-evac layers should not be empty-unavailable")
+	if m.attribution == "" {
+		t.Error("evacuation layer must always carry the reference-only attribution")
 	}
 }
 

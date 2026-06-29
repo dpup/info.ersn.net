@@ -378,12 +378,20 @@ map still fetches the per-layer `.geojson` above): per-layer `source_status` +
 `feature_count`, and a cross-layer `summary` (`highest_severity`,
 `severity_counts`, `top_headlines`) plus a `scanners` sidecar.
 
-**Life-safety contract:** `summary.active_evacuations` is `null` whenever
-evacuation data is unavailable (`summary.evacuation_status` says which) — a client
-must render `null` as "unknown — check the official source", **never** as zero.
-Because Cal OES is active-events-only, the count is `null`-or-positive and never
-`0`. The evacuation layer always carries the authoritative
-[Genasys](https://protect.genasys.com/) viewer link in its `source_url`.
+**Life-safety contract:** `summary.active_evacuations` separates *feed health*
+from *content*, with `summary.evacuation_status` (`OK` | `STALE` | `UNAVAILABLE`)
+saying which:
+
+- `UNAVAILABLE` → `active_evacuations: null` — Cal OES errored. Render "unknown —
+  check the official source", **never** as zero.
+- `OK` → `active_evacuations: 0` — Cal OES is healthy and reports no active zones.
+  Render "no active evacuations reported" (caveated, never a guaranteed all-clear).
+- `OK`/`STALE` → `active_evacuations: N>0` — active zones.
+
+The invariant is **an error never becomes a `0`**, so a quiet day (`0`) is
+distinguishable from an outage (`null`). The evacuation layer always carries the
+authoritative [Genasys](https://protect.genasys.com/) viewer link in its
+`source_url`, in every state.
 
 #### Scanner Feeds
 

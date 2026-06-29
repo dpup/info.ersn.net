@@ -240,11 +240,13 @@ hand-built GeoJSON/JSON (not grpc-gateway), so field names are `snake_case`.
   mechanism. A layer is fail-loud: on source error it returns `UNAVAILABLE` with
   empty features (or `STALE` + `last_source_update` when serving a cached last-good
   fetch), never a fabricated clear state.
-- **Evacuation is life-safety / fail-loud**: an empty active-events result is
-  `UNAVAILABLE`/unknown (never "all clear"); `situation.active_evacuations` is
-  `null` when unavailable (never `0`), and `metadata.source_url` always links the
-  authoritative Genasys viewer. Areas are configured under `hazards.areas` in
-  `prefab.yaml`.
+- **Evacuation is life-safety / fail-loud**: the invariant is *an error never
+  becomes a `0`*. A Cal OES failure is `UNAVAILABLE` → `situation.active_evacuations:
+  null` (render "unknown — check Genasys"); a clean fetch with no active zones is
+  `OK` → `active_evacuations: 0` (render "no active evacuations reported", a
+  caveated confirmed-empty, not a guarantee). `metadata.source_url` always links
+  the authoritative Genasys viewer in every state. Areas are configured under
+  `hazards.areas` in `prefab.yaml`.
 
 ## Performance & Monitoring
 

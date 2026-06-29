@@ -35,28 +35,33 @@ calls.** Each response sets `Content-Type: application/geo+json` and
 
 ## Fail-loud
 
-If a layer's source errors, the handler returns `metadata.source_status =
-UNAVAILABLE` with empty features — never a fabricated clear state. The evac layer
-(M4) extends this: any empty active-evac result is `UNAVAILABLE`/`unknown`, never
-"all clear".
+If a layer's source **errors**, the handler returns `metadata.source_status =
+UNAVAILABLE` with empty features — never a fabricated clear state. The
+load-bearing safety property is **"an error never becomes a 0"**: `UNAVAILABLE`
+means the source genuinely failed (consumer shows "unknown / check the official
+source"), distinct from `OK` + 0 features, which means the source is healthy and
+currently reports nothing (e.g. no active evacuation zones). A confirmed-empty is
+**not** UNAVAILABLE — but it's still caveated (evac always carries the Genasys
+`source_url` + "reference only" attribution); "no active zones per Cal OES" is
+never a guarantee.
 
 `buildLayer` is the one place all this is enforced (both the single-layer and
 `/situation` paths go through it). Status resolution:
 
 - fresh cache hit → `OK` (no upstream call)
-- builder OK → `OK` (non-empty result cached for `layerTTL`)
+- builder OK (incl. a clean empty) → `OK`; non-empty results cached for `layerTTL`
 - builder returns `partialData(err)` → `STALE`, features kept (a multi-source
   layer like wildfire lost one source — don't present partial data as complete)
 - builder hard error **with** a cached value → `STALE`, last-good features served
   (`last_source_update` = fetch time); transient upstream blips don't go dark
 - builder hard error, nothing cached → `UNAVAILABLE`, empty
-- empty active-events source (evac) → `UNAVAILABLE` (the fail-loud flip)
 
 Caching uses the shared `internal/cache` (passed to `NewService`); `layerTTL`
 returns 0 for the road/weather layers that are already cached by their underlying
 services (no double-caching), and a short TTL for the new upstreams + the live
-Caltrans chain-control fetch. Empty results are **never** cached (so an empty
-all-clear can't be replayed as STALE).
+Caltrans chain-control fetch. Empty results are **never** cached — that keeps the
+safety property: a later fetch error falls through to `UNAVAILABLE` instead of
+replaying a stale "0".
 
 ## Adding a layer
 
@@ -92,14 +97,20 @@ GeoJSON: per-layer `source_status` + `feature_count`, a cross-layer
 scanner sidecar. The map still fetches `*.geojson` per layer; this is the
 dashboard's single status fetch.
 
-**Unknown-aware evacuation posture (don't regress):** `summary.active_evacuations`
-is `null` whenever the evac layer is `UNAVAILABLE`, and `evacuation_status` says
-which. A client MUST treat `null` as "unknown — check Genasys", never as zero.
-Because the evac layer is `emptyUnavailable` (an empty active-events feed flips to
-`UNAVAILABLE` in `buildLayer`), the production count is `null`-or-positive and
-never `0`. The rollup math lives in the pure `summarize()` (unit-tested in
-`situation_test.go`); its OK-with-zero branch returns `0` for completeness but is
-unreachable for the evac layer through `buildLayer`.
+**Evacuation posture — health vs. content (don't regress):**
+`summary.active_evacuations` distinguishes the two on purpose:
+
+- `evacuation_status: OK`, `active_evacuations: 0` — Cal OES is healthy and
+  reports no active zones (confirmed-empty; a client renders "no active
+  evacuations reported — verify at Genasys", **not** a guaranteed all-clear).
+- `evacuation_status: OK`/`STALE`, `active_evacuations: N>0` — active zones.
+- `evacuation_status: UNAVAILABLE`, `active_evacuations: null` — Cal OES errored;
+  a client MUST render `null` as "unknown — check Genasys", never as zero.
+
+The safety property is **an error never becomes a 0** (a fetch failure is
+`UNAVAILABLE`/`null`, a confirmed-empty is `OK`/`0`). The rollup math lives in the
+pure `summarize()` (unit-tested in `situation_test.go`): it sets the count for
+`OK`/`STALE` and leaves it `null` for `UNAVAILABLE`.
 
 Status: **M0–M5 shipped.** All eight layers + `/situation/{area}` +
 `/scanners/{area}` are live. See the design doc's milestone table.

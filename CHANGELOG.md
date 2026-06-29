@@ -7,6 +7,29 @@ There are no formal releases — the service deploys from `main`. Each entry bel
 is timestamped; add a new dated section at the top when the API surface changes.
 The API is JSON over HTTP (`/api/v1/...`); field names are camelCase.
 
+## 2026-06-29 00:00 UTC
+
+### Changed — evacuation now distinguishes "no active zones" from "feed error"
+
+Previously a healthy Cal OES feed reporting **no** active evacuation zones was
+indistinguishable from a Cal OES **error**: both returned `source_status:
+UNAVAILABLE` with empty features (and `situation.active_evacuations: null`). On a
+normal quiet day that read as a permanent outage. The two are now split:
+
+- **Confirmed-empty** (Cal OES healthy, no active zones):
+  `…/evacuation.geojson` → `metadata.source_status: "OK"` with `features: []`;
+  `…/situation` → `evacuation_status: "OK"`, `active_evacuations: 0`.
+- **Error/unreachable** (transport error, non-2xx, or ArcGIS error-envelope):
+  `source_status: "UNAVAILABLE"`, `evacuation_status: "UNAVAILABLE"`,
+  `active_evacuations: null` (unchanged).
+
+So `active_evacuations` can now be `0` (it previously never was). Consumer action:
+render `0` as "no active evacuations reported by Cal OES" (still caveated — the
+Genasys `source_url` is present in every state and it is never a guaranteed
+all-clear), and keep rendering `null` as "unknown — check Genasys". The safety
+invariant is preserved: **an error never becomes a `0`** (empty results are not
+cached, so a later fetch error can't replay a stale `0`).
+
 ## 2026-06-27 01:15 UTC
 
 ### Changed — road-condition alerts are now localized to the matching segment
